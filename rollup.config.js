@@ -1,8 +1,8 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import babel from '@rollup/plugin-babel';
-import terser from '@rollup/plugin-terser';
-import typescript from '@rollup/plugin-typescript';
+import { terser } from 'rollup-plugin-terser';
+import typescript from 'rollup-plugin-typescript2';
 
 export default {
     input: 'src/index.ts',
@@ -28,22 +28,21 @@ export default {
     plugins: [
         resolve(),
         commonjs(),
-        typescript({ 
-            tsconfig: false,
-            compilerOptions: {
-                target: 'es5',
-                lib: ['dom', 'dom.iterable', 'esnext'],
-                jsx: 'react-jsx',
-                declaration: false,
-                module: 'esnext',
-                moduleResolution: 'nodenext',
-                esModuleInterop: true,
-                allowSyntheticDefaultImports: true,
-                strict: true,
-                skipLibCheck: true,
-                resolveJsonModule: true,
+        typescript({
+            tsconfig: 'tsconfig.json',
+            useTsconfigDeclarationDir: true,
+            clean: true,
+            tsconfigOverride: {
+                compilerOptions: {
+                    declaration: true,
+                    declarationDir: 'dist',
+                    emitDeclarationOnly: false,
+                    module: 'esnext',
+                    target: 'es5',
+                    jsx: 'react-jsx',
+                },
+                exclude: ['**/*.stories.ts', '**/*.stories.tsx', '**/__tests__/**', '**/__stories__/**', 'node_modules/**'],
             },
-            exclude: ['**/*.stories.ts', '**/*.stories.tsx', '**/__tests__/**', '**/__stories__/**', 'node_modules/**']
         }),
         babel({
             babelHelpers: 'bundled',

@@ -1,32 +1,35 @@
-# Getting Started 
+# UI Component Library
 
-This project uses react styled-component
-
-make sure to run npm i styled-component into your project
+This repository is configured as a UI component library, not a standalone React app.
 
 ## Available Scripts
 
-In the project directory, you can run:
+In the project directory, run:
 
 ### `npm run storybook`
 
-Runs the storybook
-Open [http://localhost:6006](http://localhost:6006) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm run test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches Storybook at [http://localhost:6006](http://localhost:6006).
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Builds the library bundles into `dist/` using Rollup.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### `npm run test`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Runs the Jest test suite.
+
+## Package Exports
+
+The package exports:
+
+- `main`: `dist/index.cjs.js`
+- `module`: `dist/index.esm.js`
+- `types`: `dist/index.d.ts`
+
+## Usage
+
+Import components from the package entry point:
+
+```ts
+import { Button, Accordion } from '@taty1977/my-component-library';
+```

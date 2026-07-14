@@ -1,1 +1,1 @@
-export * from './accordion/index.js';
+export * from './accordion';
