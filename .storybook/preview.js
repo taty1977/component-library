@@ -1,12 +1,9 @@
-const preview = {
-  parameters: {
-    controls: {
-      matchers: {
-        color: /(background|color)$/i,
-        date: /Date$/i,
-      },
-    },
-  },
-};
+import React from 'react';
 
-export default preview;
+export const decorators = [
+  (Story) => React.createElement(
+    'div',
+    { style: { padding: '1rem', minHeight: '100vh' } },
+    React.createElement(Story)
+  ),
+];
