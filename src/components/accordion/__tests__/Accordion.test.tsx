@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { theme } from '../../../styles/theme';
 import { Accordion } from '../Accordion';
 
 const testItems = [
@@ -16,7 +17,15 @@ function renderWithUser(component: React.ReactElement) {
   };
 }
 
-describe('Accordion', () => {  
+describe('Accordion', () => {
+  test('uses shared theme colors for its surface styles', () => {
+    render(<Accordion items={testItems} />);
+    const button = screen.getByRole('button', { name: /panel one/i });
+
+    expect(button).toHaveStyle(`background-color: ${theme.colors.surface}`);
+    expect(button).toHaveStyle(`color: ${theme.colors.heading}`);
+  });
+
   test('renders accordion with multiple panels', () => {  
     render(<Accordion items={testItems} />);  
     const buttons = screen.getAllByRole('button');  

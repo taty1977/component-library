@@ -1,5 +1,48 @@
 import React, { useState } from 'react';
+import styled from 'styled-components';
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
+import { theme } from '../../styles/theme';
+
+const Container = styled.div`
+    display: grid;
+    gap: 0.75rem;
+`;
+
+const Item = styled.div`
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid ${theme.colors.border};
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+`;
+
+const Button = styled.button`
+    width: 100%;
+    display: flex;
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '0.75rem 1rem',
+    backgroundColor: ${theme.colors.surface};
+    border: 'none',
+    cursor: 'pointer',
+    textAlign: 'left',
+    fontSize: '1rem',
+    fontWeight: 500,
+    color: ${theme.colors.heading},
+`;
+
+const Panel = styled.div`
+    padding: '0.75rem 1rem',
+    backgroundColor: ${theme.colors.surfaceAlt};
+    color: ${theme.colors.mutedText};
+    borderTop: 1px solid ${theme.colors.border};
+`;
+
+const Icon = styled.div`
+    width: '1em',
+    height: '1em',
+    color: ${theme.colors.icon};
+    flexShrink: 0,
+`;
 
 interface AccordionItem {
     id: string;
@@ -20,7 +63,7 @@ const containerStyle: React.CSSProperties = {
 const itemStyle: React.CSSProperties = {
     borderRadius: '0.75rem',
     overflow: 'hidden',
-    border: '1px solid #e2e8f0',
+    border: `1px solid ${theme.colors.border}`,
     boxShadow: '0 1px 2px rgba(15, 23, 42, 0.05)',
 };
 
@@ -30,26 +73,26 @@ const buttonStyle: React.CSSProperties = {
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: '0.75rem 1rem',
-    backgroundColor: '#ffffff',
+    backgroundColor: theme.colors.surface,
     border: 'none',
     cursor: 'pointer',
     textAlign: 'left',
     fontSize: '1rem',
     fontWeight: 500,
-    color: '#0f172a',
+    color: theme.colors.heading,
 };
 
 const panelStyle: React.CSSProperties = {
     padding: '0.75rem 1rem',
-    backgroundColor: '#f8fafc',
-    color: '#334155',
-    borderTop: '1px solid #e2e8f0',
+    backgroundColor: theme.colors.surfaceAlt,
+    color: theme.colors.mutedText,
+    borderTop: `1px solid ${theme.colors.border}`,
 };
 
 const iconStyle: React.CSSProperties = {
     width: '1em',
     height: '1em',
-    color: '#64748b',
+    color: theme.colors.icon,
     flexShrink: 0,
 };
 
