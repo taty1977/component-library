@@ -1,5 +1,5 @@
 export declare const colors: {
-    readonly col_0070f3: "#0070f3";
+    readonly col_006fcf: "#006fcf";
     readonly col_1fa1f2: "#1fa1f2";
     readonly col_333333: "#333333";
     readonly col_ffffff: "#ffffff";

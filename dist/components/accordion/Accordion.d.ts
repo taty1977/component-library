@@ -7,6 +7,7 @@ interface AccordionItem {
 interface AccordionProps {
     items: AccordionItem[];
     allowMultiple?: boolean;
+    reverseHeader?: boolean;
 }
-export declare const Accordion: ({ items, allowMultiple }: AccordionProps) => import("react/jsx-runtime").JSX.Element;
+export declare const Accordion: ({ items, allowMultiple, reverseHeader }: AccordionProps) => import("react/jsx-runtime").JSX.Element;
 export default Accordion;

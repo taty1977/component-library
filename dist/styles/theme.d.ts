@@ -1,6 +1,15 @@
 export declare const theme: {
     colors: {
-        primary: "#0070f3";
+        col_006fcf: "#006fcf";
+        col_1fa1f2: "#1fa1f2";
+        col_333333: "#333333";
+        col_ffffff: "#ffffff";
+        col_f8fafc: "#f8fafc";
+        col_e2e8f0: "#e2e8f0";
+        col_0f172a: "#0f172a";
+        col_334155: "#334155";
+        col_64748b: "#64748b";
+        primary: "#006fcf";
         secondary: "#1fa1f2";
         text: "#333333";
         surface: "#ffffff";
@@ -10,12 +19,12 @@ export declare const theme: {
         mutedText: "#334155";
         icon: "#64748b";
     };
-    space: {
-        xs: "0.25rem";
-        sm: "0.5rem";
+    fontSizes: {
+        xs: "0.5rem";
+        sm: "0.75rem";
         md: "1rem";
-        lg: "1.5rem";
-        xl: "2rem";
+        lg: "1.25rem";
+        xl: "1.5rem";
     };
     headingSizes: {
         h1: "2rem";
@@ -25,9 +34,42 @@ export declare const theme: {
         h5: "1rem";
         h6: "0.75rem";
     };
-    fontSizes: {
-        sm: "1rem";
-        md: "1.25rem";
+    sizes: {
+        sz_025: "0.25rem";
+        sz_050: "0.5rem";
+        sz_075: "0.75rem";
+        sz_100: "1rem";
+        sz_125: "1.25rem";
+        sz_150: "1.5rem";
+        sz_175: "1.75rem";
+        sz_200: "2rem";
+        sz_225: "2.25rem";
+        sz_250: "2.5rem";
+        sz_275: "2.75rem";
+        sz_300: "3rem";
+        sz_325: "3.25rem";
+        sz_350: "3.5rem";
+        sz_375: "3.75rem";
+        sz_400: "4rem";
+        sz_425: "4.25rem";
+        sz_450: "4.5rem";
+        sz_475: "4.75rem";
+        sz_500: "5rem";
+        sz_525: "5.25rem";
+        sz_550: "5.5rem";
+        sz_575: "5.75rem";
+        sz_600: "6rem";
+        sz_625: "6.25rem";
+        sz_650: "6.5rem";
+        sz_675: "6.75rem";
+        sz_700: "7rem";
+        sz_750: "7.5rem";
+        sz_800: "8rem";
+    };
+    space: {
+        xs: "0.25rem";
+        sm: "0.5rem";
+        md: "1rem";
         lg: "1.5rem";
         xl: "2rem";
     };
