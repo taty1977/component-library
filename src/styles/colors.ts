@@ -1,5 +1,5 @@
 export const colors = {
-  col_0070f3: '#0070f3',
+  col_006fcf: '#006fcf',
   col_1fa1f2: '#1fa1f2',
   col_333333: '#333333',
   col_ffffff: '#ffffff',

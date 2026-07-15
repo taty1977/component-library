@@ -1,48 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid';
-import { theme } from '../../styles/theme';
-
-const Container = styled.div`
-    display: grid;
-    gap: 0.75rem;
-`;
-
-const Item = styled.div`
-    border-radius: 0.75rem;
-    overflow: hidden;
-    border: 1px solid ${theme.colors.border};
-    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
-`;
-
-const Button = styled.button`
-    width: 100%;
-    display: flex;
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '0.75rem 1rem',
-    backgroundColor: ${theme.colors.surface};
-    border: 'none',
-    cursor: 'pointer',
-    textAlign: 'left',
-    fontSize: '1rem',
-    fontWeight: 500,
-    color: ${theme.colors.heading},
-`;
-
-const Panel = styled.div`
-    padding: '0.75rem 1rem',
-    backgroundColor: ${theme.colors.surfaceAlt};
-    color: ${theme.colors.mutedText};
-    borderTop: 1px solid ${theme.colors.border};
-`;
-
-const Icon = styled.div`
-    width: '1em',
-    height: '1em',
-    color: ${theme.colors.icon};
-    flexShrink: 0,
-`;
+import { theme } from '../../styles';
+import { ChevronDownIcon, ChevronUpIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
 interface AccordionItem {
     id: string;
@@ -53,50 +12,82 @@ interface AccordionItem {
 interface AccordionProps {
     items: AccordionItem[];
     allowMultiple?: boolean;
+    reverseHeader?: boolean;
 }
 
-const containerStyle: React.CSSProperties = {
-    display: 'grid',
-    gap: '0.75rem',
+const Container = styled.div`
+    display: grid;
+    gap: 0.75rem;
+`;
+
+const Item = styled.div<{ reverse?: boolean }>`
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: ${({ reverse }) => (reverse ? 'none' : `1px solid ${theme.colors.border}`)};
+    box-shadow: ${({ reverse }) => (reverse ? 'none' : `0 1px 2px rgba(15, 23, 42, 0.05)`)};
+`;
+
+const ToggleButton = styled.button<{ reverse?: boolean }>`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: ${theme.sizes.sz_100} ${theme.sizes.sz_150};
+    background-color: ${theme.colors.surface};
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-size: ${theme.sizes.sz_100};
+    font-weight: 500;
+    color: ${theme.colors.heading};
+`;
+
+const Panel = styled.div<{reverse?: boolean}>`
+    padding: ${theme.sizes.sz_100} ${theme.sizes.sz_150};
+    background-color: ${theme.colors.surfaceAlt};
+    color: ${theme.colors.mutedText};
+    border-top: ${({ reverse }) => (reverse ? 'none' : `1px solid ${theme.colors.border}`)};
+`;
+
+const HeaderContent = styled.div<{ reverse?: boolean }>`
+    display: flex;
+    align-items: center;
+    justify-content: ${({ reverse }) => (reverse ? 'flex-start' : 'space-between')};
+    gap: ${theme.sizes.sz_075};
+    width: 100%;
+    flex-direction: ${({ reverse }) => (reverse ? 'row-reverse' : 'row')};
+
+    & > span {
+        flex: 1;
+    }
+
+    & > div {
+        flex: 0;
+    }
+`;
+
+const IconWrapper = styled.span`
+    width: 100%;
+    max-width: 1em;
+    height: 1em;
+    color: ${theme.colors.icon};
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+`;
+
+const getHeaderIcon = (expanded: boolean, reverseHeader: boolean) => {
+    if (expanded) {
+        if (reverseHeader) {
+            return ChevronDownIcon;
+        }
+        return ChevronUpIcon;
+    } 
+    return reverseHeader ? ChevronRightIcon : ChevronDownIcon;
 };
 
-const itemStyle: React.CSSProperties = {
-    borderRadius: '0.75rem',
-    overflow: 'hidden',
-    border: `1px solid ${theme.colors.border}`,
-    boxShadow: '0 1px 2px rgba(15, 23, 42, 0.05)',
-};
-
-const buttonStyle: React.CSSProperties = {
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '0.75rem 1rem',
-    backgroundColor: theme.colors.surface,
-    border: 'none',
-    cursor: 'pointer',
-    textAlign: 'left',
-    fontSize: '1rem',
-    fontWeight: 500,
-    color: theme.colors.heading,
-};
-
-const panelStyle: React.CSSProperties = {
-    padding: '0.75rem 1rem',
-    backgroundColor: theme.colors.surfaceAlt,
-    color: theme.colors.mutedText,
-    borderTop: `1px solid ${theme.colors.border}`,
-};
-
-const iconStyle: React.CSSProperties = {
-    width: '1em',
-    height: '1em',
-    color: theme.colors.icon,
-    flexShrink: 0,
-};
-
-export const Accordion = ({ items, allowMultiple = false }: AccordionProps) => {
+export const Accordion = ({ items, allowMultiple = false, reverseHeader = false }: AccordionProps) => {
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
     const toggleItem = (id: string) => {
@@ -119,74 +110,42 @@ export const Accordion = ({ items, allowMultiple = false }: AccordionProps) => {
     };
 
     return (
-        <div style={containerStyle}>
+        <Container>
             {items.map((item) => {
                 const expanded = expandedIds.has(item.id);
+                const HeaderIcon = getHeaderIcon(expanded, reverseHeader);
+
                 return (
-                    <div key={item.id} style={itemStyle}>
-                        <button
+                    <Item key={item.id} reverse={reverseHeader}>
+                        <ToggleButton
                             type="button"
                             id={`accordion-button-${item.id}`}
-                            style={buttonStyle}
                             onClick={() => toggleItem(item.id)}
                             aria-expanded={expanded}
                             aria-controls={`accordion-content-${item.id}`}
+                            reverse={reverseHeader}
                         >
-                            <span>{item.title}</span>
-                            {expanded ? (
-                                <ChevronUpIcon width="1em" height="1em" style={iconStyle} />
-                            ) : (
-                                <ChevronDownIcon width="1em" height="1em" style={iconStyle} />
-                            )}
-                        </button>
+                            <HeaderContent reverse={reverseHeader}>
+                                <span>{item.title}</span>
+                                <IconWrapper>
+                                    <HeaderIcon width="1em" height="1em" />
+                                </IconWrapper>
+                            </HeaderContent>
+                        </ToggleButton>
                         {expanded && (
-                            <div
+                            <Panel
                                 id={`accordion-content-${item.id}`}
-                                style={panelStyle}
                                 role="region"
                                 aria-labelledby={`accordion-button-${item.id}`}
+                                reverse={reverseHeader}
                             >
                                 {item.content}
-                            </div>
+                            </Panel>
                         )}
-                    </div>
+                    </Item>
                 );
             })}
-        </div>
-        // <div className="space-y-3">
-        //     {items.map((item) => {
-        //         const expanded = expandedIds.has(item.id);
-        //         return (
-        //             <div key={item.id} className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
-        //                 <button
-        //                     type="button"
-        //                     id={`accordion-button-${item.id}`}
-        //                     className={`w-full flex items-center justify-between gap-3 px-4 py-3 text-left focus:outline-none focus:ring-2 focus:ring-sky-300 focus:ring-offset-2 ${expanded ? 'bg-slate-50' : 'bg-white'}`}
-        //                     onClick={() => toggleItem(item.id)}
-        //                     aria-expanded={expanded}
-        //                     aria-controls={`accordion-content-${item.id}`}
-        //                 >
-        //                     <span className="flex-1 font-medium text-slate-900">{item.title}</span>
-        //                     <ChevronDownIcon className={`h-5 w-5 text-slate-500 transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
-        //                 </button>
-        //                  {expandedIds.has(item.id) && (
-
-        //                 <div
-        //                     id={`accordion-content-${item.id}`}
-        //                     role="region"
-        //                     aria-labelledby={`accordion-button-${item.id}`}
-        //                     aria-hidden={!expanded}
-        //                     className={`overflow-hidden text-slate-700 transition-all duration-200 ease-in-out ${expanded ? 'py-4 opacity-100' : 'py-0 opacity-0'}`}
-        //                     style={{ maxHeight: expanded ? 1000 : 0 }}
-        //                 >
-        //                     <div className="px-4">{item.content}</div>
-        //                 </div>
-        //                       )}
-        //             </div>
-
-        //         );
-        //     })}
-        // </div>
+        </Container>
     );
 };
 

@@ -1,7 +1,8 @@
+
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { theme } from '../../../styles/theme';
+import { theme } from '../../../styles';
 import { Accordion } from '../Accordion';
 
 const testItems = [
@@ -79,7 +80,7 @@ describe('Accordion', () => {
     test('each button has aria-controls pointing to its content region', () => {  
       render(<Accordion items={testItems} />);  
       const buttons = screen.getAllByRole('button');  
-      buttons.forEach((button, index) => {  
+      buttons.forEach((button: HTMLElement, index: number) => {  
         const controlsId = button.getAttribute('aria-controls');  
         expect(controlsId).toBeTruthy();  
         expect(controlsId).toBe(`accordion-content-${testItems[index].id}`);  
@@ -95,7 +96,7 @@ describe('Accordion', () => {
       }
       const regions = screen.getAllByRole('region');  
       expect(regions).toHaveLength(3);
-      regions.forEach((region) => {  
+      regions.forEach((region: HTMLElement) => {  
         const labelledBy = region.getAttribute('aria-labelledby');  
         expect(labelledBy).toBeTruthy();  
         // Verify the button with this ID exists
