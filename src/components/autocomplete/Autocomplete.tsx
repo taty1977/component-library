@@ -84,7 +84,7 @@ const Input = styled.input<{ $hasLeftIcon?: boolean; $hasRightIcon?: boolean }>`
   font-weight: ${({ theme }) => theme.fontWeights.normal};
   line-height: 1.4;
   outline: none;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+  box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   &::placeholder {
@@ -93,7 +93,7 @@ const Input = styled.input<{ $hasLeftIcon?: boolean; $hasRightIcon?: boolean }>`
 
   &:focus {
     border-color: ${({ theme }) => theme.colors.primary};
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    box-shadow: ${({ theme }) => theme.boxShadow.bs_02};
   }
 `;
 
@@ -161,6 +161,17 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect, placehol
     onSelect(option);
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter' && filteredOptions.length > 0) {
+      event.preventDefault();
+      handleOptionClick(filteredOptions[0]);
+    }
+
+    if (event.key === 'Escape') {
+      setFilteredOptions([]);
+    }
+  };
+
   const handleFocus = () => {
     setIsFocused(true);
     if (inputValue.trim().length === 0) {
@@ -197,6 +208,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect, placehol
           onChange={handleInputChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
           placeholder={placeholder}
           $hasLeftIcon={!!iconLeft}
           $hasRightIcon={hasRightAdornment}
@@ -219,7 +231,11 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect, placehol
       {filteredOptions.length > 0 && (
         <OptionsList>
           {filteredOptions.map(option => (
-            <OptionItem key={option} onClick={() => handleOptionClick(option)}>
+            <OptionItem
+              key={option}
+              onMouseDown={(event) => event.preventDefault()}
+              onClick={() => handleOptionClick(option)}
+            >
               {option}
             </OptionItem>
           ))}

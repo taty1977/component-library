@@ -2,6 +2,21 @@
 import { sizes } from './sizes';
 
 const baseTheme = {
+  boxShadow: {
+    bs_01: `0 1px 2px ${colors.col_0f172a0d}`,
+    bs_02: `0 0 0 3px ${colors.col_0f172a0d}`,
+    bs_03: `0 8px 20px ${colors.col_0f172a0d}`,
+  },
+  carouselImageGallery: {
+    borderRadius: '62.438rem',
+    maxWidth: '60rem',
+    minHeight: '12rem',
+    maxHeight: '25rem',
+    tabletMaxHeight: '15rem',
+    mobileMaxHeight: '10rem',
+    tabletBreakpoint: '900px',
+    mobileBreakpoint: '640px',
+  },
   fontSizes: {
     xs: sizes.sz_075,
     sm: sizes.sz_0875,
@@ -49,6 +64,7 @@ export const brandTheme = {
     heading: colors.col_0f172a,
     mutedText: colors.col_777777,
     icon: colors.col_64748b,
+    danger: colors.col_ff0000,
     ...colors,
   },
   fontFamily: "'Open Sans', sans-serif",

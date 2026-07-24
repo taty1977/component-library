@@ -24,7 +24,7 @@ const Item = styled.div<{ $reverse?: boolean }>`
     border-radius: ${({ theme }) => theme.sizes.sz_075};
     overflow: hidden;
     border: ${({ $reverse, theme }) => ($reverse ? 'none' : `1px solid ${theme.colors.border}`)};
-    box-shadow: ${({ $reverse }) => ($reverse ? 'none' : `0 1px 2px rgba(15, 23, 42, 0.05)`)};
+    box-shadow: ${({ $reverse, theme }) => ($reverse ? 'none' : theme.boxShadow.bs_01)};
 `;
 
 const ToggleButton = styled.button<{ $reverse?: boolean }>`

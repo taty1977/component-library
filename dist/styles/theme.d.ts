@@ -1,3 +1,92 @@
+export declare const brandTheme: {
+    fontSizes: {
+        xs: "0.75rem";
+        sm: "0.875rem";
+        md: "1rem";
+        lg: "1.25rem";
+        xl: "1.5rem";
+    };
+    fontWeights: {
+        light: number;
+        normal: number;
+        medium: number;
+        semibold: number;
+        bold: number;
+    };
+    headingSizes: {
+        h1: "3rem";
+        h2: "2.5rem";
+        h3: "2rem";
+        h4: "1.75rem";
+        h5: "1.5rem";
+        h6: "1.25rem";
+    };
+    sizes: {
+        sz_025: "0.25rem";
+        sz_050: "0.5rem";
+        sz_075: "0.75rem";
+        sz_0875: "0.875rem";
+        sz_100: "1rem";
+        sz_125: "1.25rem";
+        sz_150: "1.5rem";
+        sz_175: "1.75rem";
+        sz_200: "2rem";
+        sz_225: "2.25rem";
+        sz_250: "2.5rem";
+        sz_275: "2.75rem";
+        sz_300: "3rem";
+        sz_325: "3.25rem";
+        sz_350: "3.5rem";
+        sz_375: "3.75rem";
+        sz_400: "4rem";
+        sz_425: "4.25rem";
+        sz_450: "4.5rem";
+        sz_475: "4.75rem";
+        sz_500: "5rem";
+        sz_525: "5.25rem";
+        sz_550: "5.5rem";
+        sz_575: "5.75rem";
+        sz_600: "6rem";
+        sz_625: "6.25rem";
+        sz_650: "6.5rem";
+        sz_675: "6.75rem";
+        sz_700: "7rem";
+        sz_750: "7.5rem";
+        sz_800: "8rem";
+    };
+    spaces: {
+        xs: "0.25rem";
+        sm: "0.5rem";
+        md: "1rem";
+        lg: "1.5rem";
+        xl: "2rem";
+    };
+    colors: {
+        col_ffffff: "#ffffff";
+        col_f8fafc: "#f8fafc";
+        col_e2e8f0: "#e2e8f0";
+        col_0088cc: "#0088cc";
+        col_0169fe: "#0169fe";
+        col_005AEF: "#005AEF";
+        col_64748b: "#64748b";
+        col_777777: "#777777";
+        col_383f48: "#383f48";
+        col_334155: "#334155";
+        col_0f172a: "#0f172a";
+        primary: "#0088cc";
+        secondary: "#0169fe";
+        tertiary: "#005AEF";
+        quaternary: "#383f48";
+        text: "#777777";
+        surface: "#ffffff";
+        surfaceAlt: "#f8fafc";
+        border: "#e2e8f0";
+        heading: "#0f172a";
+        mutedText: "#777777";
+        icon: "#64748b";
+    };
+    fontFamily: string;
+};
 export declare const lightTheme: {
     fontSizes: {
         xs: "0.75rem";
@@ -263,4 +352,4 @@ export declare const theme: {
     };
     fontFamily: string;
 };
-export type ThemeType = typeof lightTheme;
+export type ThemeType = typeof theme;

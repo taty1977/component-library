@@ -33,6 +33,18 @@ describe('Autocomplete Component', () => {
     expect(onSelectMock).toHaveBeenCalledWith('Banana');
   });
 
+  test('calls onSelect for first filtered option when Enter is pressed', () => {
+    const onSelectMock = jest.fn();
+    const { getByPlaceholderText } = renderWithTheme(<Autocomplete options={options} onSelect={onSelectMock} placeholder="Search..." />);
+    const input = getByPlaceholderText('Search...');
+
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: 'Ba' } });
+    fireEvent.keyDown(input, { key: 'Enter', code: 'Enter' });
+
+    expect(onSelectMock).toHaveBeenCalledWith('Banana');
+  });
+
   test('filters options based on input value', () => {
     const { getByPlaceholderText, getByText, queryByText } = renderWithTheme(<Autocomplete options={options} onSelect={() => {}} placeholder="Search..." />);
     fireEvent.focus(getByPlaceholderText('Search...'));

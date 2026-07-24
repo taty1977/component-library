@@ -88,13 +88,3 @@ export const MultiOpen = {
   },
 };
 
-Default.play = async ({ canvasElement }) => {
-  try {
-    const { within, userEvent } = await import('@storybook/testing-library');
-    const canvas = within(canvasElement);
-    const firstButton = await canvas.getByRole('button', { name: /accordion item 1/i });
-    await userEvent.click(firstButton);
-  } catch (e) {
-    // ignore when testing helpers are not installed
-  }
-};
