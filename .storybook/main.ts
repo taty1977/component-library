@@ -13,29 +13,45 @@ const config: StorybookConfig = {
   ],
   "framework": "@storybook/react-webpack5",
   "staticDirs": [
-    "..\\public"
-  ]
-  ,
+    "../public"
+  ],
+  typescript: {
+    check: false,
+    reactDocgen: "react-docgen-typescript"
+  },
   webpackFinal: async (config) => {
-    // Add ts-loader for handling TypeScript files in stories and components
-    config.module = config.module || {};
+    config.resolve = config.resolve || {};
+    config.resolve.extensions = config.resolve.extensions || [".js", ".jsx", ".ts", ".tsx"];
+    config.performance = {
+      ...(config.performance || {}),
+      hints: false
+    };
+
+    config.module = config.module || { rules: [] };
     config.module.rules = config.module.rules || [];
+
+    config.module.rules.push({
+      test: /\.(js|jsx|mjs)$/,
+      exclude: /node_modules/,
+      use: {
+        loader: "babel-loader",
+        options: {
+          presets: ["@babel/preset-react"]
+        }
+      }
+    });
+
     config.module.rules.push({
       test: /\.tsx?$/,
-      use: [
-        {
-          loader: 'ts-loader',
-          options: {
-            transpileOnly: true,
-          },
-        },
-      ],
       exclude: /node_modules/,
+      use: {
+        loader: "ts-loader",
+        options: {
+          transpileOnly: true
+        }
+      }
     });
-    config.resolve = config.resolve || {};
-    config.resolve.extensions = config.resolve.extensions || [];
-    if (!config.resolve.extensions.includes('.ts')) config.resolve.extensions.push('.ts');
-    if (!config.resolve.extensions.includes('.tsx')) config.resolve.extensions.push('.tsx');
+
     return config;
   }
 };

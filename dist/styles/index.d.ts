@@ -1,4 +1,4 @@
-export { theme } from './theme';
+export { theme, lightTheme, darkTheme } from './theme';
 export type { ThemeType } from './theme';
 export { colors } from './colors';
 export type { ColorTokens } from './colors';

@@ -1,29 +1,56 @@
 import React from 'react';
-import { ThemeProvider } from 'styled-components';
 import { Accordion } from '../Accordion';
-import { theme } from '../../../styles';
 
-const withTheme = (Story) => {
-  return React.createElement(
-    ThemeProvider,
-    { theme },
-    React.createElement(
-      'div',
-      { style: { padding: '1rem' } },
-      React.createElement(Story, null)
-    )
-  );
+const themeStyles = {
+  brand: {
+    backgroundColor: '#eff6ff',
+    color: '#1d4ed8',
+    padding: '16px',
+  },
+  light: {
+    backgroundColor: '#ffffff',
+    color: '#111827',
+    padding: '16px',
+  },
+  dark: {
+    backgroundColor: '#111827',
+    color: '#f9fafb',
+    padding: '16px',
+  },
 };
 
 export default {
   component: Accordion,
   title: 'Components/Accordion',
   tags: ['autodocs'],
-  decorators: [withTheme],
   argTypes: {
-    allowMultiple: { control: 'boolean' },
+    allowMultiple: {
+      control: { type: 'inline-radio' },
+      options: [true, false],
+      labels: {
+        true: 'Allow multiple open',
+        false: 'Single panel only',
+      },
+      description: 'When true, multiple accordion panels can stay open at once.',
+      table: {
+        category: 'Behavior',
+        defaultValue: { summary: false },
+      },
+    },
     items: { control: 'object' },
+    theme: {
+      control: { type: 'select' },
+      options: ['brand', 'light', 'dark'],
+      description: 'Pick a theme color palette for the accordion wrapper',
+    },
   },
+  decorators: [
+    (Story, context) => (
+      <div style={themeStyles[context.args.theme || 'brand']}>
+        <Story />
+      </div>
+    ),
+  ],
   parameters: {
     docs: {
       description: {
@@ -42,21 +69,26 @@ const defaultItems = [
 export const Default = {
   args: {
     items: defaultItems,
-    allowMultiple: true,
+    allowMultiple: false,
+    theme: 'light',
   },
 };
 
-export const SingleOpen = {
+export const MultiOpen = {
   args: {
     ...Default.args,
-    allowMultiple: false,
+    allowMultiple: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Multiple panels can remain open at the same time.',
+      },
+    },
   },
 };
 
-// Example play function to demonstrate interaction in Storybook's canvas
-// (requires Storybook's testing-library support)
 Default.play = async ({ canvasElement }) => {
-  // noop if testing helpers not available
   try {
     const { within, userEvent } = await import('@storybook/testing-library');
     const canvas = within(canvasElement);

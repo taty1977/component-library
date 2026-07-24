@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { theme } from '../../styles';
 import { ChevronDownIcon, ChevronUpIcon, ChevronRightIcon } from '@heroicons/react/24/solid';
 
 interface AccordionItem {
     id: string;
     title: string;
-    content: React.ReactNode;
+    content?: React.ReactNode;
 }
 
 interface AccordionProps {
     items: AccordionItem[];
     allowMultiple?: boolean;
     reverseHeader?: boolean;
+    children?: React.ReactNode;
 }
 
 const Container = styled.div`
@@ -20,42 +20,47 @@ const Container = styled.div`
     gap: 0.75rem;
 `;
 
-const Item = styled.div<{ reverse?: boolean }>`
-    border-radius: 0.75rem;
+const Item = styled.div<{ $reverse?: boolean }>`
+    border-radius: ${({ theme }) => theme.sizes.sz_075};
     overflow: hidden;
-    border: ${({ reverse }) => (reverse ? 'none' : `1px solid ${theme.colors.border}`)};
-    box-shadow: ${({ reverse }) => (reverse ? 'none' : `0 1px 2px rgba(15, 23, 42, 0.05)`)};
+    border: ${({ $reverse, theme }) => ($reverse ? 'none' : `1px solid ${theme.colors.border}`)};
+    box-shadow: ${({ $reverse }) => ($reverse ? 'none' : `0 1px 2px rgba(15, 23, 42, 0.05)`)};
 `;
 
-const ToggleButton = styled.button<{ reverse?: boolean }>`
+const ToggleButton = styled.button<{ $reverse?: boolean }>`
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: ${theme.sizes.sz_100} ${theme.sizes.sz_150};
-    background-color: ${theme.colors.surface};
+    padding: ${({ theme }) => `${theme.spaces.md} ${theme.spaces.lg}`};
+    background-color: ${({ theme }) => theme.colors.surface};
     border: none;
     cursor: pointer;
     text-align: left;
-    font-size: ${theme.sizes.sz_100};
-    font-weight: 500;
-    color: ${theme.colors.heading};
+    font-family: ${({ theme }) => theme.fontFamily};
+    font-size: ${({ theme }) => theme.fontSizes.md};
+    font-weight: ${({ theme }) => theme.fontWeights.medium};
+    color: ${({ theme }) => theme.colors.heading};
 `;
 
-const Panel = styled.div<{reverse?: boolean}>`
-    padding: ${theme.sizes.sz_100} ${theme.sizes.sz_150};
-    background-color: ${theme.colors.surfaceAlt};
-    color: ${theme.colors.mutedText};
-    border-top: ${({ reverse }) => (reverse ? 'none' : `1px solid ${theme.colors.border}`)};
+const Panel = styled.div<{ $reverse?: boolean }>`
+    padding: ${({ theme }) => `${theme.spaces.md} ${theme.spaces.lg}`};
+    background-color: ${({ theme }) => theme.colors.surfaceAlt};
+    color: ${({ theme }) => theme.colors.mutedText};
+    border-top: ${({ $reverse, theme }) => ($reverse ? 'none' : `1px solid ${theme.colors.border}`)};
+    font-family: ${({ theme }) => theme.fontFamily};
+    font-size: ${({ theme }) => theme.fontSizes.sm};
+    font-weight: ${({ theme }) => theme.fontWeights.normal};
 `;
 
-const HeaderContent = styled.div<{ reverse?: boolean }>`
+const HeaderContent = styled.div<{ $reverse?: boolean }>`
     display: flex;
     align-items: center;
-    justify-content: ${({ reverse }) => (reverse ? 'flex-start' : 'space-between')};
-    gap: ${theme.sizes.sz_075};
+    justify-content: ${({ $reverse, theme }) => ($reverse ? 'flex-start' : 'space-between')};
+    gap: ${({ theme }) => theme.sizes.sz_075};
     width: 100%;
-    flex-direction: ${({ reverse }) => (reverse ? 'row-reverse' : 'row')};
+    flex-direction: ${({ $reverse }) => ($reverse ? 'row-reverse' : 'row')};
+    font-family: ${({ theme }) => theme.fontFamily};
 
     & > span {
         flex: 1;
@@ -70,7 +75,7 @@ const IconWrapper = styled.span`
     width: 100%;
     max-width: 1em;
     height: 1em;
-    color: ${theme.colors.icon};
+    color: ${({ theme }) => theme.colors.icon};
     flex-shrink: 0;
     display: inline-flex;
     align-items: center;
@@ -87,8 +92,9 @@ const getHeaderIcon = (expanded: boolean, reverseHeader: boolean) => {
     return reverseHeader ? ChevronRightIcon : ChevronDownIcon;
 };
 
-export const Accordion = ({ items, allowMultiple = false, reverseHeader = false }: AccordionProps) => {
+export const Accordion = ({ items, allowMultiple = false, reverseHeader = false, children }: AccordionProps) => {
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+    const childPanels = React.Children.toArray(children);
 
     const toggleItem = (id: string) => {
         const newExpanded = new Set(expandedIds);
@@ -111,35 +117,36 @@ export const Accordion = ({ items, allowMultiple = false, reverseHeader = false 
 
     return (
         <Container>
-            {items.map((item) => {
+            {items.map((item, index) => {
                 const expanded = expandedIds.has(item.id);
                 const HeaderIcon = getHeaderIcon(expanded, reverseHeader);
+                const panelContent = childPanels[index] ?? item.content;
 
                 return (
-                    <Item key={item.id} reverse={reverseHeader}>
+                    <Item key={item.id} $reverse={reverseHeader}>
                         <ToggleButton
                             type="button"
                             id={`accordion-button-${item.id}`}
                             onClick={() => toggleItem(item.id)}
                             aria-expanded={expanded}
                             aria-controls={`accordion-content-${item.id}`}
-                            reverse={reverseHeader}
+                            $reverse={reverseHeader}
                         >
-                            <HeaderContent reverse={reverseHeader}>
+                            <HeaderContent $reverse={reverseHeader}>
                                 <span>{item.title}</span>
                                 <IconWrapper>
                                     <HeaderIcon width="1em" height="1em" />
                                 </IconWrapper>
                             </HeaderContent>
                         </ToggleButton>
-                        {expanded && (
+                        {expanded && panelContent != null && (
                             <Panel
                                 id={`accordion-content-${item.id}`}
                                 role="region"
                                 aria-labelledby={`accordion-button-${item.id}`}
-                                reverse={reverseHeader}
+                                $reverse={reverseHeader}
                             >
-                                {item.content}
+                                {panelContent}
                             </Panel>
                         )}
                     </Item>

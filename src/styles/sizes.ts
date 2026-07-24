@@ -2,6 +2,7 @@ export const sizes = {
   sz_025: '0.25rem',
   sz_050: '0.5rem',
   sz_075: '0.75rem',
+  sz_0875: '0.875rem',
   sz_100: '1rem',
   sz_125: '1.25rem',
   sz_150: '1.5rem',

@@ -2,6 +2,7 @@
 import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { ThemeProvider } from 'styled-components';
 import { theme } from '../../../styles';
 import { Accordion } from '../Accordion';
 
@@ -14,13 +15,17 @@ const testItems = [
 function renderWithUser(component: React.ReactElement) {
   return {
     user: userEvent.setup(),
-    ...render(component),
+    ...render(<ThemeProvider theme={theme}>{component}</ThemeProvider>),
   };
 }
 
 describe('Accordion', () => {
   test('uses shared theme colors for its surface styles', () => {
-    render(<Accordion items={testItems} />);
+    render(
+      <ThemeProvider theme={theme}>
+        <Accordion items={testItems} />
+      </ThemeProvider>
+    );
     const button = screen.getByRole('button', { name: /panel one/i });
 
     expect(button).toHaveStyle(`background-color: ${theme.colors.surface}`);
@@ -28,7 +33,11 @@ describe('Accordion', () => {
   });
 
   test('renders accordion with multiple panels', () => {  
-    render(<Accordion items={testItems} />);  
+    render(
+      <ThemeProvider theme={theme}>
+        <Accordion items={testItems} />
+      </ThemeProvider>
+    );  
     const buttons = screen.getAllByRole('button');  
     expect(buttons).toHaveLength(3);  
     expect(screen.queryByText('Content for panel one')).toBeNull();  
@@ -53,8 +62,21 @@ describe('Accordion', () => {
     await user.click(buttons[2]);  
     expect(screen.queryByText('Content for panel three')).toBeNull();  
   });  
+
+  test('renders children passed as separate Accordion props', async () => {
+    const itemsWithChildren = [{ id: 'child-1', title: 'Children Panel' }];
+    const { user } = renderWithUser(
+      <Accordion items={itemsWithChildren}>
+        <span>Children body content</span>
+      </Accordion>
+    );
+    const button = screen.getByRole('button', { name: /children panel/i });
+
+    await user.click(button);
+    expect(screen.getByText('Children body content')).toBeVisible();
+  });
   
-  test('can expand multiple panels at the same time by default', async () => {  
+  test('can expand multiple panels at the same time when allowMultiple is true', async () => {  
     const { user } = renderWithUser(<Accordion items={testItems} allowMultiple={true} />);  
     const buttons = screen.getAllByRole('button');  
     await user.click(buttons[0]);  
@@ -64,7 +86,7 @@ describe('Accordion', () => {
     expect(screen.getByText('Content for panel three')).toBeVisible();  
   });  
   
-  describe('when shouldAllowMultipleExpanded is false', () => {  
+  describe('when allowMultiple is false (default)', () => {  
     test('only one panel is visible at a time', async () => {  
       const { user } = renderWithUser(<Accordion items={testItems} />);  
       const buttons = screen.getAllByRole('button');  
@@ -74,11 +96,27 @@ describe('Accordion', () => {
       expect(screen.getByText('Content for panel three')).toBeVisible();  
       expect(screen.queryByText('Content for panel one')).toBeNull();  
     });  
+
+    test('clicking another panel closes the previously open panel', async () => {
+      const { user } = renderWithUser(<Accordion items={testItems} allowMultiple={false} />);
+      const buttons = screen.getAllByRole('button');
+
+      await user.click(buttons[0]);
+      expect(screen.getByText('Content for panel one')).toBeVisible();
+
+      await user.click(buttons[1]);
+      expect(screen.getByText('Content for panel two')).toBeVisible();
+      expect(screen.queryByText('Content for panel one')).toBeNull();
+    });
   });  
   
   describe('accessibility', () => {  
     test('each button has aria-controls pointing to its content region', () => {  
-      render(<Accordion items={testItems} />);  
+      render(
+        <ThemeProvider theme={theme}>
+          <Accordion items={testItems} />
+        </ThemeProvider>
+      );  
       const buttons = screen.getAllByRole('button');  
       buttons.forEach((button: HTMLElement, index: number) => {  
         const controlsId = button.getAttribute('aria-controls');  

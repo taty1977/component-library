@@ -2,6 +2,7 @@ export declare const sizes: {
     readonly sz_025: "0.25rem";
     readonly sz_050: "0.5rem";
     readonly sz_075: "0.75rem";
+    readonly sz_0875: "0.875rem";
     readonly sz_100: "1rem";
     readonly sz_125: "1.25rem";
     readonly sz_150: "1.5rem";
