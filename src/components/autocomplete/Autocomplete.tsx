@@ -2,6 +2,14 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { XMarkIcon } from '@heroicons/react/24/solid';
 
+interface AutocompleteProps {
+  options: string[];
+  onSelect: (option: string) => void;
+  placeholder?: string;
+  iconLeft?: React.ReactNode;
+  iconRight?: React.ReactNode;
+}
+
 const AutocompleteContainer = styled.div`
   position: relative;
   width: 100%;
@@ -131,14 +139,6 @@ const OptionItem = styled.li`
     background-color: ${({ theme }) => theme.colors.border};
   }
 `;
-
-interface AutocompleteProps {
-  options: string[];
-  onSelect: (option: string) => void;
-  placeholder?: string;
-  iconLeft?: React.ReactNode;
-  iconRight?: React.ReactNode;
-}
 
 const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect, placeholder, iconLeft, iconRight }) => {
   const [inputValue, setInputValue] = useState('');
