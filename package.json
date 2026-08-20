@@ -25,7 +25,8 @@
     "rollup": "rollup -c",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "jest"
+    "test": "jest",
+    "chromatic": "npx chromatic --build-script-name build-storybook --public"
   },
   "eslintConfig": {
     "extends": [

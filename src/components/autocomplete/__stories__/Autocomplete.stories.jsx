@@ -120,11 +120,3 @@ export const WithBothIcons = {
     showRightIcon: true,
   },
 };
-
-export const DarkTheme = {
-  render: renderAutocomplete,
-  args: {
-    theme: 'dark',
-    showLeftIcon: true,
-  },
-};
