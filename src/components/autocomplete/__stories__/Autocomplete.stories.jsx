@@ -1,26 +1,10 @@
 import React from 'react';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
+import { brandTheme } from '../../../styles';
 import Autocomplete from '../Autocomplete';
 
 const themeStyles = {
-  light: {
-    '--autocomplete-bg': '#ffffff',
-    '--autocomplete-border': '#d1d5db',
-    '--autocomplete-text': '#111827',
-    '--autocomplete-hover': '#f3f4f6',
-  },
-  dark: {
-    '--autocomplete-bg': '#111827',
-    '--autocomplete-border': '#374151',
-    '--autocomplete-text': '#f9fafb',
-    '--autocomplete-hover': '#1f2937',
-  },
-  brand: {
-    '--autocomplete-bg': '#eff6ff',
-    '--autocomplete-border': '#60a5fa',
-    '--autocomplete-text': '#1d4ed8',
-    '--autocomplete-hover': '#dbeafe',
-  },
+  Brand: brandTheme,
 };
 
 const meta = {
@@ -49,7 +33,6 @@ const meta = {
       'Orange',
     ],
     placeholder: 'Search fruit...',
-    theme: 'light',
     showLeftIcon: false,
     showRightIcon: false,
   },
@@ -75,12 +58,6 @@ const meta = {
       description: 'Show a right icon in the input.',
       table: { category: 'Icons' },
     },
-    theme: {
-      control: { type: 'select' },
-      options: ['light', 'dark', 'brand'],
-      description: 'Pick a theme color palette for the autocomplete component',
-      table: { category: 'Presentation' },
-    },
     iconLeft: {
       table: { disable: true },
     },
@@ -88,18 +65,34 @@ const meta = {
       table: { disable: true },
     },
   },
+  decorators: [
+    (Story, context) => {
+      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Light;
+
+      return (
+        <div
+          style={{
+            backgroundColor: activeTheme.colors.surface,
+            color: activeTheme.colors.text,
+            border: `1px solid ${activeTheme.colors.border}`,
+            padding: '16px',
+          }}
+        >
+          <Story />
+        </div>
+      );
+    },
+  ],
 };
 
 export default meta;
 
-const renderAutocomplete = ({ theme, showLeftIcon, showRightIcon, ...args }) => (
-  <div style={themeStyles[theme]}>
-    <Autocomplete
-      {...args}
-      iconLeft={showLeftIcon ? <MagnifyingGlassIcon width="1em" height="1em" aria-hidden="true" /> : undefined}
-      iconRight={showRightIcon ? <MagnifyingGlassIcon width="1em" height="1em" aria-hidden="true" /> : undefined}
-    />
-  </div>
+const renderAutocomplete = ({ showLeftIcon, showRightIcon, ...args }) => (
+  <Autocomplete
+    {...args}
+    iconLeft={showLeftIcon ? <MagnifyingGlassIcon width="1em" height="1em" aria-hidden="true" /> : undefined}
+    iconRight={showRightIcon ? <MagnifyingGlassIcon width="1em" height="1em" aria-hidden="true" /> : undefined}
+  />
 );
 
 export const Default = {

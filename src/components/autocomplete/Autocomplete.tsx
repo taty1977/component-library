@@ -100,8 +100,8 @@ const Input = styled.input<{ $hasLeftIcon?: boolean; $hasRightIcon?: boolean }>`
   }
 
   &:focus {
-    border-color: ${({ theme }) => theme.colors.primary};
-    box-shadow: ${({ theme }) => theme.boxShadow.bs_02};
+    border-color: ${({ theme }) => theme.colors.border};
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.12);
   }
 `;
 

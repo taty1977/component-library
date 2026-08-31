@@ -1,31 +1,22 @@
 import React from 'react';
+import { brandTheme } from '../../../styles';
 import { CarouselImageGallery } from '../CarouselImageGallery';
 
 const themeStyles = {
-  Brand: {
-    background: 'linear-gradient(180deg, #eff6ff 0%, #dbeafe 100%)',
-    color: '#1e3a8a',
-    border: '1px solid #bfdbfe',
-  },
-  Light: {
-    backgroundColor: '#ffffff',
-    color: '#111827',
-    border: '1px solid #e5e7eb',
-  },
-  Dark: {
-    background: 'linear-gradient(180deg, #111827 0%, #0f172a 100%)',
-    color: '#f9fafb',
-    border: '1px solid #334155',
-  },
+  Brand: brandTheme,
 };
 
 const renderShowcase = (args, context) => {
   const activeTheme = themeStyles[context.globals.theme] || themeStyles.Light;
+  const titleId = `gallery-showcase-title-${context.id}`;
 
   return (
-    <div
+    <main
+      aria-labelledby={titleId}
       style={{
-        ...activeTheme,
+        background: activeTheme.colors.surface,
+        color: activeTheme.colors.text,
+        border: `1px solid ${activeTheme.colors.border}`,
         padding: '24px',
         borderRadius: '24px',
         display: 'grid',
@@ -38,20 +29,20 @@ const renderShowcase = (args, context) => {
           gap: '8px',
         }}
       >
-        <span style={{ fontSize: '12px', letterSpacing: '0.12em', textTransform: 'uppercase', opacity: 0.72 }}>
+        <span style={{ fontSize: '12px', letterSpacing: '0.12em', textTransform: 'uppercase', color: activeTheme.colors.mutedText }}>
           Storybook Preview
         </span>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
           <div>
-            <h2 style={{ margin: 0, fontSize: '28px', lineHeight: 1.1 }}>Performance Runner XZ</h2>
-            <p style={{ margin: '8px 0 0', opacity: 0.8 }}>Preview the gallery across themes, breakpoints, and thumbnail positions.</p>
+            <h2 id={titleId} style={{ margin: 0, fontSize: '28px', lineHeight: 1.1, color: activeTheme.colors.heading }}>Performance Runner XZ</h2>
+            <p style={{ margin: '8px 0 0', color: activeTheme.colors.mutedText }}>Preview the gallery across themes, breakpoints, and thumbnail positions.</p>
           </div>
           <div style={{ alignSelf: 'start', fontWeight: 700, fontSize: '24px' }}>$189</div>
         </div>
       </div>
 
       <CarouselImageGallery {...args} />
-    </div>
+    </main>
   );
 };
 
@@ -62,6 +53,7 @@ const imageSet = [
     thumbnailSrc: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=320&q=80',
     alt: 'Red running sneaker side view',
     badge: 'New',
+    likeButton: true,
   },
   {
     id: 'shoe-2',
@@ -143,6 +135,9 @@ const meta = {
   component: CarouselImageGallery,
   tags: ['autodocs'],
   parameters: {
+    a11y: {
+      element: '#storybook-root',
+    },
     docs: {
       description: {
         component:
@@ -153,6 +148,7 @@ const meta = {
   render: renderShowcase,
   args: {
     images: imageSet,
+    likeButton: true,
     showThumbnails: true,
     thumbnailsPosition: 'bottom',
     showIndicators: true,
@@ -161,8 +157,13 @@ const meta = {
   argTypes: {
     images: {
       control: 'object',
-      description: 'Array of gallery image objects.',
+      description: 'Array of gallery image objects. Set likeButton to false on an item to hide its favorite control.',
       table: { category: 'Data' },
+    },
+    likeButton: {
+      control: 'boolean',
+      description: 'Show or hide the favorite button for the active image.',
+      table: { category: 'Display' },
     },
     showThumbnails: {
       control: 'boolean',
@@ -175,9 +176,10 @@ const meta = {
       description: 'Choose where thumbnails are displayed around the main image.',
       table: { category: 'Display' },
     },
-    isMobile: {
-      control: 'boolean',
-      description: 'Simulate mobile view.',
+    breakpoint: {
+      control: 'select',
+      options: ['mobile', 'tablet', 'desktop'],
+      description: 'Choose the responsive layout breakpoint.',
       table: { category: 'Display' },
     },
     showIndicators: {
@@ -190,17 +192,11 @@ const meta = {
       description: 'First selected image index.',
       table: { category: 'Behavior' },
     },
-    showIndicators: {
-      control: 'boolean',
-      description: 'Show navigation dots below the main image when the gallery is closed.',
-      table: { category: 'Display' },
-    },
     ariaLabel: {
       control: 'text',
       description: 'Accessible label for the gallery region.',
       table: { category: 'Accessibility' },
     },
-    onImageChange: { action: 'imageChanged' },
   },
 };
 
@@ -249,5 +245,19 @@ export const StartFromMiddle = {
 export const SingleImage = {
   args: {
     images: [imageSet[0]],
+  },
+};
+
+export const MissingAltFallback = {
+  args: {
+    images: [{ ...imageSet[0], alt: ' ' }],
+    showThumbnails: false,
+    showIndicators: false,
+  },
+};
+
+export const WithoutLikeButton = {
+  args: {
+    likeButton: false,
   },
 };

@@ -29,6 +29,32 @@ npm run chromatic
 
 The project token is available in Chromatic under the project's Manage screen. Do not use the deployment URL or build ID as the token, and never commit `.env` or the token to the repository.
 
+## Using Storybook from React and Angular
+
+This Storybook is built with React, but its published static site can be opened or embedded by any web application, including React and Angular projects. Use the public Chromatic URL as an iframe source:
+
+```tsx
+<iframe
+	title="Component Storybook"
+	src="https://your-public-chromatic-url.chromatic.com/"
+	style={{ width: '100%', minHeight: '800px', border: 0 }}
+/>
+```
+
+In Angular, the same iframe can be placed in a template:
+
+```html
+<iframe
+	title="Component Storybook"
+	src="https://your-public-chromatic-url.chromatic.com/"
+	width="100%"
+	height="800"
+	style="border: 0"
+></iframe>
+```
+
+The published Storybook is a documentation and preview site. The exported package components are React components and cannot be imported directly into an Angular template. Angular support requires a separate Angular component implementation or a web-component adapter.
+
 ## Package Exports
 
 The package exports:

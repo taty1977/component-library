@@ -1,4 +1,5 @@
 ﻿import { colors } from './colors';
+import { breakpoints } from './breakpoints';
 import { sizes } from './sizes';
 
 const baseTheme = {
@@ -10,12 +11,12 @@ const baseTheme = {
   carouselImageGallery: {
     borderRadius: '62.438rem',
     maxWidth: '60rem',
-    minHeight: '12rem',
+    minHeight: '25rem',
     maxHeight: '25rem',
     tabletMaxHeight: '15rem',
     mobileMaxHeight: '10rem',
-    tabletBreakpoint: '900px',
-    mobileBreakpoint: '640px',
+    tabletBreakpoint: breakpoints.tablet,
+    mobileBreakpoint: breakpoints.mobile,
   },
   fontSizes: {
     xs: sizes.sz_075,
@@ -51,60 +52,32 @@ const baseTheme = {
   },
 };
 
+const brandThemeColors = {
+  primary: colors.col_0284c7,
+  secondary: colors.col_0284c7,
+  tertiary: colors.col_0284c7,
+  heartActive: colors.col_0369a1,
+  activeBorder: colors.col_0369a1,
+  focusBorder: colors.col_0369a1,
+  quaternary: '#123b4a',
+  text: '#123b4a',
+  surface: '#ffffff',
+  surfaceAlt: '#f4f9fb',
+  border: colors.col_e2e8f0,
+  heading: '#0d3f48',
+  mutedText: '#57757d',
+  icon: '#446a73',
+  danger: colors.col_dc3545,
+  overlay: '#0d4b57',
+  badgeBackground: '#f3f4f6',
+  badgeBorder: '#d1d5db',
+  badgeText: '#4b5563',
+};
+
 export const brandTheme = {
-  colors: {
-    primary: colors.col_0088cc,
-    secondary: colors.col_0169fe,
-    tertiary: colors.col_005AEF,
-    quaternary: colors.col_383f48,
-    text: colors.col_777777,
-    surface: colors.col_ffffff,
-    surfaceAlt: colors.col_f8fafc,
-    border: colors.col_e2e8f0,
-    heading: colors.col_0f172a,
-    mutedText: colors.col_777777,
-    icon: colors.col_64748b,
-    danger: colors.col_ff0000,
-    ...colors,
-  },
+  ...baseTheme,
+  colors: brandThemeColors,
   fontFamily: "'Open Sans', sans-serif",
-  ...baseTheme,
-};
-
-export const lightTheme = {
-  colors: {
-    primary: colors.col_0088cc,
-    secondary: colors.col_0169fe,
-    tertiary: colors.col_005AEF,
-    quaternary: colors.col_383f48,
-    text: colors.col_777777,
-    surface: colors.col_ffffff,
-    surfaceAlt: colors.col_f8fafc,
-    border: colors.col_e2e8f0,
-    heading: colors.col_0f172a,
-    mutedText: colors.col_777777,
-    icon: colors.col_64748b,
-    ...colors,
-  },
-  fontFamily: "'Open Sans', sans-serif",
-  ...baseTheme,
-};
-
-export const darkTheme = {
-  colors: {
-    primary: colors.col_0088cc,
-    secondary: colors.col_0169fe,
-    text: colors.col_383f48,
-    surface: '#0f172a',
-    surfaceAlt: '#111827',
-    border: colors.col_334155,
-    heading: colors.col_f8fafc,
-    mutedText: colors.col_e2e8f0,
-    icon: colors.col_f8fafc,
-    ...colors,
-  },
-  fontFamily: "'Montserrat', sans-serif",
-  ...baseTheme,
 };
 
 export const theme = brandTheme;

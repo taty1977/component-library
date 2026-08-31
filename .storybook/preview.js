@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import { ThemeProvider } from 'styled-components';
-import { brandTheme, lightTheme, darkTheme } from '../src/styles';
+import { brandTheme } from '../src/styles';
 
 const responsiveFrames = {
   fluid: { label: 'Fluid', width: '100%' },
@@ -12,17 +12,19 @@ const responsiveFrames = {
 
 export const parameters = {
   layout: 'padded',
-  themes: {
-    default: 'Brand',
-    list: [
-      { name: 'Brand', color: '#ffffff', value: brandTheme, default: true },
-      { name: 'Light', color: '#ffffff', value: lightTheme},
-      { name: 'Dark', color: '#0f172a', value: darkTheme },
-    ],
-  },
 };
 
 export const globalTypes = {
+  theme: {
+    name: 'Theme',
+    description: 'Select the component theme',
+    defaultValue: 'Brand',
+    toolbar: {
+      icon: 'paintbrush',
+      items: ['Brand'],
+      dynamicTitle: true,
+    },
+  },
   responsiveFrame: {
     name: 'Viewport',
     description: 'Responsive preview width for all stories',
@@ -40,13 +42,11 @@ export const globalTypes = {
 
 const themeMap = {
   Brand: brandTheme,
-  Light: lightTheme,
-  Dark: darkTheme,
 };
 
 export const decorators = [
   (Story, context) => {
-    const themeObject = themeMap[context.globals.theme] || lightTheme;
+    const themeObject = themeMap[context.globals.theme] || brandTheme;
     const selectedFrame = responsiveFrames[context.globals.responsiveFrame] || responsiveFrames.fluid;
     return React.createElement(
       ThemeProvider,
@@ -54,10 +54,12 @@ export const decorators = [
       React.createElement(
         'div',
         {
+          'data-bs-theme': 'light',
           style: {
             padding: '1rem',
             minHeight: '100vh',
             background: themeObject.colors.surface,
+            colorScheme: 'light',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'flex-start',

@@ -1,22 +1,9 @@
 import React from 'react';
+import { brandTheme } from '../../../styles';
 import { Accordion } from '../Accordion';
 
 const themeStyles = {
-  brand: {
-    backgroundColor: '#eff6ff',
-    color: '#1d4ed8',
-    padding: '16px',
-  },
-  light: {
-    backgroundColor: '#ffffff',
-    color: '#111827',
-    padding: '16px',
-  },
-  dark: {
-    backgroundColor: '#111827',
-    color: '#f9fafb',
-    padding: '16px',
-  },
+  Brand: brandTheme,
 };
 
 export default {
@@ -38,18 +25,24 @@ export default {
       },
     },
     items: { control: 'object' },
-    theme: {
-      control: { type: 'select' },
-      options: ['brand', 'light', 'dark'],
-      description: 'Pick a theme color palette for the accordion wrapper',
-    },
   },
   decorators: [
-    (Story, context) => (
-      <div style={themeStyles[context.args.theme || 'brand']}>
+    (Story, context) => {
+      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Light;
+
+      return (
+      <div
+        style={{
+          backgroundColor: activeTheme.colors.surface,
+          color: activeTheme.colors.text,
+          border: `1px solid ${activeTheme.colors.border}`,
+          padding: '16px',
+        }}
+      >
         <Story />
       </div>
-    ),
+      );
+    },
   ],
   parameters: {
     docs: {
@@ -70,7 +63,6 @@ export const Default = {
   args: {
     items: defaultItems,
     allowMultiple: false,
-    theme: 'light',
   },
 };
 

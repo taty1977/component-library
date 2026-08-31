@@ -1,17 +1,21 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, HeartIcon } from '@heroicons/react/24/solid';
+import type { Breakpoint } from '../../styles';
 
-interface CarouselImageItem {
+export interface CarouselImageItem {
   id?: string;
   src: string;
   alt: string;
   thumbnailSrc?: string;
   badge?: string;
+  likeButton?: boolean;
 }
 
-interface CarouselImageGalleryProps {
+export interface CarouselImageGalleryProps {
   images: CarouselImageItem[];
+  likeButton?: boolean;
+  breakpoint?: Breakpoint;
   initialIndex?: number;
   onImageChange?: (index: number, image: CarouselImageItem) => void;
   showThumbnails?: boolean;
@@ -19,41 +23,52 @@ interface CarouselImageGalleryProps {
   showIndicators?: boolean;
   ariaLabel?: string;
   ofText?: string;
-  isMobile?: boolean;
-}
-
-interface GalleryTitleProps {
-  text: string;
 }
 
 type ThumbnailPosition = 'left' | 'right' | 'bottom';
 
-const GalleryRoot = styled.section`
+const getAccessibleAlt = (image: CarouselImageItem, index: number) => {
+  const alt = image.alt.trim();
+  return alt || `Product image ${index + 1}`;
+};
+
+const GalleryRoot = styled.section<{ $breakpoint: Breakpoint; $thumbnailsPosition: ThumbnailPosition }>`
   --carousel-thumb-size: ${({ theme }) => theme.sizes.sz_450};
   --carousel-main-image-height: ${({ theme }) => theme.carouselImageGallery.maxHeight};
   width: 100%;
+  min-width: 0;
   max-width: ${({ theme }) => theme.carouselImageGallery.maxWidth};
   font-family: ${({ theme }) => theme.fontFamily};
   display: grid;
   gap: ${({ theme }) => theme.spaces.md};
 
-  @media (max-width: ${({ theme }) => theme.carouselImageGallery.tabletBreakpoint}) {
-    --carousel-thumb-size: ${({ theme }) => theme.sizes.sz_375};
-    --carousel-main-image-height: ${({ theme }) => theme.carouselImageGallery.tabletMaxHeight};
-  }
+  ${({ $breakpoint, theme }) => $breakpoint === 'tablet' ? `
+    --carousel-thumb-size: ${theme.sizes.sz_375};
+    --carousel-main-image-height: ${theme.carouselImageGallery.tabletMaxHeight};
+  ` : ''}
 
-  @media (max-width: ${({ theme }) => theme.carouselImageGallery.mobileBreakpoint}) {
-    --carousel-thumb-size: ${({ theme }) => theme.sizes.sz_325};
-    --carousel-main-image-height: ${({ theme }) => theme.carouselImageGallery.mobileMaxHeight};
-  }
+  ${({ $breakpoint, $thumbnailsPosition, theme }) =>
+    $breakpoint === 'tablet' && $thumbnailsPosition !== 'bottom'
+      ? `--carousel-main-image-min-height: calc(${theme.sizes.sz_375} * 5 + ${theme.sizes.sz_0625} * 4);`
+      : ''}
+
+  ${({ $breakpoint, theme }) => $breakpoint === 'mobile' ? `
+    --carousel-thumb-size: ${theme.sizes.sz_325};
+    --carousel-main-image-height: ${theme.carouselImageGallery.mobileMaxHeight};
+  ` : ''}
 `;
 
 const MainStage = styled.div`
+  --carousel-control-size: ${({ theme }) => theme.sizes.sz_200};
   position: relative;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   height: min(80vh, var(--carousel-main-image-height));
+  min-height: var(--carousel-main-image-min-height, min(${({ theme }) => theme.carouselImageGallery.minHeight}, var(--carousel-main-image-height)));
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.sizes.sz_075};
   overflow: hidden;
@@ -61,7 +76,8 @@ const MainStage = styled.div`
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
 `;
 
-const GalleryBody = styled.div<{ $showThumbnails: boolean; $thumbnailsPosition: ThumbnailPosition; $isMobile: boolean }>`
+const GalleryBody = styled.div<{ $showThumbnails: boolean; $thumbnailsPosition: ThumbnailPosition; $breakpoint: Breakpoint }>`
+  min-width: 0;
   display: ${({ $showThumbnails, $thumbnailsPosition }) =>
     $showThumbnails && $thumbnailsPosition !== 'bottom' ? 'grid' : 'block'};
   gap: ${({ theme }) => theme.spaces.md};
@@ -72,8 +88,8 @@ const GalleryBody = styled.div<{ $showThumbnails: boolean; $thumbnailsPosition: 
         ? `minmax(0, 1fr) var(--carousel-thumb-size)`
         : '1fr'};
 
-  ${({ $isMobile, theme }) =>
-    $isMobile
+  ${({ $breakpoint, theme }) =>
+    $breakpoint === 'mobile'
       ? `
     display: block;
     gap: ${theme.spaces.sm};
@@ -86,13 +102,19 @@ const GalleryInlineBody = styled(GalleryBody)``;
 const MainImage = styled.img<{ $clickable?: boolean }>`
   display: block;
   width: 100%;
+  max-width: 100%;
   height: 100%;
-  min-width: 100%;
-  min-height: 100%;
+  min-width: 0;
+  min-height: var(--carousel-main-image-min-height, min(${({ theme }) => theme.carouselImageGallery.minHeight}, var(--carousel-main-image-height)));
   max-height: var(--carousel-main-image-height);
   object-fit: cover;
   object-position: center;
   cursor: ${({ $clickable }) => ($clickable ? 'zoom-in' : 'default')};
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline-offset: 2px;
+  }
 `;
 
 const Badge = styled.span`
@@ -111,8 +133,8 @@ const LikeButton = styled.button<{ $active: boolean }>`
   position: absolute;
   top: ${({ theme }) => theme.spaces.md};
   right: ${({ theme }) => theme.spaces.md};
-  width: ${({ theme }) => theme.sizes.sz_200};
-  height: ${({ theme }) => theme.sizes.sz_200};
+  width: var(--carousel-control-size);
+  height: var(--carousel-control-size);
   border: none;
   border-radius: 999px;
   background-color: ${({ theme }) => theme.colors.surface};
@@ -122,6 +144,11 @@ const LikeButton = styled.button<{ $active: boolean }>`
   justify-content: center;
   cursor: pointer;
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline-offset: 2px;
+  }
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.surfaceAlt};
@@ -133,8 +160,8 @@ const NavButton = styled.button<{ $side: 'left' | 'right' }>`
   ${({ $side, theme }) => ($side === 'left' ? `left: ${theme.spaces.md};` : `right: ${theme.spaces.md};`)}
   top: 50%;
   transform: translateY(-50%);
-  width: ${({ theme }) => theme.sizes.sz_200};
-  height: ${({ theme }) => theme.sizes.sz_200};
+  width: var(--carousel-control-size);
+  height: var(--carousel-control-size);
   border: none;
   border-radius: ${({ theme }) => theme.carouselImageGallery.borderRadius};
   background-color: ${({ theme }) => theme.colors.surface};
@@ -144,6 +171,11 @@ const NavButton = styled.button<{ $side: 'left' | 'right' }>`
   justify-content: center;
   cursor: pointer;
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline-offset: 2px;
+  }
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.surfaceAlt};
@@ -174,10 +206,15 @@ const DotButton = styled.button<{ $active: boolean }>`
   padding: 0;
   cursor: pointer;
   background-color: ${({ theme, $active }) => ($active ? theme.colors.primary : theme.colors.surface)};
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline-offset: 2px;
+  }
 `;
 
-const Thumbnails = styled.div<{ $position: ThumbnailPosition; $slots: number; $isMobile: boolean }>`
-  display: ${({ $isMobile }) => ($isMobile ? 'none' : 'grid')};
+const Thumbnails = styled.div<{ $position: ThumbnailPosition; $slots: number; $breakpoint: Breakpoint }>`
+  display: ${({ $breakpoint }) => ($breakpoint === 'mobile' ? 'none' : 'grid')};
   width: 100%;
   gap: ${({ theme }) => theme.sizes.sz_0625};
   overflow: hidden;
@@ -196,10 +233,11 @@ const Thumbnails = styled.div<{ $position: ThumbnailPosition; $slots: number; $i
       grid-template-rows: repeat(${$slots}, var(--carousel-thumb-size));
       align-content: start;
     `}
+
 `;
 
-const ThumbnailsRail = styled.div<{ $position: ThumbnailPosition; $isMobile: boolean }>`
-  display: ${({ $isMobile }) => ($isMobile ? 'none' : 'grid')};
+const ThumbnailsRail = styled.div<{ $position: ThumbnailPosition; $breakpoint: Breakpoint }>`
+  display: ${({ $breakpoint }) => ($breakpoint === 'mobile' ? 'none' : 'grid')};
   gap: ${({ $position, theme }) => ($position === 'bottom' ? theme.spaces.md : theme.sizes.sz_0625)};
   align-items: ${({ $position }) => ($position === 'bottom' ? 'center' : 'start')};
   align-content: ${({ $position }) => ($position === 'bottom' ? 'center' : 'start')};
@@ -212,6 +250,7 @@ const ThumbnailsRail = styled.div<{ $position: ThumbnailPosition; $isMobile: boo
       height: ${theme.carouselImageGallery.maxHeight};
       overflow: hidden;
     `}
+
 `;
 
 const ThumbNavButton = styled.button`
@@ -228,6 +267,11 @@ const ThumbNavButton = styled.button`
   justify-content: center;
   cursor: pointer;
 
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline-offset: 2px;
+  }
+
   &:disabled {
     opacity: 0.45;
     cursor: not-allowed;
@@ -239,19 +283,24 @@ const ThumbButton = styled.button<{ $active: boolean }>`
   width: 100%;
   aspect-ratio: 1 / 1;
   border-radius: ${({ theme }) => theme.sizes.sz_050};
-  border: 1px solid ${({ theme, $active }) => ($active ? theme.colors.primary : theme.colors.border)};
+  border: 1px solid ${({ theme, $active }) => ($active ? theme.colors.activeBorder : theme.colors.border)};
   background-color: ${({ theme }) => theme.colors.surfaceAlt};
   overflow: hidden;
   padding: 0;
   cursor: pointer;
   line-height: 0;
   box-shadow: ${({ $active }) => ($active ? '0 0 0 1px rgba(59, 130, 246, 0.25)' : 'none')};
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline-offset: 2px;
+  }
 `;
 
 const MoreCountOverlay = styled.span`
   position: absolute;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.58);
+  background-color: ${({ theme }) => theme.colors.overlay};
   color: ${({ theme }) => theme.colors.surface};
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
@@ -319,8 +368,6 @@ const GalleryTitleText = styled.h3`
   font-size: ${({ theme }) => theme.fontSizes.md};
 `;
 
-const GalleryTitle: React.FC<GalleryTitleProps> = ({ text }) => <GalleryTitleText>{text}</GalleryTitleText>;
-
 const CloseButton = styled.button`
   border: none;
   border-radius: ${({ theme }) => theme.carouselImageGallery.borderRadius};
@@ -329,6 +376,11 @@ const CloseButton = styled.button`
   font-size: ${({ theme }) => theme.fontSizes.sm};
   padding: ${({ theme }) => `${theme.spaces.xs} ${theme.spaces.sm}`};
   cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline-offset: 2px;
+  }
 `;
 
 const GalleryDialogContent = styled.div`
@@ -345,6 +397,7 @@ const GalleryDialogContent = styled.div`
 
 export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
   images,
+  likeButton = true,
   initialIndex = 0,
   onImageChange,
   showThumbnails = true,
@@ -352,19 +405,20 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
   showIndicators = true,
   ariaLabel = 'Product image gallery',
   ofText = 'of',
-  isMobile = false,
+  breakpoint = 'desktop',
 }) => {
   const safeImages = useMemo(() => images ?? [], [images]);
+  const galleryTitleId = useId();
+  const normalizedInitial = Math.min(Math.max(initialIndex, 0), Math.max(safeImages.length - 1, 0));
+  const [activeIndex, setActiveIndex] = useState(normalizedInitial);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [thumbStartIndex, setThumbStartIndex] = useState(0);
+  const [likedImages, setLikedImages] = useState<Record<string, boolean>>({});
 
   if (safeImages.length === 0) {
     return <EmptyState>No product images available.</EmptyState>;
   }
 
-  const normalizedInitial = Math.min(Math.max(initialIndex, 0), safeImages.length - 1);
-  const [activeIndex, setActiveIndex] = useState(normalizedInitial);
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
-  const [thumbStartIndex, setThumbStartIndex] = useState(0);
-  const [likedImages, setLikedImages] = useState<Record<string, boolean>>({});
   const activeImage = safeImages[activeIndex];
 
   const maxThumbSlots = thumbnailsPosition === 'bottom' ? 8 : 5;
@@ -415,13 +469,35 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
     setIsGalleryOpen(true);
   };
 
+  useEffect(() => {
+    if (!isGalleryOpen) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsGalleryOpen(false);
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isGalleryOpen]);
+
+  const handleMainImageKeyDown = (event: React.KeyboardEvent<HTMLImageElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openGallery();
+    }
+  };
+
   const renderInlineThumbnails = (position: ThumbnailPosition) => {
     if (!showThumbnails || thumbnailsPosition !== position) {
       return null;
     }
 
     return (
-      <Thumbnails $position={position} $slots={visibleThumbCount} $isMobile={isMobile}>
+      <Thumbnails $position={position} $slots={visibleThumbCount} $breakpoint={breakpoint}>
         {safeImages.slice(0, visibleThumbCount).map((image, index) => {
           const isOverflowThumb = hiddenThumbCount > 0 && index === visibleThumbCount - 1;
 
@@ -430,7 +506,7 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
               key={`thumb-${image.id || image.src}-${index}`}
               type="button"
               $active={!isOverflowThumb && activeIndex === index}
-              aria-label={isOverflowThumb ? `Open image gallery (${hiddenThumbCount} more)` : `Select ${image.alt}`}
+              aria-label={isOverflowThumb ? `Open image gallery (${hiddenThumbCount} more)` : `Select ${getAccessibleAlt(image, index)}`}
               onClick={() => {
                 if (isOverflowThumb) {
                   openGallery();
@@ -455,7 +531,7 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
     }
 
     return (
-      <ThumbnailsRail $position={position} $isMobile={isMobile}>
+      <ThumbnailsRail $position={position} $breakpoint={breakpoint}>
         <ThumbNavButton
           type="button"
           aria-label="Previous thumbnails"
@@ -472,7 +548,7 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
         <Thumbnails
           $position={position}
           $slots={Math.min(maxThumbSlots, safeImages.length - thumbStartIndex)}
-          $isMobile={isMobile}
+          $breakpoint={breakpoint}
         >
           {safeImages.slice(thumbStartIndex, thumbStartIndex + maxThumbSlots).map((image, index) => {
             const actualIndex = thumbStartIndex + index;
@@ -482,7 +558,7 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
                 key={`thumb-${image.id || image.src}-${actualIndex}`}
                 type="button"
                 $active={activeIndex === actualIndex}
-                aria-label={`Select ${image.alt}`}
+                aria-label={`Select ${getAccessibleAlt(image, actualIndex)}`}
                 onClick={() => selectIndex(actualIndex)}
               >
                 <ThumbImage src={image.thumbnailSrc || image.src} alt="" aria-hidden="true" />
@@ -510,22 +586,33 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
   const showFooter = showIndicators || (showThumbnails && thumbnailsPosition === 'bottom');
 
   return (
-    <GalleryRoot aria-label={ariaLabel}>
-      <GalleryInlineBody $showThumbnails={showThumbnails} $thumbnailsPosition={thumbnailsPosition} $isMobile={isMobile}>
+    <GalleryRoot aria-label={ariaLabel} $breakpoint={breakpoint} $thumbnailsPosition={thumbnailsPosition}>
+      <GalleryInlineBody $showThumbnails={showThumbnails} $thumbnailsPosition={thumbnailsPosition} $breakpoint={breakpoint}>
         {renderInlineThumbnails('left')}
 
         <MainStage>
           {activeImage.badge ? <Badge>{activeImage.badge}</Badge> : null}
-          <LikeButton
-            type="button"
-            $active={isActiveImageLiked}
-            aria-label={isActiveImageLiked ? 'Remove from favorites' : 'Add to favorites'}
-            aria-pressed={isActiveImageLiked}
-            onClick={() => toggleLike(activeImage)}
-          >
-            <HeartIcon width="1.5em" height="1.5em" aria-hidden="true" />
-          </LikeButton>
-          <MainImage $clickable src={activeImage.src} alt={activeImage.alt} onClick={openGallery} />
+          {likeButton && activeImage.likeButton !== false ? (
+            <LikeButton
+              type="button"
+              $active={isActiveImageLiked}
+              aria-label={isActiveImageLiked ? 'Remove from favorites' : 'Add to favorites'}
+              aria-pressed={isActiveImageLiked}
+              onClick={() => toggleLike(activeImage)}
+            >
+              <HeartIcon width="1.5em" height="1.5em" aria-hidden="true" />
+            </LikeButton>
+          ) : null}
+          <MainImage
+            $clickable
+            src={activeImage.src}
+            alt={getAccessibleAlt(activeImage, activeIndex)}
+            role="button"
+            aria-label={`Open image gallery: ${getAccessibleAlt(activeImage, activeIndex)}`}
+            tabIndex={0}
+            onClick={openGallery}
+            onKeyDown={handleMainImageKeyDown}
+          />
           <NavButton type="button" $side="left" aria-label="Previous image" onClick={() => selectIndex(activeIndex - 1)}>
             <ChevronLeftIcon width="1em" height="1em" aria-hidden="true" />
           </NavButton>
@@ -537,7 +624,7 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
         {renderInlineThumbnails('right')}
       </GalleryInlineBody>
 
-      {showFooter && !isMobile ? (
+      {showFooter && breakpoint !== 'mobile' ? (
         <Footer>
           {showIndicators ? (
             <Indicators>
@@ -559,21 +646,26 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
 
       {isGalleryOpen ? (
         <GalleryOverlay role="presentation" onClick={() => setIsGalleryOpen(false)}>
-          <GalleryDialog role="dialog" aria-modal="true" aria-label="Image gallery" onClick={(event) => event.stopPropagation()}>
+          <GalleryDialog
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={galleryTitleId}
+            onClick={(event) => event.stopPropagation()}
+          >
             <GalleryHeader>
-              <GalleryTitle text={`${activeIndex + 1} ${ofText} ${safeImages.length}`} />
+              <GalleryTitleText id={galleryTitleId}>{`Image gallery: ${activeIndex + 1} ${ofText} ${safeImages.length}`}</GalleryTitleText>
               <CloseButton type="button" aria-label="Close image gallery" onClick={() => setIsGalleryOpen(false)}>
                 <span aria-hidden="true">&#10005;</span>
               </CloseButton>
             </GalleryHeader>
 
             <GalleryDialogContent>
-              <GalleryBody $showThumbnails={showThumbnails} $thumbnailsPosition={thumbnailsPosition} $isMobile={isMobile}>
+              <GalleryBody $showThumbnails={showThumbnails} $thumbnailsPosition={thumbnailsPosition} $breakpoint={breakpoint}>
                 {renderGalleryThumbnails('left')}
 
                 <MainStage>
                   {activeImage.badge ? <Badge>{activeImage.badge}</Badge> : null}
-                  <LikeButton
+                  {likeButton && activeImage.likeButton !== false ? <LikeButton
                     type="button"
                     $active={isActiveImageLiked}
                     aria-label={isActiveImageLiked ? 'Remove from favorites' : 'Add to favorites'}
@@ -581,8 +673,8 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
                     onClick={() => toggleLike(activeImage)}
                   >
                     <HeartIcon width="1.5em" height="1.5em" aria-hidden="true" />
-                  </LikeButton>
-                  <MainImage src={activeImage.src} alt={activeImage.alt} />
+                  </LikeButton> : null}
+                  <MainImage src={activeImage.src} alt={getAccessibleAlt(activeImage, activeIndex)} />
                   <NavButton type="button" $side="left" aria-label="Previous image" onClick={() => selectIndex(activeIndex - 1)}>
                     <ChevronLeftIcon width="1em" height="1em" aria-hidden="true" />
                   </NavButton>

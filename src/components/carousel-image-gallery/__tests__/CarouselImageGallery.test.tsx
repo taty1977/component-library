@@ -40,15 +40,43 @@ describe('CarouselImageGallery', () => {
 
   test('renders first image by default', () => {
     renderWithTheme(<CarouselImageGallery images={images} />);
-    expect(screen.getByRole('img', { name: /image one/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /open image gallery: image one/i })).toBeInTheDocument();
+  });
+
+  test('provides fallback accessible text when an image alt is empty', () => {
+    renderWithTheme(<CarouselImageGallery images={[{ src: 'https://example.com/untitled.jpg', alt: '   ' }]} />);
+    expect(screen.getByRole('button', { name: /open image gallery: product image 1/i })).toBeInTheDocument();
   });
 
   test('opens gallery when main image is clicked', async () => {
     const user = userEvent.setup();
     renderWithTheme(<CarouselImageGallery images={images} />);
 
-    await user.click(screen.getByRole('img', { name: /image one/i }));
+    await user.click(screen.getByRole('button', { name: /open image gallery: image one/i }));
     expect(screen.getByRole('dialog', { name: /image gallery/i })).toBeInTheDocument();
+  });
+
+  test('opens gallery when the active image is activated with the keyboard', async () => {
+    const user = userEvent.setup();
+    renderWithTheme(<CarouselImageGallery images={images} />);
+
+    const image = screen.getByRole('button', { name: /open image gallery: image one/i });
+    image.focus();
+    await user.keyboard('[Enter]');
+
+    expect(screen.getByRole('dialog', { name: /image gallery/i })).toBeInTheDocument();
+  });
+
+  test('dialog is labeled and closes on Escape', async () => {
+    const user = userEvent.setup();
+    renderWithTheme(<CarouselImageGallery images={images} />);
+
+    await user.click(screen.getByRole('button', { name: /open image gallery: image one/i }));
+    const dialog = screen.getByRole('dialog', { name: /image gallery/i });
+
+    expect(dialog).toHaveAttribute('aria-labelledby');
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog', { name: /image gallery/i })).not.toBeInTheDocument();
   });
 
   test('toggles like button state when clicked', async () => {
@@ -62,12 +90,17 @@ describe('CarouselImageGallery', () => {
     expect(screen.getByRole('button', { name: /remove from favorites/i })).toHaveAttribute('aria-pressed', 'true');
   });
 
+  test('hides the like button when disabled', () => {
+    renderWithTheme(<CarouselImageGallery images={images} likeButton={false} />);
+    expect(screen.queryByRole('button', { name: /add to favorites/i })).not.toBeInTheDocument();
+  });
+
   test('moves to next image when next button is clicked', async () => {
     const user = userEvent.setup();
     renderWithTheme(<CarouselImageGallery images={images} />);
 
     await user.click(screen.getByRole('button', { name: /next image/i }));
-    expect(screen.getByRole('img', { name: /image two/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /open image gallery: image two/i })).toBeInTheDocument();
   });
 
   test('selects image when thumbnail is clicked', async () => {
@@ -75,7 +108,7 @@ describe('CarouselImageGallery', () => {
     renderWithTheme(<CarouselImageGallery images={images} />);
 
     await user.click(screen.getByRole('button', { name: /select image three/i }));
-    expect(screen.getByRole('img', { name: /image three/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /open image gallery: image three/i })).toBeInTheDocument();
   });
 
   test('calls onImageChange on navigation', async () => {
@@ -94,7 +127,7 @@ describe('CarouselImageGallery', () => {
     renderWithTheme(<CarouselImageGallery images={images} thumbnailsPosition={thumbnailsPosition} />);
 
     await user.click(screen.getByRole('button', { name: /select image three/i }));
-    expect(screen.getByRole('img', { name: /image three/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /open image gallery: image three/i })).toBeInTheDocument();
   });
 
   test('shows +N thumbnail and no thumbnail arrows in inline view', () => {
