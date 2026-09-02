@@ -1,9 +1,12 @@
 import type { ThemeType } from './theme';
 
-export type ControlSize = 'sm' | 'md' | 'lg';
-export type ControlWidth = 'auto' | 'sm' | 'md' | 'lg' | 'full';
+export type ControlSize = 'default' | 'sm' | 'md' | 'lg';
+export type ControlWidth = 'default' | 'auto' | 'sm' | 'md' | 'lg' | 'full';
 
 export const controlSizeStyles = {
+  default: {
+    padding: 'md',
+  },
   sm: {
     fontSize: 'sm',
     padding: 'sm',
@@ -26,6 +29,7 @@ export const controlSizeStyles = {
 }>;
 
 export const controlWidthTokens = {
+  default: 'auto',
   auto: 'auto',
   sm: 'sz_800',
   md: 'sz_1200',

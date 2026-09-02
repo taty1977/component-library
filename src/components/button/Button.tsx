@@ -127,7 +127,7 @@ const Icon = styled.span`
 const Button: React.FC<ButtonProps> = ({
   iconLeft,
   iconRight,
-  size = 'md',
+  size = 'default',
   width = 'default',
   variant = 'primary',
   children,
