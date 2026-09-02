@@ -4,6 +4,7 @@ export const sizes = {
   sz_0625: '0.625rem',
   sz_075: '0.75rem',
   sz_0875: '0.875rem',
+  sz_999: '999px',
   sz_100: '1rem',
   sz_125: '1.25rem',
   sz_150: '1.5rem',
@@ -31,6 +32,9 @@ export const sizes = {
   sz_700: '7rem',
   sz_750: '7.5rem',
   sz_800: '8rem',
+  sz_1200: '12rem',
+  sz_1600: '16rem',
+  sz_62438: '62.438rem',
 } as const;
 
 export type SizeTokens = typeof sizes;

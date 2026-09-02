@@ -1,4 +1,5 @@
 import React from 'react';
+import { Bars3Icon, PlusIcon } from '@heroicons/react/24/solid';
 import { brandTheme } from '../../../styles';
 import { Accordion } from '../Accordion';
 
@@ -24,11 +25,19 @@ export default {
         defaultValue: { summary: false },
       },
     },
+    variant: {
+      control: 'select',
+      options: ['default', 'leftIcon'],
+      description: 'Choose the default or left icon header layout.',
+      table: { category: 'Appearance' },
+    },
+    collapsedIcon: { table: { disable: true } },
+    expandedIcon: { table: { disable: true } },
     items: { control: 'object' },
   },
   decorators: [
     (Story, context) => {
-      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Light;
+      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand;
 
       return (
       <div
@@ -63,6 +72,7 @@ export const Default = {
   args: {
     items: defaultItems,
     allowMultiple: false,
+    variant: 'default',
   },
 };
 
@@ -77,6 +87,21 @@ export const MultiOpen = {
         story: 'Multiple panels can remain open at the same time.',
       },
     },
+  },
+};
+
+export const ReverseHeader = {
+  args: {
+    ...Default.args,
+    variant: 'leftIcon',
+  },
+};
+
+export const WithCustomIcons = {
+  args: {
+    ...Default.args,
+    collapsedIcon: <PlusIcon width="1em" height="1em" aria-hidden="true" />,
+    expandedIcon: <Bars3Icon width="1em" height="1em" aria-hidden="true" />,
   },
 };
 

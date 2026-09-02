@@ -1,6 +1,12 @@
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, HeartIcon } from '@heroicons/react/24/solid';
+import {
+  ChevronDownIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronUpIcon,
+  HeartIcon,
+} from '@heroicons/react/24/solid';
 import type { Breakpoint } from '../../styles';
 
 export interface CarouselImageItem {
@@ -33,6 +39,7 @@ const getAccessibleAlt = (image: CarouselImageItem, index: number) => {
 };
 
 const GalleryRoot = styled.section<{ $breakpoint: Breakpoint; $thumbnailsPosition: ThumbnailPosition }>`
+  /* Breakpoint-specific values are exposed as CSS variables for nested gallery layouts. */
   --carousel-thumb-size: ${({ theme }) => theme.sizes.sz_450};
   --carousel-main-image-height: ${({ theme }) => theme.carouselImageGallery.maxHeight};
   width: 100%;
@@ -42,20 +49,26 @@ const GalleryRoot = styled.section<{ $breakpoint: Breakpoint; $thumbnailsPositio
   display: grid;
   gap: ${({ theme }) => theme.spaces.md};
 
-  ${({ $breakpoint, theme }) => $breakpoint === 'tablet' ? `
+  ${({ $breakpoint, theme }) =>
+    $breakpoint === 'tablet'
+      ? `
     --carousel-thumb-size: ${theme.sizes.sz_375};
     --carousel-main-image-height: ${theme.carouselImageGallery.tabletMaxHeight};
-  ` : ''}
+  `
+      : ''}
 
   ${({ $breakpoint, $thumbnailsPosition, theme }) =>
     $breakpoint === 'tablet' && $thumbnailsPosition !== 'bottom'
       ? `--carousel-main-image-min-height: calc(${theme.sizes.sz_375} * 5 + ${theme.sizes.sz_0625} * 4);`
       : ''}
 
-  ${({ $breakpoint, theme }) => $breakpoint === 'mobile' ? `
+  ${({ $breakpoint, theme }) =>
+    $breakpoint === 'mobile'
+      ? `
     --carousel-thumb-size: ${theme.sizes.sz_325};
     --carousel-main-image-height: ${theme.carouselImageGallery.mobileMaxHeight};
-  ` : ''}
+  `
+      : ''}
 `;
 
 const MainStage = styled.div`
@@ -68,7 +81,10 @@ const MainStage = styled.div`
   align-items: center;
   justify-content: center;
   height: min(80vh, var(--carousel-main-image-height));
-  min-height: var(--carousel-main-image-min-height, min(${({ theme }) => theme.carouselImageGallery.minHeight}, var(--carousel-main-image-height)));
+  min-height: var(
+    --carousel-main-image-min-height,
+    min(${({ theme }) => theme.carouselImageGallery.minHeight}, var(--carousel-main-image-height))
+  );
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.sizes.sz_075};
   overflow: hidden;
@@ -76,7 +92,11 @@ const MainStage = styled.div`
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
 `;
 
-const GalleryBody = styled.div<{ $showThumbnails: boolean; $thumbnailsPosition: ThumbnailPosition; $breakpoint: Breakpoint }>`
+const GalleryBody = styled.div<{
+  $showThumbnails: boolean;
+  $thumbnailsPosition: ThumbnailPosition;
+  $breakpoint: Breakpoint;
+}>`
   min-width: 0;
   display: ${({ $showThumbnails, $thumbnailsPosition }) =>
     $showThumbnails && $thumbnailsPosition !== 'bottom' ? 'grid' : 'block'};
@@ -105,7 +125,10 @@ const MainImage = styled.img<{ $clickable?: boolean }>`
   max-width: 100%;
   height: 100%;
   min-width: 0;
-  min-height: var(--carousel-main-image-min-height, min(${({ theme }) => theme.carouselImageGallery.minHeight}, var(--carousel-main-image-height)));
+  min-height: var(
+    --carousel-main-image-min-height,
+    min(${({ theme }) => theme.carouselImageGallery.minHeight}, var(--carousel-main-image-height))
+  );
   max-height: var(--carousel-main-image-height);
   object-fit: cover;
   object-position: center;
@@ -233,7 +256,6 @@ const Thumbnails = styled.div<{ $position: ThumbnailPosition; $slots: number; $b
       grid-template-rows: repeat(${$slots}, var(--carousel-thumb-size));
       align-content: start;
     `}
-
 `;
 
 const ThumbnailsRail = styled.div<{ $position: ThumbnailPosition; $breakpoint: Breakpoint }>`
@@ -250,7 +272,6 @@ const ThumbnailsRail = styled.div<{ $position: ThumbnailPosition; $breakpoint: B
       height: ${theme.carouselImageGallery.maxHeight};
       overflow: hidden;
     `}
-
 `;
 
 const ThumbNavButton = styled.button`
@@ -289,7 +310,7 @@ const ThumbButton = styled.button<{ $active: boolean }>`
   padding: 0;
   cursor: pointer;
   line-height: 0;
-  box-shadow: ${({ $active }) => ($active ? '0 0 0 1px rgba(59, 130, 246, 0.25)' : 'none')};
+  box-shadow: ${({ theme, $active }) => ($active ? `0 0 0 1px ${theme.colors.activeRing}` : 'none')};
 
   &:focus-visible {
     outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
@@ -329,7 +350,7 @@ const EmptyState = styled.div`
 const GalleryOverlay = styled.div`
   position: fixed;
   inset: 0;
-  background-color: rgba(15, 23, 42, 0.6);
+  background-color: ${({ theme }) => theme.colors.overlayBackdrop};
   display: grid;
   place-items: center;
   z-index: 1000;
@@ -371,7 +392,7 @@ const GalleryTitleText = styled.h3`
 const CloseButton = styled.button`
   border: none;
   border-radius: ${({ theme }) => theme.carouselImageGallery.borderRadius};
-  background-color: ${({ theme }) => theme.colors.surfaceAlt};
+  background-color: ${({ theme }) => theme.colors.surface};
   color: ${({ theme }) => theme.colors.text};
   font-size: ${({ theme }) => theme.fontSizes.sm};
   padding: ${({ theme }) => `${theme.spaces.xs} ${theme.spaces.sm}`};
@@ -429,6 +450,7 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
   const canThumbPrev = thumbStartIndex > 0;
   const canThumbNext = thumbStartIndex + maxThumbSlots < safeImages.length;
 
+  // Keep the selected thumbnail inside the visible window in the dialog rail.
   const ensureThumbVisible = (index: number) => {
     setThumbStartIndex((previousStart) => {
       if (index < previousStart) {
@@ -469,6 +491,36 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
     setIsGalleryOpen(true);
   };
 
+  // Inline and dialog stages intentionally share these controls and their accessibility labels.
+  const renderLikeButton = () => {
+    if (!likeButton || activeImage.likeButton === false) {
+      return null;
+    }
+
+    return (
+      <LikeButton
+        type="button"
+        $active={isActiveImageLiked}
+        aria-label={isActiveImageLiked ? 'Remove from favorites' : 'Add to favorites'}
+        aria-pressed={isActiveImageLiked}
+        onClick={() => toggleLike(activeImage)}
+      >
+        <HeartIcon width="1.5em" height="1.5em" aria-hidden="true" />
+      </LikeButton>
+    );
+  };
+
+  const renderImageNavigation = () => (
+    <>
+      <NavButton type="button" $side="left" aria-label="Previous image" onClick={() => selectIndex(activeIndex - 1)}>
+        <ChevronLeftIcon width="1em" height="1em" aria-hidden="true" />
+      </NavButton>
+      <NavButton type="button" $side="right" aria-label="Next image" onClick={() => selectIndex(activeIndex + 1)}>
+        <ChevronRightIcon width="1em" height="1em" aria-hidden="true" />
+      </NavButton>
+    </>
+  );
+
   useEffect(() => {
     if (!isGalleryOpen) {
       return;
@@ -506,7 +558,11 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
               key={`thumb-${image.id || image.src}-${index}`}
               type="button"
               $active={!isOverflowThumb && activeIndex === index}
-              aria-label={isOverflowThumb ? `Open image gallery (${hiddenThumbCount} more)` : `Select ${getAccessibleAlt(image, index)}`}
+              aria-label={
+                isOverflowThumb
+                  ? `Open image gallery (${hiddenThumbCount} more)`
+                  : `Select ${getAccessibleAlt(image, index)}`
+              }
               onClick={() => {
                 if (isOverflowThumb) {
                   openGallery();
@@ -587,22 +643,16 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
 
   return (
     <GalleryRoot aria-label={ariaLabel} $breakpoint={breakpoint} $thumbnailsPosition={thumbnailsPosition}>
-      <GalleryInlineBody $showThumbnails={showThumbnails} $thumbnailsPosition={thumbnailsPosition} $breakpoint={breakpoint}>
+      <GalleryInlineBody
+        $showThumbnails={showThumbnails}
+        $thumbnailsPosition={thumbnailsPosition}
+        $breakpoint={breakpoint}
+      >
         {renderInlineThumbnails('left')}
 
         <MainStage>
           {activeImage.badge ? <Badge>{activeImage.badge}</Badge> : null}
-          {likeButton && activeImage.likeButton !== false ? (
-            <LikeButton
-              type="button"
-              $active={isActiveImageLiked}
-              aria-label={isActiveImageLiked ? 'Remove from favorites' : 'Add to favorites'}
-              aria-pressed={isActiveImageLiked}
-              onClick={() => toggleLike(activeImage)}
-            >
-              <HeartIcon width="1.5em" height="1.5em" aria-hidden="true" />
-            </LikeButton>
-          ) : null}
+          {renderLikeButton()}
           <MainImage
             $clickable
             src={activeImage.src}
@@ -613,12 +663,7 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
             onClick={openGallery}
             onKeyDown={handleMainImageKeyDown}
           />
-          <NavButton type="button" $side="left" aria-label="Previous image" onClick={() => selectIndex(activeIndex - 1)}>
-            <ChevronLeftIcon width="1em" height="1em" aria-hidden="true" />
-          </NavButton>
-          <NavButton type="button" $side="right" aria-label="Next image" onClick={() => selectIndex(activeIndex + 1)}>
-            <ChevronRightIcon width="1em" height="1em" aria-hidden="true" />
-          </NavButton>
+          {renderImageNavigation()}
         </MainStage>
 
         {renderInlineThumbnails('right')}
@@ -653,34 +698,27 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
             onClick={(event) => event.stopPropagation()}
           >
             <GalleryHeader>
-              <GalleryTitleText id={galleryTitleId}>{`Image gallery: ${activeIndex + 1} ${ofText} ${safeImages.length}`}</GalleryTitleText>
+              <GalleryTitleText
+                id={galleryTitleId}
+              >{`Image gallery: ${activeIndex + 1} ${ofText} ${safeImages.length}`}</GalleryTitleText>
               <CloseButton type="button" aria-label="Close image gallery" onClick={() => setIsGalleryOpen(false)}>
                 <span aria-hidden="true">&#10005;</span>
               </CloseButton>
             </GalleryHeader>
 
             <GalleryDialogContent>
-              <GalleryBody $showThumbnails={showThumbnails} $thumbnailsPosition={thumbnailsPosition} $breakpoint={breakpoint}>
+              <GalleryBody
+                $showThumbnails={showThumbnails}
+                $thumbnailsPosition={thumbnailsPosition}
+                $breakpoint={breakpoint}
+              >
                 {renderGalleryThumbnails('left')}
 
                 <MainStage>
                   {activeImage.badge ? <Badge>{activeImage.badge}</Badge> : null}
-                  {likeButton && activeImage.likeButton !== false ? <LikeButton
-                    type="button"
-                    $active={isActiveImageLiked}
-                    aria-label={isActiveImageLiked ? 'Remove from favorites' : 'Add to favorites'}
-                    aria-pressed={isActiveImageLiked}
-                    onClick={() => toggleLike(activeImage)}
-                  >
-                    <HeartIcon width="1.5em" height="1.5em" aria-hidden="true" />
-                  </LikeButton> : null}
+                  {renderLikeButton()}
                   <MainImage src={activeImage.src} alt={getAccessibleAlt(activeImage, activeIndex)} />
-                  <NavButton type="button" $side="left" aria-label="Previous image" onClick={() => selectIndex(activeIndex - 1)}>
-                    <ChevronLeftIcon width="1em" height="1em" aria-hidden="true" />
-                  </NavButton>
-                  <NavButton type="button" $side="right" aria-label="Next image" onClick={() => selectIndex(activeIndex + 1)}>
-                    <ChevronRightIcon width="1em" height="1em" aria-hidden="true" />
-                  </NavButton>
+                  {renderImageNavigation()}
                 </MainStage>
 
                 {renderGalleryThumbnails('right')}

@@ -7,7 +7,7 @@ const themeStyles = {
 };
 
 const renderShowcase = (args, context) => {
-  const activeTheme = themeStyles[context.globals.theme] || themeStyles.Light;
+  const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand;
   const titleId = `gallery-showcase-title-${context.id}`;
 
   return (

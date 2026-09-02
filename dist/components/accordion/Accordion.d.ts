@@ -4,11 +4,14 @@ interface AccordionItem {
     title: string;
     content?: React.ReactNode;
 }
-interface AccordionProps {
+export type AccordionVariant = 'default' | 'leftIcon';
+export interface AccordionProps {
     items: AccordionItem[];
     allowMultiple?: boolean;
-    reverseHeader?: boolean;
+    collapsedIcon?: React.ReactNode;
+    expandedIcon?: React.ReactNode;
+    variant?: AccordionVariant;
     children?: React.ReactNode;
 }
-export declare const Accordion: ({ items, allowMultiple, reverseHeader, children }: AccordionProps) => import("react/jsx-runtime").JSX.Element;
+export declare const Accordion: ({ items, allowMultiple, collapsedIcon, expandedIcon, variant, children, }: AccordionProps) => import("react/jsx-runtime").JSX.Element;
 export default Accordion;

@@ -35,9 +35,9 @@ This Storybook is built with React, but its published static site can be opened 
 
 ```tsx
 <iframe
-	title="Component Storybook"
-	src="https://your-public-chromatic-url.chromatic.com/"
-	style={{ width: '100%', minHeight: '800px', border: 0 }}
+  title="Component Storybook"
+  src="https://your-public-chromatic-url.chromatic.com/"
+  style={{ width: '100%', minHeight: '800px', border: 0 }}
 />
 ```
 
@@ -45,11 +45,11 @@ In Angular, the same iframe can be placed in a template:
 
 ```html
 <iframe
-	title="Component Storybook"
-	src="https://your-public-chromatic-url.chromatic.com/"
-	width="100%"
-	height="800"
-	style="border: 0"
+  title="Component Storybook"
+  src="https://your-public-chromatic-url.chromatic.com/"
+  width="100%"
+  height="800"
+  style="border: 0"
 ></iframe>
 ```
 

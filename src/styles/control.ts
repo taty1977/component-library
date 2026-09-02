@@ -1,0 +1,33 @@
+import type { ThemeType } from './theme';
+
+export type ControlSize = 'sm' | 'md' | 'lg';
+export type ControlWidth = 'auto' | 'sm' | 'md' | 'lg' | 'full';
+
+export const controlSizeStyles = {
+  sm: {
+    fontSize: 'sm',
+    padding: 'sm',
+    minHeight: 'sz_200',
+  },
+  md: {
+    fontSize: 'md',
+    padding: 'md',
+    minHeight: 'sz_250',
+  },
+  lg: {
+    fontSize: 'lg',
+    padding: 'lg',
+    minHeight: 'sz_300',
+  },
+} as const satisfies Record<ControlSize, {
+  padding: keyof ThemeType['spaces'];
+  fontSize?: keyof ThemeType['fontSizes'];
+  minHeight?: keyof ThemeType['sizes'];
+}>;
+
+export const controlWidthTokens = {
+  auto: 'auto',
+  sm: 'sz_800',
+  md: 'sz_1200',
+  lg: 'sz_1600',
+} as const satisfies Record<Exclude<ControlWidth, 'full'>, keyof ThemeType['sizes'] | 'auto'>;

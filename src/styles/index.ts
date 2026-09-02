@@ -6,3 +6,5 @@ export { sizes } from './sizes';
 export type { SizeTokens } from './sizes';
 export { breakpoints } from './breakpoints';
 export type { Breakpoint } from './breakpoints';
+export { controlSizeStyles, controlWidthTokens } from './control';
+export type { ControlSize, ControlWidth } from './control';

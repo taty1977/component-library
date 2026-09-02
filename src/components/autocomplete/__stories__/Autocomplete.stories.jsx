@@ -1,5 +1,5 @@
 import React from 'react';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
+import { ArrowRightIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { brandTheme } from '../../../styles';
 import Autocomplete from '../Autocomplete';
 
@@ -67,7 +67,7 @@ const meta = {
   },
   decorators: [
     (Story, context) => {
-      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Light;
+      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand;
 
       return (
         <div
@@ -91,7 +91,7 @@ const renderAutocomplete = ({ showLeftIcon, showRightIcon, ...args }) => (
   <Autocomplete
     {...args}
     iconLeft={showLeftIcon ? <MagnifyingGlassIcon width="1em" height="1em" aria-hidden="true" /> : undefined}
-    iconRight={showRightIcon ? <MagnifyingGlassIcon width="1em" height="1em" aria-hidden="true" /> : undefined}
+    iconRight={showRightIcon ? <ArrowRightIcon width="1em" height="1em" aria-hidden="true" /> : undefined}
   />
 );
 

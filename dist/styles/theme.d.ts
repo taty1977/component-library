@@ -6,25 +6,29 @@ export declare const brandTheme: {
         heartActive: "#0369a1";
         activeBorder: "#0369a1";
         focusBorder: "#0369a1";
-        quaternary: string;
-        text: string;
-        surface: string;
-        surfaceAlt: string;
+        focusRing: "#0284c747";
+        activeRing: "#3b82f640";
+        overlayBackdrop: "#0f172a99";
+        quaternary: "#123b4a";
+        text: "#123b4a";
+        surface: "#ffffff";
+        surfaceAlt: "#f4f9fb";
         border: "#e2e8f0";
-        heading: string;
-        mutedText: string;
-        icon: string;
+        heading: "#0d3f48";
+        mutedText: "#57757d";
+        icon: "#446a73";
         danger: "#dc3545";
-        overlay: string;
-        badgeBackground: string;
-        badgeBorder: string;
-        badgeText: string;
+        overlay: "#0d4b57";
+        badgeBackground: "#f3f4f6";
+        badgeBorder: "#d1d5db";
+        badgeText: "#4b5563";
     };
     fontFamily: string;
     boxShadow: {
         bs_01: string;
         bs_02: string;
         bs_03: string;
+        bs_04: string;
     };
     carouselImageGallery: {
         borderRadius: string;
@@ -64,6 +68,7 @@ export declare const brandTheme: {
         sz_0625: "0.625rem";
         sz_075: "0.75rem";
         sz_0875: "0.875rem";
+        sz_999: "999px";
         sz_100: "1rem";
         sz_125: "1.25rem";
         sz_150: "1.5rem";
@@ -91,6 +96,9 @@ export declare const brandTheme: {
         sz_700: "7rem";
         sz_750: "7.5rem";
         sz_800: "8rem";
+        sz_1200: "12rem";
+        sz_1600: "16rem";
+        sz_62438: "62.438rem";
     };
     spaces: {
         xs: "0.25rem";
@@ -108,25 +116,29 @@ export declare const theme: {
         heartActive: "#0369a1";
         activeBorder: "#0369a1";
         focusBorder: "#0369a1";
-        quaternary: string;
-        text: string;
-        surface: string;
-        surfaceAlt: string;
+        focusRing: "#0284c747";
+        activeRing: "#3b82f640";
+        overlayBackdrop: "#0f172a99";
+        quaternary: "#123b4a";
+        text: "#123b4a";
+        surface: "#ffffff";
+        surfaceAlt: "#f4f9fb";
         border: "#e2e8f0";
-        heading: string;
-        mutedText: string;
-        icon: string;
+        heading: "#0d3f48";
+        mutedText: "#57757d";
+        icon: "#446a73";
         danger: "#dc3545";
-        overlay: string;
-        badgeBackground: string;
-        badgeBorder: string;
-        badgeText: string;
+        overlay: "#0d4b57";
+        badgeBackground: "#f3f4f6";
+        badgeBorder: "#d1d5db";
+        badgeText: "#4b5563";
     };
     fontFamily: string;
     boxShadow: {
         bs_01: string;
         bs_02: string;
         bs_03: string;
+        bs_04: string;
     };
     carouselImageGallery: {
         borderRadius: string;
@@ -166,6 +178,7 @@ export declare const theme: {
         sz_0625: "0.625rem";
         sz_075: "0.75rem";
         sz_0875: "0.875rem";
+        sz_999: "999px";
         sz_100: "1rem";
         sz_125: "1.25rem";
         sz_150: "1.5rem";
@@ -193,6 +206,9 @@ export declare const theme: {
         sz_700: "7rem";
         sz_750: "7.5rem";
         sz_800: "8rem";
+        sz_1200: "12rem";
+        sz_1600: "16rem";
+        sz_62438: "62.438rem";
     };
     spaces: {
         xs: "0.25rem";

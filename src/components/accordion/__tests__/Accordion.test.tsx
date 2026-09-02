@@ -32,6 +32,30 @@ describe('Accordion', () => {
     expect(button).toHaveStyle(`color: ${theme.colors.heading}`);
   });
 
+  test('supports the left icon variant', () => {
+    const { container } = render(
+      <ThemeProvider theme={theme}>
+        <Accordion items={testItems} variant="leftIcon" />
+      </ThemeProvider>
+    );
+
+    expect(container.firstChild).toHaveAttribute('data-variant', 'leftIcon');
+  });
+
+  test('uses custom icons for collapsed and expanded states', async () => {
+    const { user } = renderWithUser(
+      <Accordion
+        collapsedIcon={<span data-testid="collapsed-icon">Collapsed</span>}
+        expandedIcon={<span data-testid="expanded-icon">Expanded</span>}
+        items={[testItems[0]]}
+      />
+    );
+
+    expect(screen.getByTestId('collapsed-icon')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: /panel one/i }));
+    expect(screen.getByTestId('expanded-icon')).toBeInTheDocument();
+  });
+
   test('renders accordion with multiple panels', () => {  
     render(
       <ThemeProvider theme={theme}>
