@@ -6,6 +6,15 @@ const themeStyles = {
   Brand: brandTheme,
 };
 
+const createGalleryImage = (background, accent) =>
+  `data:image/svg+xml,${encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+      <rect width="1200" height="800" fill="${background}" />
+      <circle cx="600" cy="400" r="240" fill="${accent}" />
+      <rect x="410" y="310" width="380" height="180" rx="90" fill="#ffffff" opacity="0.92" />
+    </svg>
+  `)}`;
+
 const renderShowcase = (args, context) => {
   const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand;
   const titleId = `gallery-showcase-title-${context.id}`;
@@ -48,85 +57,31 @@ const renderShowcase = (args, context) => {
 
 const imageSet = [
   {
-    id: 'shoe-1',
-    src: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1400&q=80',
-    thumbnailSrc: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=320&q=80',
-    alt: 'Red running sneaker side view',
+    id: 'sky',
+    src: createGalleryImage('#e0f2fe', '#38bdf8'),
+    alt: 'Sky blue product image',
     badge: 'New',
     likeButton: true,
   },
   {
-    id: 'shoe-2',
-    src: 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=1400&q=80',
-    thumbnailSrc: 'https://images.unsplash.com/photo-1460353581641-37baddab0fa2?auto=format&fit=crop&w=320&q=80',
-    alt: 'Black sneaker top angle',
+    id: 'mist',
+    src: createGalleryImage('#f0f9ff', '#7dd3fc'),
+    alt: 'Pale blue product image',
   },
   {
-    id: 'shoe-3',
-    src: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=1400&q=80',
-    thumbnailSrc: 'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=320&q=80',
-    alt: 'Pair of white sneakers in studio',
+    id: 'ocean',
+    src: createGalleryImage('#dbeafe', '#60a5fa'),
+    alt: 'Ocean blue product image',
   },
   {
-    id: 'shoe-4',
-    src: 'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&w=1400&q=80',
-    thumbnailSrc: 'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?auto=format&fit=crop&w=320&q=80',
-    alt: 'Gray performance sneaker profile',
+    id: 'ice',
+    src: createGalleryImage('#eff6ff', '#93c5fd'),
+    alt: 'Ice blue product image',
   },
   {
-    id: 'shoe-5',
-    src: 'https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=1400&q=80',
-    thumbnailSrc: 'https://images.unsplash.com/photo-1556906781-9a412961c28c?auto=format&fit=crop&w=320&q=80',
-    alt: 'Running shoes with neon details',
-  },
-  {
-    id: 'shoe-6',
-    src: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=1400&q=80',
-    thumbnailSrc: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?auto=format&fit=crop&w=320&q=80',
-    alt: 'White sneaker with gum sole closeup',
-  },
-
-    {
-    id: 'shoe-7',
-    src: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=1400&q=80',
-    thumbnailSrc: 'https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?auto=format&fit=crop&w=320&q=80',
-    alt: 'Pair of sport shoes on concrete floor',
-  },
-  {
-    id: 'shoe-8',
-    src: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=1400&q=80',
-    thumbnailSrc: 'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=320&q=80',
-    alt: 'Red and white sneaker detail shot',
-  },
-  {
-    id: 'shoe-9',
-    src: 'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?auto=format&fit=crop&w=1400&q=80',
-    thumbnailSrc: 'https://images.unsplash.com/photo-1587563871167-1ee9c731aefb?auto=format&fit=crop&w=320&q=80',
-    alt: 'Athletic shoe side angle on white background',
-  },
-  {
-    id: 'shoe-10',
-    src: 'https://images.unsplash.com/photo-1579338559194-a162d19bf842?auto=format&fit=crop&w=1400&q=80',
-    thumbnailSrc: 'https://images.unsplash.com/photo-1579338559194-a162d19bf842?auto=format&fit=crop&w=320&q=80',
-    alt: 'Modern sneaker pair arranged in studio',
-  },
-  {
-    id: 'shoe-11',
-    src: 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=1400&q=80',
-    thumbnailSrc: 'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?auto=format&fit=crop&w=320&q=80',
-    alt: 'Dark running shoe with textured sole',
-  },
-  {
-    id: 'shoe-12',
-    src: 'https://images.unsplash.com/photo-1597248881519-db089d3744a5?auto=format&fit=crop&w=1400&q=80',
-    thumbnailSrc: 'https://images.unsplash.com/photo-1597248881519-db089d3744a5?auto=format&fit=crop&w=320&q=80',
-    alt: 'Lightweight trainer in outdoor light',
-  },
-  {
-    id: 'shoe-13',
-    src: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=1400&q=80',
-    thumbnailSrc: 'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=320&q=80',
-    alt: 'Minimal sneaker with clean silhouette',
+    id: 'aqua',
+    src: createGalleryImage('#e6f7ff', '#0ea5e9'),
+    alt: 'Aqua blue product image',
   },
 ];
 
@@ -135,9 +90,6 @@ const meta = {
   component: CarouselImageGallery,
   tags: ['autodocs'],
   parameters: {
-    a11y: {
-      element: '#storybook-root',
-    },
     docs: {
       description: {
         component:
@@ -238,7 +190,7 @@ export const ThumbnailsRight = {
 
 export const StartFromMiddle = {
   args: {
-    initialIndex: 12,
+    initialIndex: 2,
   },
 };
 
