@@ -3,16 +3,16 @@ import '@testing-library/jest-dom'
 import { fireEvent, render, screen } from '@testing-library/react'
 import { ThemeProvider } from 'styled-components'
 import { theme } from '../../../styles'
-import TextArea from '../TextArea'
+import Textarea from '../Textarea'
 
 const renderWithTheme = (component: React.ReactElement) =>
   render(<ThemeProvider theme={theme}>{component}</ThemeProvider>)
 
-describe('TextArea', () => {
+describe('Textarea', () => {
   test('renders a labeled textarea and forwards changes', () => {
     const onChange = jest.fn()
 
-    renderWithTheme(<TextArea label='Message' onChange={onChange} placeholder='Write a message' />)
+    renderWithTheme(<Textarea label='Message' onChange={onChange} placeholder='Write a message' />)
 
     const textArea = screen.getByLabelText('Message')
     expect(textArea).toHaveAttribute('placeholder', 'Write a message')
@@ -22,7 +22,7 @@ describe('TextArea', () => {
   })
 
   test('associates validation errors with the textarea', () => {
-    renderWithTheme(<TextArea error='Message is required' id='message' label='Message' />)
+    renderWithTheme(<Textarea error='Message is required' id='message' label='Message' />)
 
     const textArea = screen.getByLabelText('Message')
     expect(textArea).toHaveAttribute('aria-invalid', 'true')
@@ -31,7 +31,7 @@ describe('TextArea', () => {
   })
 
   test('shows a required indicator without changing the accessible label', () => {
-    renderWithTheme(<TextArea label='Message' required />)
+    renderWithTheme(<Textarea label='Message' required />)
 
     expect(screen.getByRole('textbox', { name: 'Message' })).toBeInTheDocument()
     expect(screen.getByText('*')).toHaveAttribute('aria-hidden', 'true')
@@ -40,7 +40,7 @@ describe('TextArea', () => {
   test('supports controlled values', () => {
     const onChange = jest.fn()
 
-    renderWithTheme(<TextArea onChange={onChange} value='Controlled message' />)
+    renderWithTheme(<Textarea onChange={onChange} value='Controlled message' />)
 
     expect(screen.getByDisplayValue('Controlled message')).toBeInTheDocument()
   })

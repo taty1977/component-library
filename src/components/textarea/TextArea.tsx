@@ -1,7 +1,7 @@
 import React, { useId } from 'react'
 import styled from 'styled-components'
 
-export interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   /** Visible label associated with the textarea. */
   label?: string
   /** Number of visible text rows. */
@@ -74,7 +74,7 @@ const ErrorMessage = styled.p`
   font-size: ${({ theme }) => theme.fontSizes.sm};
 `
 
-const TextArea: React.FC<TextAreaProps> = ({ 'aria-describedby': ariaDescribedBy, error, id, label, ...props }) => {
+const Textarea: React.FC<TextareaProps> = ({ 'aria-describedby': ariaDescribedBy, error, id, label, ...props }) => {
   const generatedId = useId()
   const textAreaId = id ?? generatedId
   const errorId = `${textAreaId}-error`
@@ -104,4 +104,4 @@ const TextArea: React.FC<TextAreaProps> = ({ 'aria-describedby': ariaDescribedBy
   )
 }
 
-export default TextArea
+export default Textarea

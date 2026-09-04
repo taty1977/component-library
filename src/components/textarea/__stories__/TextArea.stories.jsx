@@ -1,10 +1,10 @@
 import React from 'react'
 import { brandTheme } from '../../../styles'
-import TextArea from '../TextArea'
+import Textarea from '../Textarea'
 
 const meta = {
-  title: 'Forms/TextArea',
-  component: TextArea,
+  title: 'Forms/Textarea',
+  component: Textarea,
   tags: ['autodocs'],
   parameters: {
     docs: {
@@ -92,7 +92,7 @@ export const Controlled = {
     const [value, setValue] = React.useState('')
 
     return (
-      <TextArea
+      <Textarea
         label='Controlled message'
         placeholder='Type to update state'
         value={value}
