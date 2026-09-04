@@ -40,6 +40,13 @@ describe('Input', () => {
     expect(screen.getByText('Email is required')).toHaveAttribute('id', 'email-error')
   })
 
+  test('shows a required indicator without changing the accessible label', () => {
+    renderWithTheme(<Input label='Email address' required />)
+
+    expect(screen.getByRole('textbox', { name: 'Email address' })).toBeInTheDocument()
+    expect(screen.getByText('*')).toHaveAttribute('aria-hidden', 'true')
+  })
+
   test('conditionally renders icon slots outside the input', () => {
     renderWithTheme(
       <Input

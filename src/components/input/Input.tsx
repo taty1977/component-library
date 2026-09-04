@@ -30,6 +30,11 @@ const Label = styled.label<{ $hasOutsideLeftIcon: boolean }>`
   font-weight: ${({ theme }) => theme.fontWeights.medium};
 `
 
+const RequiredIndicator = styled.span`
+  margin-left: ${({ theme }) => theme.spaces.xs};
+  color: ${({ theme }) => theme.colors.danger};
+`
+
 const InputWrapper = styled.div`
   position: relative;
   flex: 1;
@@ -153,6 +158,7 @@ const Input: React.FC<InputProps> = ({
       {label ? (
         <Label $hasOutsideLeftIcon={Boolean(outsideIconLeft)} htmlFor={inputId}>
           {label}
+          {props.required ? <RequiredIndicator aria-hidden='true'>*</RequiredIndicator> : null}
         </Label>
       ) : null}
       <InputRow>

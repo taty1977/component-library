@@ -6,5 +6,8 @@
   "editor.gotoLocation.multipleTypeDefinitions": "goto",
   "[typescriptreact]": {
     "editor.defaultFormatter": "numso.prettier-standard-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "numso.prettier-standard-vscode"
   }
 }
