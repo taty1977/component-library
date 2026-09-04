@@ -67,6 +67,13 @@ describe('CarouselImageGallery', () => {
     expect(screen.getByRole('dialog', { name: /image gallery/i })).toBeInTheDocument();
   });
 
+  test('does not make the main image open the modal when disabled', () => {
+    renderWithTheme(<CarouselImageGallery images={images} openOnClick={false} />)
+
+    expect(screen.getByRole('img', { name: /image one/i })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^open image gallery:/i })).not.toBeInTheDocument()
+  })
+
   test('dialog is labeled and closes on Escape', async () => {
     const user = userEvent.setup();
     renderWithTheme(<CarouselImageGallery images={images} />);

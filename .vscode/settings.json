@@ -3,5 +3,8 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.requireConfig": true,
   "editor.gotoLocation.multipleDefinitions": "goto",
-  "editor.gotoLocation.multipleTypeDefinitions": "goto"
+  "editor.gotoLocation.multipleTypeDefinitions": "goto",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "numso.prettier-standard-vscode"
+  }
 }

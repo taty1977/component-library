@@ -1,20 +1,24 @@
-import React, { useId } from 'react';
-import styled from 'styled-components';
+import React, { useId } from 'react'
+import styled from 'styled-components'
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  error?: string;
-  iconLeft?: React.ReactNode;
-  iconRight?: React.ReactNode;
-  label?: string;
-  outsideIconLeft?: React.ReactNode;
-  outsideIconRight?: React.ReactNode;
+  label?: string
+  'aria-describedby'?: string
+  value?: React.InputHTMLAttributes<HTMLInputElement>['value']
+  onChange?: React.ChangeEventHandler<HTMLInputElement>
+  error?: string
+  iconLeft?: React.ReactNode
+  iconRight?: React.ReactNode
+  outsideIconLeft?: React.ReactNode
+  outsideIconRight?: React.ReactNode
+  handleActions?: () => void
 }
 
 const Field = styled.div`
   width: 100%;
-  max-width: 24rem;
+  max-width: ${({ theme }) => theme.sizes.sz_2400};
   font-family: ${({ theme }) => theme.fontFamily};
-`;
+`
 
 const Label = styled.label<{ $hasOutsideLeftIcon: boolean }>`
   display: block;
@@ -24,21 +28,21 @@ const Label = styled.label<{ $hasOutsideLeftIcon: boolean }>`
   color: ${({ theme }) => theme.colors.heading};
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
-`;
+`
 
 const InputWrapper = styled.div`
   position: relative;
   flex: 1;
   min-width: 0;
-`;
+`
 
 const InputRow = styled.div`
   display: flex;
   align-items: stretch;
   gap: ${({ theme }) => theme.spaces.sm};
-`;
+`
 
-const OutsideIcon = styled.span`
+const OutsideIcon = styled.span<{ $interactive: boolean }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -46,13 +50,14 @@ const OutsideIcon = styled.span`
   aspect-ratio: 1;
   color: ${({ theme }) => theme.colors.icon};
   flex-shrink: 0;
+  cursor: ${({ $interactive }) => ($interactive ? 'pointer' : 'default')};
 
   & > svg {
     width: 100%;
     min-width: ${({ theme }) => theme.sizes.sz_175};
     height: 100%;
   }
-`;
+`
 
 const Icon = styled.span<{ $side: 'left' | 'right' }>`
   position: absolute;
@@ -66,15 +71,15 @@ const Icon = styled.span<{ $side: 'left' | 'right' }>`
   height: ${({ theme }) => theme.sizes.sz_100};
   color: ${({ theme }) => theme.colors.icon};
   pointer-events: none;
-`;
+`
 
 const StyledInput = styled.input<{ $hasLeftIcon: boolean; $hasRightIcon: boolean; $hasError: boolean }>`
   width: 100%;
   box-sizing: border-box;
   padding: ${({ theme, $hasLeftIcon, $hasRightIcon }) => {
-    const leftPadding = $hasLeftIcon ? `calc(${theme.spaces.lg} + ${theme.sizes.sz_100})` : theme.spaces.lg;
-    const rightPadding = $hasRightIcon ? `calc(${theme.spaces.lg} + ${theme.sizes.sz_100})` : theme.spaces.lg;
-    return `${theme.spaces.md} ${rightPadding} ${theme.spaces.md} ${leftPadding}`;
+    const leftPadding = $hasLeftIcon ? `calc(${theme.spaces.lg} + ${theme.sizes.sz_100})` : theme.spaces.lg
+    const rightPadding = $hasRightIcon ? `calc(${theme.spaces.lg} + ${theme.sizes.sz_100})` : theme.spaces.lg
+    return `${theme.spaces.md} ${rightPadding} ${theme.spaces.md} ${leftPadding}`
   }};
   border: 1px solid ${({ theme, $hasError }) => ($hasError ? theme.colors.danger : theme.colors.border)};
   border-radius: ${({ theme }) => theme.sizes.sz_075};
@@ -86,9 +91,7 @@ const StyledInput = styled.input<{ $hasLeftIcon: boolean; $hasRightIcon: boolean
   line-height: 1.4;
   outline: none;
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.mutedText};
@@ -98,7 +101,12 @@ const StyledInput = styled.input<{ $hasLeftIcon: boolean; $hasRightIcon: boolean
     border-color: ${({ theme }) => theme.colors.border};
     box-shadow: ${({ theme }) => theme.boxShadow.bs_04};
   }
-`;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+`
 
 const ErrorMessage = styled.p<{ $hasOutsideLeftIcon: boolean }>`
   margin: ${({ theme }) => `${theme.spaces.sm} 0 0`};
@@ -106,10 +114,11 @@ const ErrorMessage = styled.p<{ $hasOutsideLeftIcon: boolean }>`
     $hasOutsideLeftIcon ? `calc(${theme.sizes.sz_175} + ${theme.spaces.sm})` : '0'};
   color: ${({ theme }) => theme.colors.danger};
   font-size: ${({ theme }) => theme.fontSizes.sm};
-`;
+`
 
 const Input: React.FC<InputProps> = ({
   'aria-describedby': ariaDescribedBy,
+  type = 'text',
   error,
   iconLeft,
   iconRight,
@@ -117,36 +126,76 @@ const Input: React.FC<InputProps> = ({
   label,
   outsideIconLeft,
   outsideIconRight,
+  handleActions,
   ...props
 }) => {
-  const generatedId = useId();
-  const inputId = id ?? generatedId;
-  const errorId = `${inputId}-error`;
-  const describedBy = [ariaDescribedBy, error ? errorId : undefined].filter(Boolean).join(' ') || undefined;
+  const generatedId = useId()
+  const inputId = id ?? generatedId
+  const errorId = `${inputId}-error`
+  const describedBy = [ariaDescribedBy, error ? errorId : undefined].filter(Boolean).join(' ') || undefined
+  const outsideIconProps = handleActions
+    ? {
+        $interactive: true,
+        role: 'button' as const,
+        tabIndex: 0,
+        onClick: handleActions,
+        onKeyDown: (event: React.KeyboardEvent<HTMLSpanElement>) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            handleActions()
+          }
+        },
+      }
+    : { $interactive: false }
 
   return (
     <Field>
-      {label ? <Label $hasOutsideLeftIcon={Boolean(outsideIconLeft)} htmlFor={inputId}>{label}</Label> : null}
+      {label ? (
+        <Label $hasOutsideLeftIcon={Boolean(outsideIconLeft)} htmlFor={inputId}>
+          {label}
+        </Label>
+      ) : null}
       <InputRow>
-        {outsideIconLeft ? <OutsideIcon aria-hidden="true">{outsideIconLeft}</OutsideIcon> : null}
+        {outsideIconLeft ? (
+          <OutsideIcon {...outsideIconProps} aria-hidden={handleActions ? undefined : 'true'}>
+            {outsideIconLeft}
+          </OutsideIcon>
+        ) : null}
         <InputWrapper>
-          {iconLeft ? <Icon $side="left" aria-hidden="true">{iconLeft}</Icon> : null}
+          {iconLeft ? (
+            <Icon $side='left' aria-hidden='true'>
+              {iconLeft}
+            </Icon>
+          ) : null}
           <StyledInput
             aria-describedby={describedBy}
-            aria-invalid={error ? true : undefined}
             id={inputId}
+            type={type}
+            aria-invalid={error ? true : undefined}
             $hasError={Boolean(error)}
             $hasLeftIcon={Boolean(iconLeft)}
             $hasRightIcon={Boolean(iconRight)}
             {...props}
           />
-          {iconRight ? <Icon $side="right" aria-hidden="true">{iconRight}</Icon> : null}
+          {iconRight ? (
+            <Icon $side='right' aria-hidden='true'>
+              {iconRight}
+            </Icon>
+          ) : null}
         </InputWrapper>
-        {outsideIconRight ? <OutsideIcon aria-hidden="true">{outsideIconRight}</OutsideIcon> : null}
+        {outsideIconRight ? (
+          <OutsideIcon {...outsideIconProps} aria-hidden={handleActions ? undefined : 'true'}>
+            {outsideIconRight}
+          </OutsideIcon>
+        ) : null}
       </InputRow>
-      {error ? <ErrorMessage $hasOutsideLeftIcon={Boolean(outsideIconLeft)} id={errorId}>{error}</ErrorMessage> : null}
+      {error ? (
+        <ErrorMessage $hasOutsideLeftIcon={Boolean(outsideIconLeft)} aria-live='polite' id={errorId} role='alert'>
+          {error}
+        </ErrorMessage>
+      ) : null}
     </Field>
-  );
-};
+  )
+}
 
-export default Input;
+export default Input

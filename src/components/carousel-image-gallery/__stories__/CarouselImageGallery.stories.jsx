@@ -83,6 +83,21 @@ const imageSet = [
     src: createGalleryImage('#e6f7ff', '#0ea5e9'),
     alt: 'Aqua blue product image',
   },
+  {
+    id: 'navy',
+    src: createGalleryImage('#e0f2fe', '#1e3a8a'),
+    alt: 'Navy blue product image',
+  },
+  {
+    id: 'midnight',
+    src: createGalleryImage('#eff6ff', '#93c5fd'),
+    alt: 'Midnight blue product image',
+  },
+  {
+    id: 'skyline',
+    src: createGalleryImage('#f0f9ff', '#7dd3fc'),  
+  alt: 'Skyline blue product image',
+  },
 ];
 
 const meta = {
@@ -105,6 +120,7 @@ const meta = {
     thumbnailsPosition: 'bottom',
     showIndicators: true,
     ariaLabel: 'Product image gallery',
+    openOnClick: true,
   },
   argTypes: {
     images: {
@@ -144,6 +160,11 @@ const meta = {
       description: 'First selected image index.',
       table: { category: 'Behavior' },
     },
+    openOnClick: {
+      control: 'boolean',
+      description: 'Allow the main image and overflow thumbnail to open the gallery modal.',
+      table: { category: 'Behavior' },
+    },
     ariaLabel: {
       control: 'text',
       description: 'Accessible label for the gallery region.',
@@ -173,6 +194,12 @@ export const ThumbnailsOnly = {
   args: {
     showThumbnails: true,
     showIndicators: false,
+  },
+};
+
+export const WithoutModalOpening = {
+  args: {
+    openOnClick: false,
   },
 };
 

@@ -4,7 +4,7 @@ import { brandTheme } from '../../../styles';
 import Input from '../Input';
 
 const meta = {
-  title: 'Components/Input',
+  title: 'Forms/Input',
   component: Input,
   tags: ['autodocs'],
   args: {
@@ -56,11 +56,19 @@ const renderInput = ({ showLeftIcon, showOutsideLeftIcon, showOutsideRightIcon, 
 
 export const Default = { render: renderInput };
 
-export const WithBothIcons = {
+export const WithRightIcon = {
+  render: renderInput,
+  args: {
+    showLeftIcon: false,
+    showRightIcon: true,
+  },
+};
+
+export const WithLeftIcon = {
   render: renderInput,
   args: {
     showLeftIcon: true,
-    showRightIcon: true,
+    showRightIcon: false,
   },
 };
 

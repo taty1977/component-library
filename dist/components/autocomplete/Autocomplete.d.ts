@@ -1,5 +1,5 @@
 import React from 'react';
-interface AutocompleteProps {
+export interface AutocompleteProps {
     options: string[];
     onSelect: (option: string) => void;
     placeholder?: string;

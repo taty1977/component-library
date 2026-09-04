@@ -34,6 +34,11 @@ export const sizes = {
   sz_800: '8rem',
   sz_1200: '12rem',
   sz_1600: '16rem',
+  sz_2000: '20rem',
+  sz_2400: '24rem',
+  sz_2800: '28rem',
+  sz_3200: '32rem',
+  sz_3600: '36rem',
   sz_62438: '62.438rem',
 } as const;
 

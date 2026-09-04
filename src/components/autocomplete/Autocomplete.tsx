@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import styled from 'styled-components';
-import { XMarkIcon } from '@heroicons/react/24/solid';
+import React, { useState } from 'react'
+import styled from 'styled-components'
+import { XMarkIcon } from '@heroicons/react/24/solid'
 
-interface AutocompleteProps {
-  options: string[];
-  onSelect: (option: string) => void;
-  placeholder?: string;
-  iconLeft?: React.ReactNode;
-  iconRight?: React.ReactNode;
+export interface AutocompleteProps {
+  options: string[]
+  onSelect: (option: string) => void
+  placeholder?: string
+  iconLeft?: React.ReactNode
+  iconRight?: React.ReactNode
 }
 
 const AutocompleteContainer = styled.div`
@@ -15,11 +15,11 @@ const AutocompleteContainer = styled.div`
   width: 100%;
   max-width: 24rem;
   font-family: ${({ theme }) => theme.fontFamily};
-`;
+`
 
 const InputWrapper = styled.div`
   position: relative;
-`;
+`
 
 const InputLeftIcon = styled.span`
   position: absolute;
@@ -33,7 +33,12 @@ const InputLeftIcon = styled.span`
   width: ${({ theme }) => theme.sizes.sz_100};
   height: ${({ theme }) => theme.sizes.sz_100};
   pointer-events: none;
-`;
+
+  & > svg {
+    width: 100%;
+    height: 100%;
+  }
+`
 
 const InputRightIcon = styled.span`
   position: absolute;
@@ -47,7 +52,12 @@ const InputRightIcon = styled.span`
   width: ${({ theme }) => theme.sizes.sz_100};
   height: ${({ theme }) => theme.sizes.sz_100};
   pointer-events: none;
-`;
+
+  & > svg {
+    width: 100%;
+    height: 100%;
+  }
+`
 
 const ClearButton = styled.button`
   position: absolute;
@@ -69,16 +79,16 @@ const ClearButton = styled.button`
   &:hover {
     background-color: ${({ theme }) => theme.colors.surfaceAlt};
   }
-`;
+`
 
 const Input = styled.input<{ $hasLeftIcon?: boolean; $hasRightIcon?: boolean }>`
   width: 100%;
   box-sizing: border-box;
   /* Reserve input space for optional icons and the contextual clear button. */
   padding: ${({ theme, $hasLeftIcon, $hasRightIcon }) => {
-    const leftPadding = $hasLeftIcon ? `calc(${theme.spaces.lg} + ${theme.sizes.sz_100})` : theme.spaces.lg;
-    const rightPadding = $hasRightIcon ? `calc(${theme.spaces.lg} + ${theme.sizes.sz_100})` : theme.spaces.lg;
-    return `${theme.spaces.md} ${rightPadding} ${theme.spaces.md} ${leftPadding}`;
+    const leftPadding = $hasLeftIcon ? `calc(${theme.spaces.lg} + ${theme.sizes.sz_100})` : theme.spaces.lg
+    const rightPadding = $hasRightIcon ? `calc(${theme.spaces.lg} + ${theme.sizes.sz_100})` : theme.spaces.lg
+    return `${theme.spaces.md} ${rightPadding} ${theme.spaces.md} ${leftPadding}`
   }};
   border: 1px solid ${({ theme }) => theme.colors.border};
   border-radius: ${({ theme }) => theme.sizes.sz_075};
@@ -90,9 +100,7 @@ const Input = styled.input<{ $hasLeftIcon?: boolean; $hasRightIcon?: boolean }>`
   line-height: 1.4;
   outline: none;
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.mutedText};
@@ -102,7 +110,7 @@ const Input = styled.input<{ $hasLeftIcon?: boolean; $hasRightIcon?: boolean }>`
     border-color: ${({ theme }) => theme.colors.border};
     box-shadow: ${({ theme }) => theme.boxShadow.bs_04};
   }
-`;
+`
 
 const OptionsList = styled.ul`
   position: absolute;
@@ -119,7 +127,7 @@ const OptionsList = styled.ul`
   box-shadow: ${({ theme }) => theme.boxShadow.bs_04};
   z-index: 20;
   overflow: hidden;
-`;
+`
 
 const OptionItem = styled.li`
   padding: ${({ theme }) => `${theme.spaces.sm} ${theme.spaces.lg}`};
@@ -128,9 +136,7 @@ const OptionItem = styled.li`
   font-family: ${({ theme }) => theme.fontFamily};
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.normal};
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.surfaceAlt};
@@ -139,70 +145,70 @@ const OptionItem = styled.li`
   &:active {
     background-color: ${({ theme }) => theme.colors.border};
   }
-`;
+`
 
 const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect, placeholder, iconLeft, iconRight }) => {
-  const [inputValue, setInputValue] = useState('');
-  const [filteredOptions, setFilteredOptions] = useState<string[]>([]);
-  const [isFocused, setIsFocused] = useState(false);
+  const [inputValue, setInputValue] = useState('')
+  const [filteredOptions, setFilteredOptions] = useState<string[]>([])
+  const [isFocused, setIsFocused] = useState(false)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value;
-    setInputValue(value);
+    const value = event.target.value
+    setInputValue(value)
     if (value.trim().length === 0) {
-      setFilteredOptions([]);
-      return;
+      setFilteredOptions([])
+      return
     }
-    setFilteredOptions(options.filter((option) => option.toLowerCase().includes(value.toLowerCase())));
-  };
+    setFilteredOptions(options.filter(option => option.toLowerCase().includes(value.toLowerCase())))
+  }
 
   const handleOptionClick = (option: string) => {
-    setInputValue(option);
-    setFilteredOptions([]);
-    onSelect(option);
-  };
+    setInputValue(option)
+    setFilteredOptions([])
+    onSelect(option)
+  }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter' && filteredOptions.length > 0) {
-      event.preventDefault();
-      handleOptionClick(filteredOptions[0]);
+      event.preventDefault()
+      handleOptionClick(filteredOptions[0])
     }
 
     if (event.key === 'Escape') {
-      setFilteredOptions([]);
+      setFilteredOptions([])
     }
-  };
+  }
 
   const handleFocus = () => {
-    setIsFocused(true);
+    setIsFocused(true)
     if (inputValue.trim().length === 0) {
-      setFilteredOptions([]);
-      return;
+      setFilteredOptions([])
+      return
     }
-    setFilteredOptions(options.filter((option) => option.toLowerCase().includes(inputValue.toLowerCase())));
-  };
+    setFilteredOptions(options.filter(option => option.toLowerCase().includes(inputValue.toLowerCase())))
+  }
 
   const handleBlur = () => {
-    setIsFocused(false);
+    setIsFocused(false)
     // Preserve the option click long enough for its mouse handler to run.
-    setTimeout(() => setFilteredOptions([]), 100);
-  };
+    setTimeout(() => setFilteredOptions([]), 100)
+  }
 
   const handleClear = () => {
-    setInputValue('');
-    setFilteredOptions([]);
-  };
+    setInputValue('')
+    setFilteredOptions([])
+  }
 
-  const showClear = isFocused && inputValue.trim().length > 0;
+  const showClear = isFocused && inputValue.trim().length > 0
   // The clear affordance takes precedence over a supplied right icon.
-  const hasRightAdornment = showClear || !!iconRight;
+  const hasRightAdornment = showClear || !!iconRight
 
   return (
     <AutocompleteContainer>
       <InputWrapper>
-        {iconLeft && <InputLeftIcon>{iconLeft}</InputLeftIcon>}
+        {iconLeft && <InputLeftIcon aria-hidden='true'>{iconLeft}</InputLeftIcon>}
         <Input
-          type="text"
+          type='text'
           value={inputValue}
           onChange={handleInputChange}
           onFocus={handleFocus}
@@ -214,23 +220,23 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect, placehol
         />
         {showClear ? (
           <ClearButton
-            type="button"
-            aria-label="Clear input"
-            onMouseDown={(event) => event.preventDefault()}
+            type='button'
+            aria-label='Clear input'
+            onMouseDown={event => event.preventDefault()}
             onClick={handleClear}
           >
-            <XMarkIcon width="1em" height="1em" aria-hidden="true" />
+            <XMarkIcon width='1em' height='1em' aria-hidden='true' />
           </ClearButton>
         ) : iconRight ? (
-          <InputRightIcon>{iconRight}</InputRightIcon>
+          <InputRightIcon aria-hidden='true'>{iconRight}</InputRightIcon>
         ) : null}
       </InputWrapper>
       {filteredOptions.length > 0 && (
         <OptionsList>
-          {filteredOptions.map((option) => (
+          {filteredOptions.map(option => (
             <OptionItem
               key={option}
-              onMouseDown={(event) => event.preventDefault()}
+              onMouseDown={event => event.preventDefault()}
               onClick={() => handleOptionClick(option)}
             >
               {option}
@@ -239,7 +245,7 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect, placehol
         </OptionsList>
       )}
     </AutocompleteContainer>
-  );
-};
+  )
+}
 
-export default Autocomplete;
+export default Autocomplete

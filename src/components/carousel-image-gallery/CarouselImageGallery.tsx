@@ -1,42 +1,37 @@
-import React, { useEffect, useId, useMemo, useState } from 'react';
-import styled from 'styled-components';
-import {
-  ChevronDownIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  ChevronUpIcon,
-  HeartIcon,
-} from '@heroicons/react/24/solid';
-import type { Breakpoint } from '../../styles';
+import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
+import styled from 'styled-components'
+import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, HeartIcon } from '@heroicons/react/24/solid'
+import type { Breakpoint } from '../../styles'
 
 export interface CarouselImageItem {
-  id?: string;
-  src: string;
-  alt: string;
-  thumbnailSrc?: string;
-  badge?: string;
-  likeButton?: boolean;
+  id?: string
+  src: string
+  alt: string
+  thumbnailSrc?: string
+  badge?: string
+  likeButton?: boolean
 }
 
 export interface CarouselImageGalleryProps {
-  images: CarouselImageItem[];
-  likeButton?: boolean;
-  breakpoint?: Breakpoint;
-  initialIndex?: number;
-  onImageChange?: (index: number, image: CarouselImageItem) => void;
-  showThumbnails?: boolean;
-  thumbnailsPosition?: 'left' | 'right' | 'bottom';
-  showIndicators?: boolean;
-  ariaLabel?: string;
-  ofText?: string;
+  images: CarouselImageItem[]
+  likeButton?: boolean
+  breakpoint?: Breakpoint
+  initialIndex?: number
+  onImageChange?: (index: number, image: CarouselImageItem) => void
+  showThumbnails?: boolean
+  thumbnailsPosition?: 'left' | 'right' | 'bottom'
+  showIndicators?: boolean
+  ariaLabel?: string
+  ofText?: string
+  openOnClick?: boolean
 }
 
-type ThumbnailPosition = 'left' | 'right' | 'bottom';
+type ThumbnailPosition = 'left' | 'right' | 'bottom'
 
 const getAccessibleAlt = (image: CarouselImageItem, index: number) => {
-  const alt = image.alt.trim();
-  return alt || `Product image ${index + 1}`;
-};
+  const alt = image.alt.trim()
+  return alt || `Product image ${index + 1}`
+}
 
 const GalleryRoot = styled.section<{ $breakpoint: Breakpoint; $thumbnailsPosition: ThumbnailPosition }>`
   /* Breakpoint-specific values are exposed as CSS variables for nested gallery layouts. */
@@ -69,7 +64,7 @@ const GalleryRoot = styled.section<{ $breakpoint: Breakpoint; $thumbnailsPositio
     --carousel-main-image-height: ${theme.carouselImageGallery.mobileMaxHeight};
   `
       : ''}
-`;
+`
 
 const MainStage = styled.div`
   --carousel-control-size: ${({ theme }) => theme.sizes.sz_200};
@@ -90,12 +85,12 @@ const MainStage = styled.div`
   overflow: hidden;
   background-color: ${({ theme }) => theme.colors.surface};
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
-`;
+`
 
 const GalleryBody = styled.div<{
-  $showThumbnails: boolean;
-  $thumbnailsPosition: ThumbnailPosition;
-  $breakpoint: Breakpoint;
+  $showThumbnails: boolean
+  $thumbnailsPosition: ThumbnailPosition
+  $breakpoint: Breakpoint
 }>`
   min-width: 0;
   display: ${({ $showThumbnails, $thumbnailsPosition }) =>
@@ -105,8 +100,8 @@ const GalleryBody = styled.div<{
     $thumbnailsPosition === 'left'
       ? `var(--carousel-thumb-size) minmax(0, 1fr)`
       : $thumbnailsPosition === 'right'
-        ? `minmax(0, 1fr) var(--carousel-thumb-size)`
-        : '1fr'};
+      ? `minmax(0, 1fr) var(--carousel-thumb-size)`
+      : '1fr'};
 
   ${({ $breakpoint, theme }) =>
     $breakpoint === 'mobile'
@@ -115,9 +110,9 @@ const GalleryBody = styled.div<{
     gap: ${theme.spaces.sm};
   `
       : ''}
-`;
+`
 
-const GalleryInlineBody = styled(GalleryBody)``;
+const GalleryInlineBody = styled(GalleryBody)``
 
 const MainImage = styled.img<{ $clickable?: boolean }>`
   display: block;
@@ -138,7 +133,7 @@ const MainImage = styled.img<{ $clickable?: boolean }>`
     outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
     outline-offset: 2px;
   }
-`;
+`
 
 const Badge = styled.span`
   position: absolute;
@@ -150,7 +145,7 @@ const Badge = styled.span`
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
   padding: ${({ theme }) => `${theme.spaces.xs} ${theme.spaces.sm}`};
   border-radius: ${({ theme }) => theme.carouselImageGallery.borderRadius};
-`;
+`
 
 const LikeButton = styled.button<{ $active: boolean }>`
   position: absolute;
@@ -176,7 +171,7 @@ const LikeButton = styled.button<{ $active: boolean }>`
   &:hover {
     background-color: ${({ theme }) => theme.colors.surfaceAlt};
   }
-`;
+`
 
 const NavButton = styled.button<{ $side: 'left' | 'right' }>`
   position: absolute;
@@ -203,7 +198,7 @@ const NavButton = styled.button<{ $side: 'left' | 'right' }>`
   &:hover {
     background-color: ${({ theme }) => theme.colors.surfaceAlt};
   }
-`;
+`
 
 const Footer = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.border};
@@ -212,14 +207,14 @@ const Footer = styled.div`
   padding: ${({ theme }) => theme.spaces.md};
   display: grid;
   gap: ${({ theme }) => theme.spaces.sm};
-`;
+`
 
 const Indicators = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   gap: ${({ theme }) => theme.spaces.sm};
-`;
+`
 
 const DotButton = styled.button<{ $active: boolean }>`
   width: ${({ theme }) => theme.sizes.sz_0625};
@@ -234,7 +229,7 @@ const DotButton = styled.button<{ $active: boolean }>`
     outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
     outline-offset: 2px;
   }
-`;
+`
 
 const Thumbnails = styled.div<{ $position: ThumbnailPosition; $slots: number; $breakpoint: Breakpoint }>`
   display: ${({ $breakpoint }) => ($breakpoint === 'mobile' ? 'none' : 'grid')};
@@ -256,7 +251,7 @@ const Thumbnails = styled.div<{ $position: ThumbnailPosition; $slots: number; $b
       grid-template-rows: repeat(${$slots}, var(--carousel-thumb-size));
       align-content: start;
     `}
-`;
+`
 
 const ThumbnailsRail = styled.div<{ $position: ThumbnailPosition; $breakpoint: Breakpoint }>`
   display: ${({ $breakpoint }) => ($breakpoint === 'mobile' ? 'none' : 'grid')};
@@ -272,7 +267,7 @@ const ThumbnailsRail = styled.div<{ $position: ThumbnailPosition; $breakpoint: B
       height: ${theme.carouselImageGallery.maxHeight};
       overflow: hidden;
     `}
-`;
+`
 
 const ThumbNavButton = styled.button`
   width: ${({ theme }) => theme.sizes.sz_200};
@@ -297,7 +292,7 @@ const ThumbNavButton = styled.button`
     opacity: 0.45;
     cursor: not-allowed;
   }
-`;
+`
 
 const ThumbButton = styled.button<{ $active: boolean }>`
   position: relative;
@@ -316,7 +311,7 @@ const ThumbButton = styled.button<{ $active: boolean }>`
     outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
     outline-offset: 2px;
   }
-`;
+`
 
 const MoreCountOverlay = styled.span`
   position: absolute;
@@ -329,14 +324,14 @@ const MoreCountOverlay = styled.span`
   align-items: center;
   justify-content: center;
   line-height: 1;
-`;
+`
 
 const ThumbImage = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-`;
+`
 
 const EmptyState = styled.div`
   border: 1px dashed ${({ theme }) => theme.colors.border};
@@ -345,9 +340,9 @@ const EmptyState = styled.div`
   color: ${({ theme }) => theme.colors.mutedText};
   text-align: center;
   font-size: ${({ theme }) => theme.fontSizes.sm};
-`;
+`
 
-const GalleryOverlay = styled.div`
+const GalleryOverlay = styled.div<{ $breakpoint: Breakpoint }>`
   position: fixed;
   inset: 0;
   background-color: ${({ theme }) => theme.colors.overlayBackdrop};
@@ -355,11 +350,28 @@ const GalleryOverlay = styled.div`
   place-items: center;
   z-index: 1000;
   padding: ${({ theme }) => theme.spaces.md};
-`;
 
-const GalleryDialog = styled.div`
-  width: min(1024px, 100%);
-  max-height: min(90vh, 980px);
+  ${({ $breakpoint, theme }) =>
+    $breakpoint === 'mobile'
+      ? `padding: ${theme.spaces.sm};`
+      : $breakpoint === 'tablet'
+      ? `padding: ${theme.spaces.md};`
+      : ''}
+`
+
+const GalleryDialog = styled.div<{ $breakpoint: Breakpoint }>`
+  width: ${({ $breakpoint, theme }) =>
+    $breakpoint === 'mobile'
+      ? '100%'
+      : $breakpoint === 'tablet'
+      ? `min(${theme.carouselImageGallery.modalTabletMaxWidth}, 100%)`
+      : `min(${theme.carouselImageGallery.modalMaxWidth}, 100%)`};
+  max-height: ${({ $breakpoint, theme }) =>
+    $breakpoint === 'mobile'
+      ? theme.carouselImageGallery.modalMobileMaxHeight
+      : $breakpoint === 'tablet'
+      ? theme.carouselImageGallery.modalTabletMaxHeight
+      : theme.carouselImageGallery.modalMaxHeight};
   border-radius: ${({ theme }) => theme.sizes.sz_075};
   background-color: ${({ theme }) => theme.colors.surface};
   border: 1px solid ${({ theme }) => theme.colors.border};
@@ -367,13 +379,7 @@ const GalleryDialog = styled.div`
   display: grid;
   grid-template-rows: auto 1fr;
   overflow: hidden;
-
-  @media (max-width: ${({ theme }) => theme.carouselImageGallery.mobileBreakpoint}) {
-    width: 100%;
-    max-height: 100vh;
-    border-radius: ${({ theme }) => theme.sizes.sz_050};
-  }
-`;
+`
 
 const GalleryHeader = styled.div`
   display: flex;
@@ -382,12 +388,12 @@ const GalleryHeader = styled.div`
   gap: ${({ theme }) => theme.spaces.md};
   padding: ${({ theme }) => theme.spaces.md};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
-`;
+`
 
 const GalleryTitleText = styled.h3`
   margin: 0;
   font-size: ${({ theme }) => theme.fontSizes.md};
-`;
+`
 
 const CloseButton = styled.button`
   border: none;
@@ -402,19 +408,21 @@ const CloseButton = styled.button`
     outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
     outline-offset: 2px;
   }
-`;
+`
 
-const GalleryDialogContent = styled.div`
+const GalleryDialogContent = styled.div<{ $breakpoint: Breakpoint }>`
   padding: ${({ theme }) => theme.spaces.md};
   overflow: auto;
   display: grid;
   gap: ${({ theme }) => theme.spaces.md};
 
-  @media (max-width: ${({ theme }) => theme.carouselImageGallery.mobileBreakpoint}) {
-    padding: ${({ theme }) => theme.spaces.sm};
-    gap: ${({ theme }) => theme.spaces.sm};
-  }
-`;
+  ${({ $breakpoint, theme }) =>
+    $breakpoint === 'mobile'
+      ? `padding: ${theme.spaces.sm}; gap: ${theme.spaces.sm};`
+      : $breakpoint === 'tablet'
+      ? `padding: ${theme.spaces.md}; gap: ${theme.spaces.md};`
+      : ''}
+`
 
 export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
   images,
@@ -427,177 +435,201 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
   ariaLabel = 'Product image gallery',
   ofText = 'of',
   breakpoint = 'desktop',
+  openOnClick = true,
 }) => {
-  const safeImages = useMemo(() => images ?? [], [images]);
-  const galleryTitleId = useId();
-  const normalizedInitial = Math.min(Math.max(initialIndex, 0), Math.max(safeImages.length - 1, 0));
-  const [activeIndex, setActiveIndex] = useState(normalizedInitial);
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
-  const [thumbStartIndex, setThumbStartIndex] = useState(0);
-  const [likedImages, setLikedImages] = useState<Record<string, boolean>>({});
+  const safeImages = useMemo(() => images ?? [], [images])
+  const galleryTitleId = useId()
+  const normalizedInitial = Math.min(Math.max(initialIndex, 0), Math.max(safeImages.length - 1, 0))
+  const [activeIndex, setActiveIndex] = useState(normalizedInitial)
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
+  const [thumbStartIndex, setThumbStartIndex] = useState(0)
+  const [likedImages, setLikedImages] = useState<Record<string, boolean>>({})
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const galleryTriggerRef = useRef<HTMLImageElement>(null)
+
+  useEffect(() => {
+    setActiveIndex(current => Math.min(current, Math.max(safeImages.length - 1, 0)))
+    setThumbStartIndex(current => Math.min(current, Math.max(safeImages.length - 1, 0)))
+    if (safeImages.length === 0) {
+      setIsGalleryOpen(false)
+    }
+  }, [safeImages.length])
+
+  useEffect(() => {
+    if (!isGalleryOpen) {
+      return
+    }
+
+    closeButtonRef.current?.focus()
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsGalleryOpen(false)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      galleryTriggerRef.current?.focus()
+    }
+  }, [isGalleryOpen])
 
   if (safeImages.length === 0) {
-    return <EmptyState>No product images available.</EmptyState>;
+    return <EmptyState>No product images available.</EmptyState>
   }
 
-  const activeImage = safeImages[activeIndex];
+  const activeImage = safeImages[activeIndex]
 
-  const maxThumbSlots = thumbnailsPosition === 'bottom' ? 8 : 5;
-  const hasOverflow = safeImages.length > maxThumbSlots;
-  const visibleThumbCount = hasOverflow ? maxThumbSlots : safeImages.length;
-  const hiddenThumbCount = hasOverflow ? safeImages.length - maxThumbSlots : 0;
-  const maxThumbStart = Math.max(0, safeImages.length - maxThumbSlots);
-  const canThumbPrev = thumbStartIndex > 0;
-  const canThumbNext = thumbStartIndex + maxThumbSlots < safeImages.length;
+  const maxThumbSlots = thumbnailsPosition === 'bottom' ? 8 : 5
+  const hasOverflow = safeImages.length > maxThumbSlots
+  const visibleThumbCount = hasOverflow ? maxThumbSlots : safeImages.length
+  const hiddenThumbCount = hasOverflow ? safeImages.length - maxThumbSlots : 0
+  const maxThumbStart = Math.max(0, safeImages.length - maxThumbSlots)
+  const canThumbPrev = thumbStartIndex > 0
+  const canThumbNext = thumbStartIndex + maxThumbSlots < safeImages.length
 
   // Keep the selected thumbnail inside the visible window in the dialog rail.
   const ensureThumbVisible = (index: number) => {
-    setThumbStartIndex((previousStart) => {
+    setThumbStartIndex(previousStart => {
       if (index < previousStart) {
-        return index;
+        return index
       }
 
       if (index >= previousStart + maxThumbSlots) {
-        return index - maxThumbSlots + 1;
+        return index - maxThumbSlots + 1
       }
 
-      return previousStart;
-    });
-  };
+      return previousStart
+    })
+  }
 
   const selectIndex = (index: number) => {
-    const nextIndex = (index + safeImages.length) % safeImages.length;
-    setActiveIndex(nextIndex);
-    ensureThumbVisible(nextIndex);
+    const nextIndex = (index + safeImages.length) % safeImages.length
+    setActiveIndex(nextIndex)
+    ensureThumbVisible(nextIndex)
     if (onImageChange) {
-      onImageChange(nextIndex, safeImages[nextIndex]);
+      onImageChange(nextIndex, safeImages[nextIndex])
     }
-  };
+  }
 
-  const getImageLikeKey = (image: CarouselImageItem) => image.id || image.src;
+  const getImageLikeKey = (image: CarouselImageItem) => image.id || image.src
 
   const toggleLike = (image: CarouselImageItem) => {
-    const key = getImageLikeKey(image);
-    setLikedImages((current) => ({
+    const key = getImageLikeKey(image)
+    setLikedImages(current => ({
       ...current,
       [key]: !current[key],
-    }));
-  };
+    }))
+  }
 
-  const isActiveImageLiked = Boolean(likedImages[getImageLikeKey(activeImage)]);
+  const isActiveImageLiked = Boolean(likedImages[getImageLikeKey(activeImage)])
 
   const openGallery = () => {
-    ensureThumbVisible(activeIndex);
-    setIsGalleryOpen(true);
-  };
+    ensureThumbVisible(activeIndex)
+    setIsGalleryOpen(true)
+  }
 
   // Inline and dialog stages intentionally share these controls and their accessibility labels.
   const renderLikeButton = () => {
     if (!likeButton || activeImage.likeButton === false) {
-      return null;
+      return null
     }
 
     return (
       <LikeButton
-        type="button"
+        type='button'
         $active={isActiveImageLiked}
         aria-label={isActiveImageLiked ? 'Remove from favorites' : 'Add to favorites'}
         aria-pressed={isActiveImageLiked}
         onClick={() => toggleLike(activeImage)}
       >
-        <HeartIcon width="1.5em" height="1.5em" aria-hidden="true" />
+        <HeartIcon width='1.5em' height='1.5em' aria-hidden='true' />
       </LikeButton>
-    );
-  };
+    )
+  }
 
   const renderImageNavigation = () => (
     <>
-      <NavButton type="button" $side="left" aria-label="Previous image" onClick={() => selectIndex(activeIndex - 1)}>
-        <ChevronLeftIcon width="1em" height="1em" aria-hidden="true" />
+      <NavButton type='button' $side='left' aria-label='Previous image' onClick={() => selectIndex(activeIndex - 1)}>
+        <ChevronLeftIcon width='1em' height='1em' aria-hidden='true' />
       </NavButton>
-      <NavButton type="button" $side="right" aria-label="Next image" onClick={() => selectIndex(activeIndex + 1)}>
-        <ChevronRightIcon width="1em" height="1em" aria-hidden="true" />
+      <NavButton type='button' $side='right' aria-label='Next image' onClick={() => selectIndex(activeIndex + 1)}>
+        <ChevronRightIcon width='1em' height='1em' aria-hidden='true' />
       </NavButton>
     </>
-  );
-
-  useEffect(() => {
-    if (!isGalleryOpen) {
-      return;
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsGalleryOpen(false);
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [isGalleryOpen]);
+  )
 
   const handleMainImageKeyDown = (event: React.KeyboardEvent<HTMLImageElement>) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      openGallery();
+    if (!openOnClick) {
+      return
     }
-  };
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault()
+      openGallery()
+    }
+  }
 
   const renderInlineThumbnails = (position: ThumbnailPosition) => {
     if (!showThumbnails || thumbnailsPosition !== position) {
-      return null;
+      return null
     }
 
     return (
       <Thumbnails $position={position} $slots={visibleThumbCount} $breakpoint={breakpoint}>
         {safeImages.slice(0, visibleThumbCount).map((image, index) => {
-          const isOverflowThumb = hiddenThumbCount > 0 && index === visibleThumbCount - 1;
+          const isOverflowThumb = hiddenThumbCount > 0 && index === visibleThumbCount - 1
 
           return (
             <ThumbButton
               key={`thumb-${image.id || image.src}-${index}`}
-              type="button"
+              type='button'
               $active={!isOverflowThumb && activeIndex === index}
               aria-label={
                 isOverflowThumb
-                  ? `Open image gallery (${hiddenThumbCount} more)`
+                  ? openOnClick
+                    ? `Open image gallery (${hiddenThumbCount} more)`
+                    : `${hiddenThumbCount} additional images`
                   : `Select ${getAccessibleAlt(image, index)}`
               }
               onClick={() => {
                 if (isOverflowThumb) {
-                  openGallery();
-                  return;
+                  if (openOnClick) {
+                    openGallery()
+                  }
+                  return
                 }
 
-                selectIndex(index);
+                selectIndex(index)
               }}
             >
-              <ThumbImage src={image.thumbnailSrc || image.src} alt="" aria-hidden="true" />
+              <ThumbImage src={image.thumbnailSrc || image.src} alt='' aria-hidden='true' />
               {isOverflowThumb ? <MoreCountOverlay>+{hiddenThumbCount}</MoreCountOverlay> : null}
             </ThumbButton>
-          );
+          )
         })}
       </Thumbnails>
-    );
-  };
+    )
+  }
 
   const renderGalleryThumbnails = (position: ThumbnailPosition) => {
     if (!showThumbnails || thumbnailsPosition !== position) {
-      return null;
+      return null
     }
 
     return (
       <ThumbnailsRail $position={position} $breakpoint={breakpoint}>
         <ThumbNavButton
-          type="button"
-          aria-label="Previous thumbnails"
+          type='button'
+          aria-label='Previous thumbnails'
           disabled={!canThumbPrev}
-          onClick={() => setThumbStartIndex((current) => Math.max(0, current - 1))}
+          onClick={() => setThumbStartIndex(current => Math.max(0, current - 1))}
         >
           {position === 'bottom' ? (
-            <ChevronLeftIcon width="1em" height="1em" aria-hidden="true" />
+            <ChevronLeftIcon width='1em' height='1em' aria-hidden='true' />
           ) : (
-            <ChevronUpIcon width="1em" height="1em" aria-hidden="true" />
+            <ChevronUpIcon width='1em' height='1em' aria-hidden='true' />
           )}
         </ThumbNavButton>
 
@@ -607,39 +639,39 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
           $breakpoint={breakpoint}
         >
           {safeImages.slice(thumbStartIndex, thumbStartIndex + maxThumbSlots).map((image, index) => {
-            const actualIndex = thumbStartIndex + index;
+            const actualIndex = thumbStartIndex + index
 
             return (
               <ThumbButton
                 key={`thumb-${image.id || image.src}-${actualIndex}`}
-                type="button"
+                type='button'
                 $active={activeIndex === actualIndex}
                 aria-label={`Select ${getAccessibleAlt(image, actualIndex)}`}
                 onClick={() => selectIndex(actualIndex)}
               >
-                <ThumbImage src={image.thumbnailSrc || image.src} alt="" aria-hidden="true" />
+                <ThumbImage src={image.thumbnailSrc || image.src} alt='' aria-hidden='true' />
               </ThumbButton>
-            );
+            )
           })}
         </Thumbnails>
 
         <ThumbNavButton
-          type="button"
-          aria-label="Next thumbnails"
+          type='button'
+          aria-label='Next thumbnails'
           disabled={!canThumbNext}
-          onClick={() => setThumbStartIndex((current) => Math.min(maxThumbStart, current + 1))}
+          onClick={() => setThumbStartIndex(current => Math.min(maxThumbStart, current + 1))}
         >
           {position === 'bottom' ? (
-            <ChevronRightIcon width="1em" height="1em" aria-hidden="true" />
+            <ChevronRightIcon width='1em' height='1em' aria-hidden='true' />
           ) : (
-            <ChevronDownIcon width="1em" height="1em" aria-hidden="true" />
+            <ChevronDownIcon width='1em' height='1em' aria-hidden='true' />
           )}
         </ThumbNavButton>
       </ThumbnailsRail>
-    );
-  };
+    )
+  }
 
-  const showFooter = showIndicators || (showThumbnails && thumbnailsPosition === 'bottom');
+  const showFooter = showIndicators || (showThumbnails && thumbnailsPosition === 'bottom')
 
   return (
     <GalleryRoot aria-label={ariaLabel} $breakpoint={breakpoint} $thumbnailsPosition={thumbnailsPosition}>
@@ -654,14 +686,19 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
           {activeImage.badge ? <Badge>{activeImage.badge}</Badge> : null}
           {renderLikeButton()}
           <MainImage
-            $clickable
+            $clickable={openOnClick}
+            ref={openOnClick ? galleryTriggerRef : undefined}
             src={activeImage.src}
             alt={getAccessibleAlt(activeImage, activeIndex)}
-            role="button"
-            aria-label={`Open image gallery: ${getAccessibleAlt(activeImage, activeIndex)}`}
-            tabIndex={0}
-            onClick={openGallery}
-            onKeyDown={handleMainImageKeyDown}
+            {...(openOnClick
+              ? {
+                  role: 'button' as const,
+                  'aria-label': `Open image gallery: ${getAccessibleAlt(activeImage, activeIndex)}`,
+                  tabIndex: 0,
+                  onClick: openGallery,
+                  onKeyDown: handleMainImageKeyDown,
+                }
+              : {})}
           />
           {renderImageNavigation()}
         </MainStage>
@@ -676,7 +713,7 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
               {safeImages.map((image, index) => (
                 <DotButton
                   key={`dot-${image.id || image.src}-${index}`}
-                  type="button"
+                  type='button'
                   aria-label={`Go to image ${index + 1}`}
                   $active={activeIndex === index}
                   onClick={() => selectIndex(index)}
@@ -690,23 +727,30 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
       ) : null}
 
       {isGalleryOpen ? (
-        <GalleryOverlay role="presentation" onClick={() => setIsGalleryOpen(false)}>
+        <GalleryOverlay $breakpoint={breakpoint} role='presentation' onClick={() => setIsGalleryOpen(false)}>
           <GalleryDialog
-            role="dialog"
-            aria-modal="true"
+            $breakpoint={breakpoint}
+            role='dialog'
+            aria-modal='true'
             aria-labelledby={galleryTitleId}
-            onClick={(event) => event.stopPropagation()}
+            tabIndex={-1}
+            onClick={event => event.stopPropagation()}
           >
             <GalleryHeader>
-              <GalleryTitleText
-                id={galleryTitleId}
-              >{`Image gallery: ${activeIndex + 1} ${ofText} ${safeImages.length}`}</GalleryTitleText>
-              <CloseButton type="button" aria-label="Close image gallery" onClick={() => setIsGalleryOpen(false)}>
-                <span aria-hidden="true">&#10005;</span>
+              <GalleryTitleText id={galleryTitleId}>{`Image gallery: ${activeIndex + 1} ${ofText} ${
+                safeImages.length
+              }`}</GalleryTitleText>
+              <CloseButton
+                ref={closeButtonRef}
+                type='button'
+                aria-label='Close image gallery'
+                onClick={() => setIsGalleryOpen(false)}
+              >
+                <span aria-hidden='true'>&#10005;</span>
               </CloseButton>
             </GalleryHeader>
 
-            <GalleryDialogContent>
+            <GalleryDialogContent $breakpoint={breakpoint}>
               <GalleryBody
                 $showThumbnails={showThumbnails}
                 $thumbnailsPosition={thumbnailsPosition}
@@ -730,7 +774,7 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
         </GalleryOverlay>
       ) : null}
     </GalleryRoot>
-  );
-};
+  )
+}
 
-export default CarouselImageGallery;
+export default CarouselImageGallery

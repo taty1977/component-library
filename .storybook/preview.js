@@ -12,6 +12,11 @@ const responsiveFrames = {
 
 export const parameters = {
   layout: 'padded',
+  options: {
+    storySort: {
+      order: ['Design System', '*'],
+    },
+  },
 };
 
 export const globalTypes = {
@@ -72,6 +77,7 @@ export const decorators = [
               width: '100%',
               maxWidth: selectedFrame.width,
               minWidth: 0,
+              fontFamily: 'Calibri, sans-serif',
               transition: 'max-width 160ms ease',
             },
           },

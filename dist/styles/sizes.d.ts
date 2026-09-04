@@ -34,6 +34,11 @@ export declare const sizes: {
     readonly sz_800: "8rem";
     readonly sz_1200: "12rem";
     readonly sz_1600: "16rem";
+    readonly sz_2000: "20rem";
+    readonly sz_2400: "24rem";
+    readonly sz_2800: "28rem";
+    readonly sz_3200: "32rem";
+    readonly sz_3600: "36rem";
     readonly sz_62438: "62.438rem";
 };
 export type SizeTokens = typeof sizes;

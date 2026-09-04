@@ -19,6 +19,7 @@ export interface CarouselImageGalleryProps {
     showIndicators?: boolean;
     ariaLabel?: string;
     ofText?: string;
+    openOnClick?: boolean;
 }
 export declare const CarouselImageGallery: React.FC<CarouselImageGalleryProps>;
 export default CarouselImageGallery;
