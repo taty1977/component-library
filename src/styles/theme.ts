@@ -59,9 +59,9 @@ const baseTheme = {
 };
 
 const brandThemeColors = {
-  primary: colors.col_0284c7,
-  secondary: colors.col_0284c7,
-  tertiary: colors.col_0284c7,
+  primary: colors.col_00a1cd,
+  secondary: colors.col_183f72,
+  tertiary: colors.col_0281d7,
   heartActive: colors.col_0369a1,
   activeBorder: colors.col_0369a1,
   focusBorder: colors.col_0369a1,

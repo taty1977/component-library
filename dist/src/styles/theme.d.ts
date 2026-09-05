@@ -1,8 +1,8 @@
 export declare const brandTheme: {
     colors: {
-        primary: "#0284c7";
-        secondary: "#0284c7";
-        tertiary: "#0284c7";
+        primary: "#0369a1";
+        secondary: "#0369a1";
+        tertiary: "#0369a1";
         heartActive: "#0369a1";
         activeBorder: "#0369a1";
         focusBorder: "#0369a1";
@@ -120,9 +120,9 @@ export declare const brandTheme: {
 };
 export declare const theme: {
     colors: {
-        primary: "#0284c7";
-        secondary: "#0284c7";
-        tertiary: "#0284c7";
+        primary: "#0369a1";
+        secondary: "#0369a1";
+        tertiary: "#0369a1";
         heartActive: "#0369a1";
         activeBorder: "#0369a1";
         focusBorder: "#0369a1";

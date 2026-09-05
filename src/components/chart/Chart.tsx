@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useId, useMemo } from 'react'
 import styled, { useTheme } from 'styled-components'
 import {
   ResponsiveContainer,
@@ -55,6 +55,8 @@ export interface ChartProps {
   title?: string
   /** Short description shown below the title */
   description?: string
+  /** Accessible ARIA label for screen readers */
+  ariaLabel?: string
   /** Height of the chart container (e.g., 300 or "100%") */
   height?: number | string
   /** Stroke width for lines and area borders */
@@ -105,7 +107,7 @@ const Title = styled.h3`
 
 const Description = styled.p`
   margin: ${({ theme }) => `${theme.spaces.xs} 0 0`};
-  color: ${({ theme }) => theme.colors.mutedText};
+  color: ${({ theme }) => theme.colors.text};
   font-size: ${({ theme }) => theme.fontSizes.sm};
 `
 
@@ -113,6 +115,36 @@ const ChartWrapper = styled.div<{ $height: number | string }>`
   width: 100%;
   height: ${({ $height }) => (typeof $height === 'number' ? `${$height}px` : $height)};
   min-height: ${({ theme }) => theme.sizes.sz_1200};
+
+  & .recharts-surface {
+    background-color: ${({ theme }) => theme.colors.surface};
+  }
+
+  & .recharts-default-legend,
+  & .recharts-legend-wrapper,
+  & .recharts-legend-item,
+  & .recharts-legend-item-text {
+    color: ${({ theme }) => theme.colors.text} !important;
+  }
+
+  & .recharts-text,
+  & .recharts-cartesian-axis-tick-value,
+  & .recharts-pie-label-text,
+  & .recharts-label {
+    fill: ${({ theme }) => theme.colors.text} !important;
+  }
+`
+
+const VisuallyHidden = styled.div`
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 `
 
 export const Chart: React.FC<ChartProps> = ({
@@ -127,6 +159,7 @@ export const Chart: React.FC<ChartProps> = ({
   xAxisKey = 'name',
   title,
   description,
+  ariaLabel,
   height = 300,
   strokeWidth = 2,
   dot = { r: 4 },
@@ -141,6 +174,9 @@ export const Chart: React.FC<ChartProps> = ({
   className,
 }) => {
   const theme = useTheme()
+  const chartId = useId()
+  const titleId = `${chartId}-title`
+  const descriptionId = `${chartId}-desc`
 
   // Color palette: props > theme
   const palette = useMemo(() => {
@@ -169,46 +205,70 @@ export const Chart: React.FC<ChartProps> = ({
   )
 
   // Resolve theme styles
-  const { gridColor, customTooltipStyle, axisTickStyle, legendStyle } = useMemo(() => {
-    const grid = customGridColor || theme?.colors?.border
-    const text = customTextColor || theme?.colors?.mutedText
-    const bg = customTooltipBgColor || theme?.colors?.surface
-    const border = customTooltipBorderColor || theme?.colors?.border
-    const fontFamily = theme?.fontFamily
-    const fontSize = theme?.fontSizes?.sm
+  const { gridColor, textColor, customTooltipStyle, tooltipItemStyle, tooltipLabelStyle, axisTickStyle, legendStyle } =
+    useMemo(() => {
+      const grid = customGridColor || theme?.colors?.border
+      const text = customTextColor || theme?.colors?.text || theme?.colors?.heading || '#123b4a'
+      const bg = customTooltipBgColor || theme?.colors?.surface
+      const border = customTooltipBorderColor || theme?.colors?.border
+      const fontFamily = theme?.fontFamily
+      const fontSize = theme?.fontSizes?.sm
 
-    return {
-      gridColor: grid,
-      textColor: text,
-      customTooltipStyle: {
-        backgroundColor: bg,
-        borderColor: border,
-        borderRadius: theme?.sizes?.sz_050,
-        boxShadow: theme?.boxShadow?.bs_03,
-        color: theme?.colors?.heading,
-        fontSize,
-        fontFamily,
-      },
-      axisTickStyle: {
-        fill: text,
-        fontSize,
-        fontFamily,
-      },
-      legendStyle: {
-        color: text,
-        fontSize,
-        fontFamily,
-      },
-    }
-  }, [customGridColor, customTextColor, customTooltipBgColor, customTooltipBorderColor, theme])
+      return {
+        gridColor: grid,
+        textColor: text,
+        customTooltipStyle: {
+          backgroundColor: bg,
+          borderColor: border,
+          borderRadius: theme?.sizes?.sz_050,
+          boxShadow: theme?.boxShadow?.bs_03,
+          color: text,
+          fontSize,
+          fontFamily,
+        },
+        tooltipItemStyle: {
+          color: text,
+          fontSize,
+          fontFamily,
+        },
+        tooltipLabelStyle: {
+          color: theme?.colors?.heading || text,
+          fontSize,
+          fontFamily,
+          fontWeight: 600,
+        },
+        axisTickStyle: {
+          fill: text,
+          fontSize,
+          fontFamily,
+        },
+        legendStyle: {
+          color: text,
+          fontSize,
+          fontFamily,
+        },
+      }
+    }, [customGridColor, customTextColor, customTooltipBgColor, customTooltipBorderColor, theme])
+
+  const renderLegendFormatter = useCallback(
+    (value: string) => <span style={{ color: textColor }}>{value}</span>,
+    [textColor],
+  )
 
   // Shared Cartesian elements
   const renderCartesianElements = () => [
     showGrid ? <CartesianGrid key='grid' strokeDasharray='3 3' stroke={gridColor} /> : null,
-    <XAxis key='xaxis' dataKey={xAxisKey} stroke={gridColor} tick={axisTickStyle} />,
-    <YAxis key='yaxis' stroke={gridColor} tick={axisTickStyle} />,
-    showTooltip ? <Tooltip key='tooltip' contentStyle={customTooltipStyle} /> : null,
-    showLegend ? <Legend key='legend' wrapperStyle={legendStyle} /> : null,
+    <XAxis key='xaxis' dataKey={xAxisKey} stroke={textColor} tick={axisTickStyle} />,
+    <YAxis key='yaxis' stroke={textColor} tick={axisTickStyle} />,
+    showTooltip ? (
+      <Tooltip
+        key='tooltip'
+        contentStyle={customTooltipStyle}
+        itemStyle={tooltipItemStyle}
+        labelStyle={tooltipLabelStyle}
+      />
+    ) : null,
+    showLegend ? <Legend key='legend' wrapperStyle={legendStyle} formatter={renderLegendFormatter} /> : null,
   ]
 
   // Render chart by type
@@ -226,8 +286,10 @@ export const Chart: React.FC<ChartProps> = ({
 
         return (
           <PieChart>
-            {showTooltip && <Tooltip contentStyle={customTooltipStyle} />}
-            {showLegend && <Legend wrapperStyle={legendStyle} />}
+            {showTooltip && (
+              <Tooltip contentStyle={customTooltipStyle} itemStyle={tooltipItemStyle} labelStyle={tooltipLabelStyle} />
+            )}
+            {showLegend && <Legend wrapperStyle={legendStyle} formatter={renderLegendFormatter} />}
             <Pie
               data={pieData}
               dataKey={dataKey}
@@ -303,13 +365,43 @@ export const Chart: React.FC<ChartProps> = ({
   }
 
   return (
-    <ChartContainer className={className}>
+    <ChartContainer
+      className={className}
+      role='region'
+      aria-label={title ? undefined : ariaLabel || 'Chart'}
+      aria-labelledby={title ? titleId : undefined}
+      aria-describedby={description ? descriptionId : undefined}
+    >
       {(title || description) && (
         <Header>
-          {title && <Title>{title}</Title>}
-          {description && <Description>{description}</Description>}
+          {title && <Title id={titleId}>{title}</Title>}
+          {description && <Description id={descriptionId}>{description}</Description>}
         </Header>
       )}
+      <VisuallyHidden>
+        <table aria-label={title ? `${title} data` : ariaLabel || 'Chart data'}>
+          <thead>
+            <tr>
+              <th scope='col'>{xAxisKey}</th>
+              {series.map(s => (
+                <th key={s.dataKey} scope='col'>
+                  {s.name || s.dataKey}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {data.map((item, idx) => (
+              <tr key={idx}>
+                <td>{item[xAxisKey]}</td>
+                {series.map(s => (
+                  <td key={s.dataKey}>{item[s.dataKey]}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </VisuallyHidden>
       <ChartWrapper $height={height}>
         <ResponsiveContainer width='100%' height='100%'>
           {renderChartContent()}

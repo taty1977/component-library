@@ -35,6 +35,8 @@ export interface ChartProps {
     title?: string;
     /** Short description shown below the title */
     description?: string;
+    /** Accessible ARIA label for screen readers */
+    ariaLabel?: string;
     /** Height of the chart container (e.g., 300 or "100%") */
     height?: number | string;
     /** Stroke width for lines and area borders */

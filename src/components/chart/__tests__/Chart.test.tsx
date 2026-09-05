@@ -87,4 +87,23 @@ describe('Chart', () => {
 
     expect(screen.getByTestId('responsive-container')).toBeInTheDocument()
   })
+
+  test('applies accessible ARIA region roles and labelling', () => {
+    renderWithTheme(
+      <Chart data={sampleData} series={sampleSeries} title='Sales Chart' description='Quarterly sales data' />,
+    )
+
+    const region = screen.getByRole('region', { name: 'Sales Chart' })
+    expect(region).toBeInTheDocument()
+    expect(region).toHaveAttribute('aria-describedby')
+  })
+
+  test('provides an accessible data table for screen readers', () => {
+    renderWithTheme(<Chart data={sampleData} series={sampleSeries} title='Accessible Chart' />)
+
+    const table = screen.getByRole('table', { name: 'Accessible Chart data' })
+    expect(table).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Sales' })).toBeInTheDocument()
+    expect(screen.getByRole('columnheader', { name: 'Profit' })).toBeInTheDocument()
+  })
 })

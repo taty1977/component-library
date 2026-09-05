@@ -14,7 +14,7 @@ const sampleData = [
 
 const sampleSeries = [
   { dataKey: 'Sales', name: 'Sales ($)', color: brandTheme.colors.primary },
-  { dataKey: 'Revenue', name: 'Revenue ($)', color: brandTheme.colors.tertiary },
+  { dataKey: 'Revenue', name: 'Revenue ($)', color: brandTheme.colors.icon },
   { dataKey: 'Profit', name: 'Profit ($)', color: brandTheme.colors.quaternary },
 ]
 
@@ -65,9 +65,19 @@ const meta = {
       description: 'Subtitle/description text displayed below the title.',
       table: { category: 'Content' },
     },
+    ariaLabel: {
+      control: 'text',
+      description: 'Accessible ARIA label for screen readers.',
+      table: { category: 'Accessibility' },
+    },
     height: {
       control: 'number',
       description: 'Height of the chart container in pixels.',
+      table: { category: 'Layout' },
+    },
+    className: {
+      control: 'text',
+      description: 'Optional custom CSS class name applied to the container.',
       table: { category: 'Layout' },
     },
     showGrid: {
@@ -88,7 +98,62 @@ const meta = {
     colors: {
       control: 'object',
       description: 'Array of custom colors to override the default theme color palette.',
-      table: { category: 'Display' },
+      table: { category: 'Colors' },
+    },
+    gridColor: {
+      control: 'color',
+      description: 'Custom stroke color for grid lines (overrides theme border).',
+      table: { category: 'Colors' },
+    },
+    textColor: {
+      control: 'color',
+      description: 'Custom text color for axes and legend (overrides theme muted text).',
+      table: { category: 'Colors' },
+    },
+    tooltipBgColor: {
+      control: 'color',
+      description: 'Custom background color for tooltips (overrides theme surface).',
+      table: { category: 'Colors' },
+    },
+    tooltipBorderColor: {
+      control: 'color',
+      description: 'Custom border color for tooltips (overrides theme border).',
+      table: { category: 'Colors' },
+    },
+    strokeWidth: {
+      control: 'number',
+      description: 'Stroke width for lines and area borders.',
+      table: { category: 'Styles' },
+    },
+    fillOpacity: {
+      control: { type: 'range', min: 0, max: 1, step: 0.1 },
+      description: 'Fill opacity for area chart fills.',
+      table: { category: 'Styles' },
+    },
+    dot: {
+      control: 'boolean',
+      description: 'Show or configure data point dots on line charts.',
+      table: { category: 'Styles' },
+    },
+    activeDot: {
+      control: 'boolean',
+      description: 'Show or configure active hover dots on line charts.',
+      table: { category: 'Styles' },
+    },
+    barRadius: {
+      control: 'object',
+      description: 'Corner radius for bar chart bars.',
+      table: { category: 'Styles' },
+    },
+    outerRadius: {
+      control: 'number',
+      description: 'Outer radius for pie chart slices.',
+      table: { category: 'Styles' },
+    },
+    innerRadius: {
+      control: 'number',
+      description: 'Inner radius for pie chart slices (e.g. donut charts).',
+      table: { category: 'Styles' },
     },
     data: { table: { category: 'Data' } },
     series: { table: { category: 'Data' } },
