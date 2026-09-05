@@ -145,15 +145,3 @@ export const WithBothIcons = {
     showRightIcon: true,
   },
 }
-
-export const WithCustomIcons = {
-  render: () => (
-    <Autocomplete
-      options={['Apple', 'Banana', 'Cherry']}
-      placeholder='Search with custom icons...'
-      iconLeft={<span style={{ fontSize: '1.25rem' }}>⌕</span>}
-      iconRight={<span style={{ fontSize: '1.25rem' }}>→</span>}
-      onSelect={() => {}}
-    />
-  ),
-}
