@@ -1,42 +1,44 @@
-import React from 'react';
-import { ArrowRightIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import { brandTheme } from '../../../styles';
-import Autocomplete from '../Autocomplete';
+import React from 'react'
+import { ArrowRightIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
+import { brandTheme } from '../../../styles'
+import Autocomplete from '../Autocomplete'
 
 const themeStyles = {
   Brand: brandTheme,
-};
+}
 
 const meta = {
-  title: 'Components/Autocomplete',
+  title: 'Forms/Autocomplete',
   component: Autocomplete,
   tags: ['autodocs'],
   parameters: {
     docs: {
       description: {
         component:
-          'A themed autocomplete input with optional left and right icon slots. Type to filter options and select a value via click.',
+          'A themed autocomplete input with labels, validation feedback, and optional left and right icon slots. Type to filter options and select a value via click.',
       },
     },
   },
   args: {
-    options: [
-      'Apple',
-      'Banana',
-      'Cherry',
-      'Date',
-      'Fig',
-      'Grape',
-      'Kiwi',
-      'Lemon',
-      'Mango',
-      'Orange',
-    ],
+    label: 'Fruit',
+    options: ['Apple', 'Banana', 'Cherry', 'Date', 'Fig', 'Grape', 'Kiwi', 'Lemon', 'Mango', 'Orange'],
     placeholder: 'Search fruit...',
+    required: false,
     showLeftIcon: false,
     showRightIcon: false,
   },
   argTypes: {
+    label: { control: 'text', description: 'Visible label for the autocomplete input.', table: { category: 'Input' } },
+    required: {
+      control: 'boolean',
+      description: 'Marks the field as required and shows an asterisk.',
+      table: { category: 'Validation' },
+    },
+    error: {
+      control: 'text',
+      description: 'Validation message shown below the input.',
+      table: { category: 'Validation' },
+    },
     onSelect: { action: 'selected' },
     options: {
       control: 'object',
@@ -67,7 +69,7 @@ const meta = {
   },
   decorators: [
     (Story, context) => {
-      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand;
+      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand
 
       return (
         <div
@@ -80,31 +82,61 @@ const meta = {
         >
           <Story />
         </div>
-      );
+      )
     },
   ],
-};
+}
 
-export default meta;
+export default meta
 
 const renderAutocomplete = ({ showLeftIcon, showRightIcon, ...args }) => (
   <Autocomplete
     {...args}
-    iconLeft={showLeftIcon ? <MagnifyingGlassIcon width="1em" height="1em" aria-hidden="true" /> : undefined}
-    iconRight={showRightIcon ? <ArrowRightIcon width="1em" height="1em" aria-hidden="true" /> : undefined}
+    iconLeft={showLeftIcon ? <MagnifyingGlassIcon width='1em' height='1em' aria-hidden='true' /> : undefined}
+    iconRight={showRightIcon ? <ArrowRightIcon width='1em' height='1em' aria-hidden='true' /> : undefined}
   />
-);
+)
 
 export const Default = {
   render: renderAutocomplete,
-};
+}
+
+export const WithLabel = {
+  render: renderAutocomplete,
+  args: {
+    label: 'Fruit',
+  },
+}
+
+export const WithError = {
+  render: renderAutocomplete,
+  args: {
+    label: 'Fruit',
+    error: 'Please select a fruit.',
+  },
+}
+
+export const Required = {
+  render: renderAutocomplete,
+  args: {
+    label: 'Fruit',
+    required: true,
+  },
+}
 
 export const WithLeftIcon = {
   render: renderAutocomplete,
   args: {
     showLeftIcon: true,
   },
-};
+}
+
+export const WithRightIcon = {
+  render: renderAutocomplete,
+  args: {
+    showRightIcon: true,
+  },
+}
 
 export const WithBothIcons = {
   render: renderAutocomplete,
@@ -112,16 +144,16 @@ export const WithBothIcons = {
     showLeftIcon: true,
     showRightIcon: true,
   },
-};
+}
 
 export const WithCustomIcons = {
   render: () => (
     <Autocomplete
       options={['Apple', 'Banana', 'Cherry']}
-      placeholder="Search with custom icons..."
+      placeholder='Search with custom icons...'
       iconLeft={<span style={{ fontSize: '1.25rem' }}>⌕</span>}
       iconRight={<span style={{ fontSize: '1.25rem' }}>→</span>}
       onSelect={() => {}}
     />
   ),
-};
+}

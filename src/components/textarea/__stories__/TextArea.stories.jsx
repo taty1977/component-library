@@ -86,19 +86,3 @@ export const Disabled = {
     defaultValue: 'This field is disabled.',
   },
 }
-
-export const Controlled = {
-  render: () => {
-    const [value, setValue] = React.useState('')
-
-    return (
-      <Textarea
-        label='Controlled message'
-        placeholder='Type to update state'
-        value={value}
-        onChange={event => setValue(event.target.value)}
-        rows={5}
-      />
-    )
-  },
-}

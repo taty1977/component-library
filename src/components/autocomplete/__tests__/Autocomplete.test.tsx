@@ -95,4 +95,22 @@ describe('Autocomplete Component', () => {
     expect(screen.getByTestId('custom-left-icon').parentElement).toHaveAttribute('aria-hidden', 'true')
     expect(screen.getByTestId('custom-right-icon').parentElement).toHaveAttribute('aria-hidden', 'true')
   })
+
+  test('renders a label and associates validation errors', () => {
+    renderWithTheme(
+      <Autocomplete error='Fruit is required' label='Fruit' onSelect={() => {}} options={options} required />,
+    )
+
+    const input = screen.getByRole('textbox', { name: 'Fruit' })
+    expect(input).toHaveAttribute('aria-invalid', 'true')
+    expect(input).toHaveAttribute('aria-describedby')
+    expect(screen.getByRole('alert')).toHaveTextContent('Fruit is required')
+  })
+
+  test('applies custom className to the container', () => {
+    const { container } = renderWithTheme(
+      <Autocomplete className='custom-autocomplete-class' onSelect={() => {}} options={options} />,
+    )
+    expect(container.firstChild).toHaveClass('custom-autocomplete-class')
+  })
 })

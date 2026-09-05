@@ -1,24 +1,42 @@
-import React, { useState } from 'react'
+import React, { useId, useState } from 'react'
 import styled from 'styled-components'
 import { XMarkIcon } from '@heroicons/react/24/solid'
 
-export interface AutocompleteProps {
+export interface AutocompleteProps
+  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'onSelect' | 'value'> {
   options: string[]
   onSelect: (option: string) => void
+  label?: string
+  error?: string
   placeholder?: string
   iconLeft?: React.ReactNode
   iconRight?: React.ReactNode
+  onChange?: React.ChangeEventHandler<HTMLInputElement>
+  value?: string
 }
 
 const AutocompleteContainer = styled.div`
   position: relative;
   width: 100%;
-  max-width: 24rem;
+  max-width: ${({ theme }) => theme.sizes.sz_2400};
   font-family: ${({ theme }) => theme.fontFamily};
 `
 
 const InputWrapper = styled.div`
   position: relative;
+`
+
+const Label = styled.label`
+  display: block;
+  margin-bottom: ${({ theme }) => theme.spaces.sm};
+  color: ${({ theme }) => theme.colors.heading};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: ${({ theme }) => theme.fontWeights.medium};
+`
+
+const RequiredIndicator = styled.span`
+  margin-left: ${({ theme }) => theme.spaces.xs};
+  color: ${({ theme }) => theme.colors.danger};
 `
 
 const InputLeftIcon = styled.span`
@@ -81,7 +99,7 @@ const ClearButton = styled.button`
   }
 `
 
-const Input = styled.input<{ $hasLeftIcon?: boolean; $hasRightIcon?: boolean }>`
+const Input = styled.input<{ $hasLeftIcon?: boolean; $hasRightIcon?: boolean; $hasError?: boolean }>`
   width: 100%;
   box-sizing: border-box;
   /* Reserve input space for optional icons and the contextual clear button. */
@@ -90,7 +108,7 @@ const Input = styled.input<{ $hasLeftIcon?: boolean; $hasRightIcon?: boolean }>`
     const rightPadding = $hasRightIcon ? `calc(${theme.spaces.lg} + ${theme.sizes.sz_100})` : theme.spaces.lg
     return `${theme.spaces.md} ${rightPadding} ${theme.spaces.md} ${leftPadding}`
   }};
-  border: 1px solid ${({ theme }) => theme.colors.border};
+  border: 1px solid ${({ theme, $hasError }) => ($hasError ? theme.colors.danger : theme.colors.border)};
   border-radius: ${({ theme }) => theme.sizes.sz_075};
   background-color: ${({ theme }) => theme.colors.surface};
   color: ${({ theme }) => theme.colors.heading};
@@ -110,6 +128,12 @@ const Input = styled.input<{ $hasLeftIcon?: boolean; $hasRightIcon?: boolean }>`
     border-color: ${({ theme }) => theme.colors.border};
     box-shadow: ${({ theme }) => theme.boxShadow.bs_04};
   }
+`
+
+const ErrorMessage = styled.p`
+  margin: ${({ theme }) => `${theme.spaces.sm} 0 0`};
+  color: ${({ theme }) => theme.colors.danger};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
 `
 
 const OptionsList = styled.ul`
@@ -147,14 +171,30 @@ const OptionItem = styled.li`
   }
 `
 
-const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect, placeholder, iconLeft, iconRight }) => {
-  const [inputValue, setInputValue] = useState('')
+const Autocomplete: React.FC<AutocompleteProps> = ({
+  className,
+  error,
+  iconLeft,
+  iconRight,
+  label,
+  onChange: externalOnChange,
+  onSelect,
+  options,
+  placeholder,
+  value,
+  ...props
+}) => {
+  const generatedId = useId()
+  const inputId = props.id ?? generatedId
+  const errorId = `${inputId}-error`
+  const [inputValue, setInputValue] = useState(value ?? '')
   const [filteredOptions, setFilteredOptions] = useState<string[]>([])
   const [isFocused, setIsFocused] = useState(false)
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value
     setInputValue(value)
+    externalOnChange?.(event)
     if (value.trim().length === 0) {
       setFilteredOptions([])
       return
@@ -204,7 +244,13 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect, placehol
   const hasRightAdornment = showClear || !!iconRight
 
   return (
-    <AutocompleteContainer>
+    <AutocompleteContainer className={className}>
+      {label ? (
+        <Label htmlFor={inputId}>
+          {label}
+          {props.required ? <RequiredIndicator aria-hidden='true'>*</RequiredIndicator> : null}
+        </Label>
+      ) : null}
       <InputWrapper>
         {iconLeft && <InputLeftIcon aria-hidden='true'>{iconLeft}</InputLeftIcon>}
         <Input
@@ -215,8 +261,13 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect, placehol
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
+          {...props}
+          id={inputId}
+          aria-describedby={error ? errorId : undefined}
+          aria-invalid={error ? true : undefined}
           $hasLeftIcon={!!iconLeft}
           $hasRightIcon={hasRightAdornment}
+          $hasError={Boolean(error)}
         />
         {showClear ? (
           <ClearButton
@@ -244,6 +295,11 @@ const Autocomplete: React.FC<AutocompleteProps> = ({ options, onSelect, placehol
           ))}
         </OptionsList>
       )}
+      {error ? (
+        <ErrorMessage id={errorId} aria-live='polite' role='alert'>
+          {error}
+        </ErrorMessage>
+      ) : null}
     </AutocompleteContainer>
   )
 }
