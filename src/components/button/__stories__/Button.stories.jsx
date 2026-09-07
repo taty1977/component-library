@@ -1,7 +1,10 @@
-import React from 'react'
 import { ArrowRightIcon, PlusIcon } from '@heroicons/react/24/solid'
 import { brandTheme } from '../../../styles'
 import Button from '../Button'
+
+const themeStyles = {
+  Brand: brandTheme,
+}
 
 const meta = {
   title: 'Components/Button',
@@ -90,17 +93,21 @@ const meta = {
     },
   },
   decorators: [
-    Story => (
-      <div
-        style={{
-          backgroundColor: brandTheme.colors.surface,
-          border: `1px solid ${brandTheme.colors.border}`,
-          padding: '16px',
-        }}
-      >
-        <Story />
-      </div>
-    ),
+    (Story, context) => {
+      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand
+
+      return (
+        <div
+          style={{
+            backgroundColor: activeTheme.colors.surface,
+            border: `1px solid ${activeTheme.colors.border}`,
+            padding: '16px',
+          }}
+        >
+          <Story />
+        </div>
+      )
+    },
   ],
 }
 

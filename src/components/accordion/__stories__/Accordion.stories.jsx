@@ -45,7 +45,11 @@ export default {
     },
     collapsedIcon: { table: { disable: true } },
     expandedIcon: { table: { disable: true } },
-    items: { control: 'object' },
+    items: {
+      control: 'object',
+      description: 'Accordion panels with an id, title, and optional content.',
+      table: { category: 'Data' },
+    },
   },
   decorators: [
     (Story, context) => {
@@ -67,31 +71,51 @@ export default {
   ],
 }
 
-const defaultItems = [
+const accordionItems = [
   { id: '1', title: 'Accordion Item 1', content: 'Content for the first accordion item' },
   { id: '2', title: 'Accordion Item 2', content: 'Content for the second accordion item' },
   { id: '3', title: 'Accordion Item 3', content: 'Content for the third accordion item' },
 ]
 
+const baseArgs = {
+  items: accordionItems,
+  allowMultiple: false,
+  variant: 'default',
+}
+
 export const Default = {
-  args: {
-    items: defaultItems,
-    allowMultiple: false,
-    variant: 'default',
-  },
+  name: 'Default variant',
+  args: baseArgs,
 }
 
 export const Primary = {
+  name: 'Primary variant',
   args: {
-    ...Default.args,
+    ...baseArgs,
     variant: 'primary',
   },
 }
 
 export const Secondary = {
+  name: 'Secondary variant',
   args: {
-    ...Default.args,
+    ...baseArgs,
     variant: 'secondary',
+  },
+}
+
+export const MultiOpen = {
+  name: 'Multiple panels open',
+  args: {
+    ...baseArgs,
+    allowMultiple: true,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Allows more than one panel to remain open at the same time.',
+      },
+    },
   },
 }
 
@@ -101,8 +125,9 @@ const customIconArgs = {
 }
 
 export const DefaultWithCustomIcons = {
+  name: 'Default with custom icons',
   args: {
-    ...Default.args,
+    ...baseArgs,
     ...customIconArgs,
   },
   parameters: {
@@ -115,6 +140,7 @@ export const DefaultWithCustomIcons = {
 }
 
 export const PrimaryWithCustomIcons = {
+  name: 'Primary with custom icons',
   args: {
     ...Primary.args,
     ...customIconArgs,
@@ -122,6 +148,7 @@ export const PrimaryWithCustomIcons = {
 }
 
 export const SecondaryWithCustomIcons = {
+  name: 'Secondary with custom icons',
   args: {
     ...Secondary.args,
     ...customIconArgs,

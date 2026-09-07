@@ -1,5 +1,6 @@
 import React, { useCallback, useId, useMemo } from 'react'
 import styled, { useTheme } from 'styled-components'
+import Heading from '../heading/Heading'
 import {
   ResponsiveContainer,
   LineChart,
@@ -96,13 +97,6 @@ const ChartContainer = styled.div`
 
 const Header = styled.div`
   margin-bottom: ${({ theme }) => theme.spaces.md};
-`
-
-const Title = styled.h3`
-  margin: 0;
-  color: ${({ theme }) => theme.colors.heading};
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
 `
 
 const Description = styled.p`
@@ -371,7 +365,11 @@ export const Chart: React.FC<ChartProps> = ({
     >
       {(title || description) && (
         <Header>
-          {title && <Title id={titleId}>{title}</Title>}
+          {title && (
+            <Heading id={titleId} level='h3' weight='semiBold'>
+              {title}
+            </Heading>
+          )}
           {description && <Description id={descriptionId}>{description}</Description>}
         </Header>
       )}

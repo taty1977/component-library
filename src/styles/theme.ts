@@ -24,6 +24,10 @@ const baseTheme = {
     tabletBreakpoint: breakpoints.tablet,
     mobileBreakpoint: breakpoints.mobile,
   },
+  fontFamilies: {
+    heading: "'Merriweather', serif",
+    paragraph: "'Open Sans', sans-serif",
+  },
   fontSizes: {
     xs: sizes.sz_075,
     sm: sizes.sz_0875,
@@ -35,8 +39,9 @@ const baseTheme = {
     light: 300,
     normal: 400,
     medium: 500,
-    semibold: 600,
+    semiBold: 600,
     bold: 700,
+    extraBold: 800,
   },
   headingSizes: {
     h1: sizes.sz_300,
@@ -45,6 +50,14 @@ const baseTheme = {
     h4: sizes.sz_175,
     h5: sizes.sz_150,
     h6: sizes.sz_125,
+  },
+  actionColors: {
+    Primary: colors.col_0d3f48,
+    Secondary: colors.col_9b417b,
+    success: colors.col_28a745,
+    danger: colors.col_dc3545,
+    warning: colors.col_ffcc00,
+    info: colors.col_17a2b8,
   },
   sizes: {
     ...sizes,
@@ -75,7 +88,7 @@ const brandThemeColors = {
   focusRing: colors.col_0284c747,
   activeRing: colors.col_3b82f640,
   overlayBackdrop: colors.col_0f172a99,
-  text: '#3c4048',
+  text: colors.col_4f545f,
   surface: colors.col_ffffff,
   surfaceAlt: colors.col_f4f9fb,
   secondarySurfaceAlt: colors.col_fbf4f9,
@@ -93,7 +106,7 @@ const brandThemeColors = {
 export const brandTheme = {
   ...baseTheme,
   colors: brandThemeColors,
-  fontFamily: "'Open Sans', sans-serif",
+  fontFamily: baseTheme.fontFamilies.paragraph,
 }
 
 export const theme = brandTheme

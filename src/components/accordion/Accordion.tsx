@@ -105,7 +105,7 @@ const HeaderContent = styled.div`
   gap: ${({ theme }) => theme.sizes.sz_075};
   width: 100%;
   font-family: ${({ theme }) => theme.fontFamily};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  font-weight: ${({ theme }) => theme.fontWeights.semiBold};
 
   & > span {
     flex: 1;

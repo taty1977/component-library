@@ -1,10 +1,11 @@
-import React from 'react';
-import { brandTheme } from '../../../styles';
-import { CarouselImageGallery } from '../CarouselImageGallery';
+import React from 'react'
+import { brandTheme } from '../../../styles'
+import { CarouselImageGallery } from '../CarouselImageGallery'
+import Heading from '../../heading/Heading'
 
 const themeStyles = {
   Brand: brandTheme,
-};
+}
 
 const createGalleryImage = (background, accent) =>
   `data:image/svg+xml,${encodeURIComponent(`
@@ -13,11 +14,11 @@ const createGalleryImage = (background, accent) =>
       <circle cx="600" cy="400" r="240" fill="${accent}" />
       <rect x="410" y="310" width="380" height="180" rx="90" fill="#ffffff" opacity="0.92" />
     </svg>
-  `)}`;
+  `)}`
 
 const renderShowcase = (args, context) => {
-  const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand;
-  const titleId = `gallery-showcase-title-${context.id}`;
+  const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand
+  const titleId = `gallery-showcase-title-${context.id}`
 
   return (
     <main
@@ -26,10 +27,10 @@ const renderShowcase = (args, context) => {
         background: activeTheme.colors.surface,
         color: activeTheme.colors.text,
         border: `1px solid ${activeTheme.colors.border}`,
-        padding: '24px',
-        borderRadius: '24px',
+        padding: activeTheme.spaces.lg,
+        borderRadius: activeTheme.sizes.sz_075,
         display: 'grid',
-        gap: '20px',
+        gap: activeTheme.spaces.lg,
       }}
     >
       <div
@@ -38,13 +39,24 @@ const renderShowcase = (args, context) => {
           gap: '8px',
         }}
       >
-        <span style={{ fontSize: '12px', letterSpacing: '0.12em', textTransform: 'uppercase', color: activeTheme.colors.mutedText }}>
+        <span
+          style={{
+            fontSize: '12px',
+            letterSpacing: '0.12em',
+            textTransform: 'uppercase',
+            color: activeTheme.colors.mutedText,
+          }}
+        >
           Storybook Preview
         </span>
         <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
           <div>
-            <h2 id={titleId} style={{ margin: 0, fontSize: '28px', lineHeight: 1.1, color: activeTheme.colors.heading }}>Performance Runner XZ</h2>
-            <p style={{ margin: '8px 0 0', color: activeTheme.colors.mutedText }}>Preview the gallery across themes, breakpoints, and thumbnail positions.</p>
+            <Heading id={titleId} level='h2' weight='extraBold'>
+              Performance Runner XZ
+            </Heading>
+            <p style={{ margin: '8px 0 0', color: activeTheme.colors.mutedText }}>
+              Preview the gallery across themes, breakpoints, and thumbnail positions.
+            </p>
           </div>
           <div style={{ alignSelf: 'start', fontWeight: 700, fontSize: '24px' }}>$189</div>
         </div>
@@ -52,8 +64,8 @@ const renderShowcase = (args, context) => {
 
       <CarouselImageGallery {...args} />
     </main>
-  );
-};
+  )
+}
 
 const imageSet = [
   {
@@ -95,20 +107,21 @@ const imageSet = [
   },
   {
     id: 'skyline',
-    src: createGalleryImage('#f0f9ff', '#7dd3fc'),  
-  alt: 'Skyline blue product image',
+    src: createGalleryImage('#f0f9ff', '#7dd3fc'),
+    alt: 'Skyline blue product image',
   },
-];
+]
 
 const meta = {
   title: 'Components/CarouselImageGallery',
   component: CarouselImageGallery,
   tags: ['autodocs'],
   parameters: {
+    layout: 'padded',
     docs: {
       description: {
         component:
-          'An ecommerce-ready product image carousel with previous/next navigation, dot indicators, thumbnail selection, favorites, and click-to-open gallery behavior. The story surface adapts to the active Storybook theme so responsive and visual QA are easier in one place.',
+          'An ecommerce-ready product image carousel with responsive thumbnails, indicators, favorites, keyboard navigation, and an accessible modal gallery.',
       },
     },
   },
@@ -148,7 +161,7 @@ const meta = {
       control: 'select',
       options: ['mobile', 'tablet', 'desktop'],
       description: 'Choose the responsive layout breakpoint.',
-      table: { category: 'Display' },
+      table: { category: 'Layout' },
     },
     showIndicators: {
       control: 'boolean',
@@ -170,62 +183,70 @@ const meta = {
       description: 'Accessible label for the gallery region.',
       table: { category: 'Accessibility' },
     },
+    ofText: {
+      control: 'text',
+      description: 'Text used between the active image number and total count.',
+      table: { category: 'Content' },
+    },
+    onImageChange: {
+      table: { disable: true },
+    },
   },
-};
+}
 
-export default meta;
+export default meta
 
-export const Default = {};
+export const Default = {}
 
 export const NoThumbnails = {
   args: {
     showThumbnails: false,
   },
-};
+}
 
 export const IndicatorsOnly = {
   args: {
     showThumbnails: false,
     showIndicators: true,
   },
-};
+}
 
 export const ThumbnailsOnly = {
   args: {
     showThumbnails: true,
     showIndicators: false,
   },
-};
+}
 
 export const WithoutModalOpening = {
   args: {
     openOnClick: false,
   },
-};
+}
 
 export const ThumbnailsLeft = {
   args: {
     thumbnailsPosition: 'left',
   },
-};
+}
 
 export const ThumbnailsRight = {
   args: {
     thumbnailsPosition: 'right',
   },
-};
+}
 
 export const StartFromMiddle = {
   args: {
     initialIndex: 2,
   },
-};
+}
 
 export const SingleImage = {
   args: {
     images: [imageSet[0]],
   },
-};
+}
 
 export const MissingAltFallback = {
   args: {
@@ -233,10 +254,10 @@ export const MissingAltFallback = {
     showThumbnails: false,
     showIndicators: false,
   },
-};
+}
 
 export const WithoutLikeButton = {
   args: {
     likeButton: false,
   },
-};
+}

@@ -96,7 +96,7 @@ const getButtonSizeStyle = (theme: ThemeType, size: ButtonSize) => {
 
   return {
     fontSize: sizeStyle.fontSize ? theme.fontSizes[sizeStyle.fontSize] : 'inherit',
-    fontWeight: sizeStyle.fontWeight ? theme.fontWeights[sizeStyle.fontWeight] : theme.fontWeights.semibold,
+    fontWeight: sizeStyle.fontWeight ? theme.fontWeights[sizeStyle.fontWeight] : theme.fontWeights.semiBold,
     minHeight: sizeStyle.minHeight ? theme.sizes[sizeStyle.minHeight] : 'auto',
     padding: `${theme.spaces[sizeStyle.padding]} ${theme.spaces.lg}`,
   }

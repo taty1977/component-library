@@ -1,7 +1,8 @@
-import React, { useEffect, useId, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useId, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, HeartIcon } from '@heroicons/react/24/solid'
 import type { Breakpoint } from '../../styles'
+import Heading from '../heading/Heading'
 
 export interface CarouselImageItem {
   id?: string
@@ -33,14 +34,23 @@ const getAccessibleAlt = (image: CarouselImageItem, index: number) => {
   return alt || `Product image ${index + 1}`
 }
 
+// The source fallback keeps image state stable when an optional id is absent.
+const getImageKey = (image: CarouselImageItem) => image.id || image.src
+
 const GalleryRoot = styled.section<{ $breakpoint: Breakpoint; $thumbnailsPosition: ThumbnailPosition }>`
   /* Breakpoint-specific values are exposed as CSS variables for nested gallery layouts. */
   --carousel-thumb-size: ${({ theme }) => theme.sizes.sz_450};
   --carousel-main-image-height: ${({ theme }) => theme.carouselImageGallery.maxHeight};
   width: 100%;
+  box-sizing: border-box;
   min-width: 0;
   max-width: ${({ theme }) => theme.carouselImageGallery.maxWidth};
   font-family: ${({ theme }) => theme.fontFamily};
+  background-color: ${({ theme }) => theme.colors.surface};
+  border: 1px solid ${({ theme }) => theme.colors.border};
+  border-radius: ${({ theme }) => theme.sizes.sz_075};
+  padding: ${({ theme }) => theme.spaces.lg};
+  box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
   display: grid;
   gap: ${({ theme }) => theme.spaces.md};
 
@@ -139,10 +149,10 @@ const Badge = styled.span`
   position: absolute;
   top: ${({ theme }) => theme.spaces.md};
   left: ${({ theme }) => theme.spaces.md};
-  background-color: ${({ theme }) => theme.colors.heartActive};
+  background-color: ${({ theme }) => theme.colors.secondary};
   color: ${({ theme }) => theme.colors.surface};
   font-size: ${({ theme }) => theme.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  font-weight: ${({ theme }) => theme.fontWeights.semiBold};
   padding: ${({ theme }) => `${theme.spaces.xs} ${theme.spaces.sm}`};
   border-radius: ${({ theme }) => theme.carouselImageGallery.borderRadius};
 `
@@ -156,7 +166,7 @@ const LikeButton = styled.button<{ $active: boolean }>`
   border: none;
   border-radius: 999px;
   background-color: ${({ theme }) => theme.colors.surface};
-  color: ${({ theme, $active }) => ($active ? theme.colors.primary : theme.colors.icon)};
+  color: ${({ theme, $active }) => ($active ? theme.colors.secondary : theme.colors.icon)};
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -319,7 +329,7 @@ const MoreCountOverlay = styled.span`
   background-color: ${({ theme }) => theme.colors.overlay};
   color: ${({ theme }) => theme.colors.surface};
   font-size: ${({ theme }) => theme.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  font-weight: ${({ theme }) => theme.fontWeights.semiBold};
   display: flex;
   align-items: center;
   justify-content: center;
@@ -390,11 +400,6 @@ const GalleryHeader = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 `
 
-const GalleryTitleText = styled.h3`
-  margin: 0;
-  font-size: ${({ theme }) => theme.fontSizes.md};
-`
-
 const CloseButton = styled.button`
   border: none;
   border-radius: ${({ theme }) => theme.carouselImageGallery.borderRadius};
@@ -437,7 +442,7 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
   breakpoint = 'desktop',
   openOnClick = true,
 }) => {
-  const safeImages = useMemo(() => images ?? [], [images])
+  const safeImages = images
   const galleryTitleId = useId()
   const normalizedInitial = Math.min(Math.max(initialIndex, 0), Math.max(safeImages.length - 1, 0))
   const [activeIndex, setActiveIndex] = useState(normalizedInitial)
@@ -513,17 +518,15 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
     }
   }
 
-  const getImageLikeKey = (image: CarouselImageItem) => image.id || image.src
-
   const toggleLike = (image: CarouselImageItem) => {
-    const key = getImageLikeKey(image)
+    const key = getImageKey(image)
     setLikedImages(current => ({
       ...current,
       [key]: !current[key],
     }))
   }
 
-  const isActiveImageLiked = Boolean(likedImages[getImageLikeKey(activeImage)])
+  const isActiveImageLiked = Boolean(likedImages[getImageKey(activeImage)])
 
   const openGallery = () => {
     ensureThumbVisible(activeIndex)
@@ -583,7 +586,7 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
 
           return (
             <ThumbButton
-              key={`thumb-${image.id || image.src}-${index}`}
+              key={`thumb-${getImageKey(image)}-${index}`}
               type='button'
               $active={!isOverflowThumb && activeIndex === index}
               aria-label={
@@ -643,7 +646,7 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
 
             return (
               <ThumbButton
-                key={`thumb-${image.id || image.src}-${actualIndex}`}
+                key={`thumb-${getImageKey(image)}-${actualIndex}`}
                 type='button'
                 $active={activeIndex === actualIndex}
                 aria-label={`Select ${getAccessibleAlt(image, actualIndex)}`}
@@ -712,7 +715,7 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
             <Indicators>
               {safeImages.map((image, index) => (
                 <DotButton
-                  key={`dot-${image.id || image.src}-${index}`}
+                  key={`dot-${getImageKey(image)}-${index}`}
                   type='button'
                   aria-label={`Go to image ${index + 1}`}
                   $active={activeIndex === index}
@@ -737,9 +740,9 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
             onClick={event => event.stopPropagation()}
           >
             <GalleryHeader>
-              <GalleryTitleText id={galleryTitleId}>{`Image gallery: ${activeIndex + 1} ${ofText} ${
-                safeImages.length
-              }`}</GalleryTitleText>
+              <Heading id={galleryTitleId} level='h4' weight='medium'>
+                {`Image gallery: ${activeIndex + 1} ${ofText} ${safeImages.length}`}
+              </Heading>
               <CloseButton
                 ref={closeButtonRef}
                 type='button'
