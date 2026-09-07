@@ -4,7 +4,7 @@ interface AccordionItem {
     title: string;
     content?: React.ReactNode;
 }
-export type AccordionVariant = 'default' | 'leftIcon';
+export type AccordionVariant = 'default' | 'primary' | 'secondary';
 export interface AccordionProps {
     items: AccordionItem[];
     allowMultiple?: boolean;

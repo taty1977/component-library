@@ -106,4 +106,10 @@ describe('Chart', () => {
     expect(screen.getByRole('columnheader', { name: 'Sales' })).toBeInTheDocument()
     expect(screen.getByRole('columnheader', { name: 'Profit' })).toBeInTheDocument()
   })
+
+  test('labels the visual chart separately from its data table', () => {
+    renderWithTheme(<Chart data={sampleData} series={sampleSeries} title='Accessible Chart' />)
+
+    expect(screen.getByRole('img', { name: 'Accessible Chart visualization' })).toBeInTheDocument()
+  })
 })

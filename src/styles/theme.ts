@@ -1,6 +1,6 @@
-﻿import { colors } from './colors';
-import { breakpoints } from './breakpoints';
-import { sizes } from './sizes';
+﻿import { colors } from './colors'
+import { breakpoints } from './breakpoints'
+import { sizes } from './sizes'
 
 const baseTheme = {
   boxShadow: {
@@ -56,22 +56,29 @@ const baseTheme = {
     lg: sizes.sz_150,
     xl: sizes.sz_200,
   },
-};
+}
 
 const brandThemeColors = {
-  primary: colors.col_00a1cd,
-  secondary: colors.col_183f72,
-  tertiary: colors.col_0281d7,
+  primary: colors.col_417b9b,
+  primaryHover: colors.col_2f5f7e,
+  primaryBorder: colors.col_254f69,
+  secondary: colors.col_9b417b,
+  secondaryHover: colors.col_7d315d,
+  secondaryBorder: colors.col_69294b,
+  tertiary: colors.col_e9f0db,
+  tertiaryHover: colors.col_dce8c7,
+  tertiaryBorder: colors.col_c4d59e,
+  tertiarySurfaceAlt: colors.col_f5f8ee,
   heartActive: colors.col_0369a1,
   activeBorder: colors.col_0369a1,
   focusBorder: colors.col_0369a1,
   focusRing: colors.col_0284c747,
   activeRing: colors.col_3b82f640,
   overlayBackdrop: colors.col_0f172a99,
-  quaternary: colors.col_123b4a,
-  text: colors.col_123b4a,
+  text: '#3c4048',
   surface: colors.col_ffffff,
   surfaceAlt: colors.col_f4f9fb,
+  secondarySurfaceAlt: colors.col_fbf4f9,
   border: colors.col_e2e8f0,
   heading: colors.col_0d3f48,
   mutedText: colors.col_57757d,
@@ -81,14 +88,13 @@ const brandThemeColors = {
   badgeBackground: colors.col_f3f4f6,
   badgeBorder: colors.col_d1d5db,
   badgeText: colors.col_4b5563,
-};
+}
 
 export const brandTheme = {
   ...baseTheme,
   colors: brandThemeColors,
   fontFamily: "'Open Sans', sans-serif",
-};
+}
 
-export const theme = brandTheme;
-export type ThemeType = typeof theme;
-
+export const theme = brandTheme
+export type ThemeType = typeof theme

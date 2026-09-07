@@ -10,7 +10,7 @@ export declare const brandTheme: {
         activeRing: "#3b82f640";
         overlayBackdrop: "#0f172a99";
         quaternary: "#123b4a";
-        text: "#123b4a";
+        text: "#4F545F";
         surface: "#ffffff";
         surfaceAlt: "#f4f9fb";
         border: "#e2e8f0";

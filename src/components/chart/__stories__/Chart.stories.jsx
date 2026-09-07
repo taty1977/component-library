@@ -2,6 +2,10 @@ import React from 'react'
 import { brandTheme } from '../../../styles'
 import Chart from '../Chart'
 
+const themeStyles = {
+  Brand: brandTheme,
+}
+
 const sampleData = [
   { name: 'Jan', Sales: 4000, Revenue: 2400, Profit: 1600 },
   { name: 'Feb', Sales: 3000, Revenue: 1398, Profit: 1200 },
@@ -13,9 +17,9 @@ const sampleData = [
 ]
 
 const sampleSeries = [
-  { dataKey: 'Sales', name: 'Sales ($)', color: brandTheme.colors.primary },
-  { dataKey: 'Revenue', name: 'Revenue ($)', color: brandTheme.colors.icon },
-  { dataKey: 'Profit', name: 'Profit ($)', color: brandTheme.colors.quaternary },
+  { dataKey: 'Sales', name: 'Sales ($)' },
+  { dataKey: 'Revenue', name: 'Revenue ($)' },
+  { dataKey: 'Profit', name: 'Profit ($)' },
 ]
 
 const pieData = [
@@ -47,6 +51,20 @@ const meta = {
     showGrid: true,
     showTooltip: true,
     showLegend: true,
+  },
+  render: (args, context) => {
+    const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand
+    const themeSeries = [activeTheme.colors.primary, activeTheme.colors.secondary, activeTheme.colors.heading]
+
+    return (
+      <Chart
+        {...args}
+        series={args.series.map((seriesItem, index) => ({
+          ...seriesItem,
+          color: seriesItem.color || themeSeries[index % themeSeries.length],
+        }))}
+      />
+    )
   },
   argTypes: {
     type: {
@@ -160,18 +178,23 @@ const meta = {
     xAxisKey: { table: { category: 'Data' } },
   },
   decorators: [
-    Story => (
-      <div
-        style={{
-          backgroundColor: brandTheme.colors.surface,
-          border: `1px solid ${brandTheme.colors.border}`,
-          padding: '24px',
-          borderRadius: '12px',
-        }}
-      >
-        <Story />
-      </div>
-    ),
+    (Story, context) => {
+      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand
+
+      return (
+        <div
+          style={{
+            backgroundColor: activeTheme.colors.surface,
+            color: activeTheme.colors.text,
+            border: `1px solid ${activeTheme.colors.border}`,
+            padding: '24px',
+            borderRadius: '12px',
+          }}
+        >
+          <Story />
+        </div>
+      )
+    },
   ],
 }
 

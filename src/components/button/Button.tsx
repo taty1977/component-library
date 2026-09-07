@@ -7,6 +7,7 @@ import type { ThemeType } from '../../styles/theme'
 export type ButtonSize = ControlSize
 export type ButtonVariant = 'primary' | 'secondary'
 export type ButtonWidth = ControlWidth
+export type ButtonShape = 'rectangle' | 'pill'
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   className?: string
@@ -15,20 +16,24 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   size?: ButtonSize
   width?: ButtonWidth
   variant?: ButtonVariant
+  outline?: boolean
+  shape?: ButtonShape
 }
 
 const variantStyles = {
   primary: {
-    background: 'activeBorder',
-    border: 'activeBorder',
+    background: 'primary',
+    border: 'primary',
     color: 'surface',
-    hoverBackground: 'activeBorder',
+    hoverBackground: 'primaryHover',
+    hoverBorder: 'primaryHover',
   },
   secondary: {
-    background: 'surface',
-    border: 'border',
-    color: 'heading',
-    hoverBackground: 'surfaceAlt',
+    background: 'secondary',
+    border: 'secondary',
+    color: 'surface',
+    hoverBackground: 'secondaryHover',
+    hoverBorder: 'secondaryHover',
   },
 } as const
 
@@ -36,6 +41,40 @@ interface StyledButtonProps {
   $size: ButtonSize
   $variant: ButtonVariant
   $width?: ButtonWidth
+  $shape?: ButtonShape
+  $outline?: boolean
+}
+
+interface ButtonAppearance {
+  background: string
+  border: string
+  color: string
+  hoverBackground: string
+  hoverBorder: string
+  hoverColor: string
+}
+
+const getButtonAppearance = (theme: ThemeType, variant: ButtonVariant, outline = false): ButtonAppearance => {
+  const styles = variantStyles[variant]
+  const baseAppearance = {
+    background: theme.colors[styles.background],
+    border: theme.colors[styles.border],
+    color: theme.colors[styles.color],
+    hoverBackground: theme.colors[styles.hoverBackground],
+    hoverBorder: theme.colors[styles.hoverBorder],
+    hoverColor: theme.colors[styles.color],
+  }
+
+  if (!outline) return baseAppearance
+
+  return {
+    background: theme.colors.surface,
+    border: theme.colors[variant],
+    color: theme.colors[variant],
+    hoverBackground: theme.colors[`${variant}Hover`],
+    hoverBorder: theme.colors[`${variant}Hover`],
+    hoverColor: theme.colors.surface,
+  }
 }
 
 const getButtonWidth = (theme: ThemeType, width: ButtonWidth) => {
@@ -51,11 +90,13 @@ const getButtonSizeStyle = (theme: ThemeType, size: ButtonSize) => {
   const sizeStyle: {
     padding: keyof ThemeType['spaces']
     fontSize?: keyof ThemeType['fontSizes']
+    fontWeight?: keyof ThemeType['fontWeights']
     minHeight?: keyof ThemeType['sizes']
   } = controlSizeStyles[size]
 
   return {
     fontSize: sizeStyle.fontSize ? theme.fontSizes[sizeStyle.fontSize] : 'inherit',
+    fontWeight: sizeStyle.fontWeight ? theme.fontWeights[sizeStyle.fontWeight] : theme.fontWeights.semibold,
     minHeight: sizeStyle.minHeight ? theme.sizes[sizeStyle.minHeight] : 'auto',
     padding: `${theme.spaces[sizeStyle.padding]} ${theme.spaces.lg}`,
   }
@@ -70,15 +111,18 @@ const StyledButton = styled.button<StyledButtonProps>`
   width: ${({ theme, $width }) => getButtonWidth(theme, $width ?? 'default')};
   min-height: ${({ theme, $size }) => getButtonSizeStyle(theme, $size).minHeight};
   padding: ${({ theme, $size }) => getButtonSizeStyle(theme, $size).padding};
-  border: 1px solid ${({ theme, $variant }) => theme.colors[variantStyles[$variant].border]};
-  border-radius: ${({ theme }) => theme.sizes.sz_075};
-  background-color: ${({ theme, $variant }) => theme.colors[variantStyles[$variant].background]};
+  border: ${({ theme, $variant, $outline }) => {
+    const appearance = getButtonAppearance(theme, $variant, $outline)
+    return `2px solid ${appearance.border}`
+  }};
+  border-radius: ${({ $shape }) => ($shape === 'pill' ? '9999px' : '0.5rem')};
+  background-color: ${({ theme, $variant, $outline }) => getButtonAppearance(theme, $variant, $outline).background};
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
-  color: ${({ theme, $variant }) => theme.colors[variantStyles[$variant].color]};
+  color: ${({ theme, $variant, $outline }) => getButtonAppearance(theme, $variant, $outline).color};
   cursor: pointer;
   font-family: ${({ theme }) => theme.fontFamily};
   font-size: ${({ theme, $size }) => getButtonSizeStyle(theme, $size).fontSize};
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  font-weight: ${({ theme, $size }) => getButtonSizeStyle(theme, $size).fontWeight ?? theme.fontWeights.medium};
   line-height: 1.4;
   transform: translateY(0);
   transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.2s ease, transform 0.15s ease;
@@ -86,8 +130,10 @@ const StyledButton = styled.button<StyledButtonProps>`
   white-space: nowrap;
 
   &:hover:not(:disabled) {
-    border-color: ${({ theme }) => theme.colors.activeBorder};
-    background-color: ${({ theme, $variant }) => theme.colors[variantStyles[$variant].hoverBackground]};
+    background-color: ${({ theme, $variant, $outline }) =>
+      getButtonAppearance(theme, $variant, $outline).hoverBackground};
+    border-color: ${({ theme, $variant, $outline }) => getButtonAppearance(theme, $variant, $outline).hoverBorder};
+    color: ${({ theme, $variant, $outline }) => getButtonAppearance(theme, $variant, $outline).hoverColor};
     box-shadow: ${({ theme }) => theme.boxShadow.bs_03};
     transform: translateY(-1px);
   }
@@ -99,8 +145,8 @@ const StyledButton = styled.button<StyledButtonProps>`
 
   &:focus-visible {
     outline: none;
-    border-color: ${({ theme }) => theme.colors.focusBorder};
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.focusRing}, ${({ theme }) => theme.boxShadow.bs_01};
+    border-color: ${({ theme, $variant }) => theme.colors[$variant]};
+    box-shadow: 0 0 0 3px ${({ theme, $variant }) => theme.colors[$variant]}, ${({ theme }) => theme.boxShadow.bs_01};
   }
 
   &:disabled {
@@ -126,6 +172,8 @@ const Button: React.FC<ButtonProps> = ({
   size = 'default',
   width = 'default',
   variant = 'primary',
+  outline = false,
+  shape = 'rectangle',
   children,
   ...props
 }) => (
@@ -134,9 +182,13 @@ const Button: React.FC<ButtonProps> = ({
     $size={size}
     $variant={variant}
     $width={width}
+    $shape={shape}
+    $outline={outline}
     data-size={size}
     data-variant={variant}
     data-width={width}
+    data-shape={shape}
+    data-outline={outline}
     {...props}
   >
     {iconLeft && <Icon aria-hidden='true'>{iconLeft}</Icon>}

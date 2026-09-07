@@ -1,16 +1,25 @@
-import React from 'react';
-import { Bars3Icon, PlusIcon } from '@heroicons/react/24/solid';
-import { brandTheme } from '../../../styles';
-import { Accordion } from '../Accordion';
+import React from 'react'
+import { Bars3Icon, PlusIcon } from '@heroicons/react/24/solid'
+import { brandTheme } from '../../../styles'
+import { Accordion } from '../Accordion'
 
 const themeStyles = {
   Brand: brandTheme,
-};
+}
 
 export default {
   component: Accordion,
   title: 'Components/Accordion',
   tags: ['autodocs'],
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component:
+          'An accessible accordion with a neutral default style and primary or secondary color variants. Use custom collapsed and expanded icons when needed.',
+      },
+    },
+  },
   argTypes: {
     allowMultiple: {
       control: { type: 'inline-radio' },
@@ -27,9 +36,12 @@ export default {
     },
     variant: {
       control: 'select',
-      options: ['default', 'leftIcon'],
-      description: 'Choose the default or left icon header layout.',
-      table: { category: 'Appearance' },
+      options: ['default', 'primary', 'secondary'],
+      description: 'Choose the accordion color treatment.',
+      table: {
+        category: 'Appearance',
+        defaultValue: { summary: 'default' },
+      },
     },
     collapsedIcon: { table: { disable: true } },
     expandedIcon: { table: { disable: true } },
@@ -37,36 +49,29 @@ export default {
   },
   decorators: [
     (Story, context) => {
-      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand;
+      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand
 
       return (
-      <div
-        style={{
-          backgroundColor: activeTheme.colors.surface,
-          color: activeTheme.colors.text,
-          border: `1px solid ${activeTheme.colors.border}`,
-          padding: '16px',
-        }}
-      >
-        <Story />
-      </div>
-      );
+        <div
+          style={{
+            backgroundColor: activeTheme.colors.surface,
+            color: activeTheme.colors.text,
+            border: `1px solid ${activeTheme.colors.border}`,
+            padding: '16px',
+          }}
+        >
+          <Story />
+        </div>
+      )
     },
   ],
-  parameters: {
-    docs: {
-      description: {
-        component: 'An accessible accordion component. Use `allowMultiple` to allow multiple panels open.',
-      },
-    },
-  },
-};
+}
 
 const defaultItems = [
   { id: '1', title: 'Accordion Item 1', content: 'Content for the first accordion item' },
   { id: '2', title: 'Accordion Item 2', content: 'Content for the second accordion item' },
   { id: '3', title: 'Accordion Item 3', content: 'Content for the third accordion item' },
-];
+]
 
 export const Default = {
   args: {
@@ -74,34 +79,51 @@ export const Default = {
     allowMultiple: false,
     variant: 'default',
   },
-};
+}
 
-export const MultiOpen = {
+export const Primary = {
   args: {
     ...Default.args,
-    allowMultiple: true,
+    variant: 'primary',
+  },
+}
+
+export const Secondary = {
+  args: {
+    ...Default.args,
+    variant: 'secondary',
+  },
+}
+
+const customIconArgs = {
+  collapsedIcon: <PlusIcon width='1em' height='1em' aria-hidden='true' />,
+  expandedIcon: <Bars3Icon width='1em' height='1em' aria-hidden='true' />,
+}
+
+export const DefaultWithCustomIcons = {
+  args: {
+    ...Default.args,
+    ...customIconArgs,
   },
   parameters: {
     docs: {
       description: {
-        story: 'Multiple panels can remain open at the same time.',
+        story: 'The default variant with custom icons for collapsed and expanded states.',
       },
     },
   },
-};
+}
 
-export const ReverseHeader = {
+export const PrimaryWithCustomIcons = {
   args: {
-    ...Default.args,
-    variant: 'leftIcon',
+    ...Primary.args,
+    ...customIconArgs,
   },
-};
+}
 
-export const WithCustomIcons = {
+export const SecondaryWithCustomIcons = {
   args: {
-    ...Default.args,
-    collapsedIcon: <PlusIcon width="1em" height="1em" aria-hidden="true" />,
-    expandedIcon: <Bars3Icon width="1em" height="1em" aria-hidden="true" />,
+    ...Secondary.args,
+    ...customIconArgs,
   },
-};
-
+}

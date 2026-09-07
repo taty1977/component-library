@@ -139,7 +139,7 @@ const Badge = styled.span`
   position: absolute;
   top: ${({ theme }) => theme.spaces.md};
   left: ${({ theme }) => theme.spaces.md};
-  background-color: ${({ theme }) => theme.colors.primary};
+  background-color: ${({ theme }) => theme.colors.heartActive};
   color: ${({ theme }) => theme.colors.surface};
   font-size: ${({ theme }) => theme.fontSizes.xs};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};

@@ -115,10 +115,7 @@ const ChartWrapper = styled.div<{ $height: number | string }>`
   width: 100%;
   height: ${({ $height }) => (typeof $height === 'number' ? `${$height}px` : $height)};
   min-height: ${({ theme }) => theme.sizes.sz_1200};
-
-  & .recharts-surface {
-    background-color: ${({ theme }) => theme.colors.surface};
-  }
+  background-color: ${({ theme }) => theme.colors.surface};
 
   & .recharts-default-legend,
   & .recharts-legend-wrapper,
@@ -187,7 +184,7 @@ export const Chart: React.FC<ChartProps> = ({
       return [
         theme.colors.primary,
         theme.colors.tertiary,
-        theme.colors.quaternary,
+        theme.colors.secondary,
         theme.colors.heading,
         theme.colors.icon,
         theme.colors.danger,
@@ -208,7 +205,7 @@ export const Chart: React.FC<ChartProps> = ({
   const { gridColor, textColor, customTooltipStyle, tooltipItemStyle, tooltipLabelStyle, axisTickStyle, legendStyle } =
     useMemo(() => {
       const grid = customGridColor || theme?.colors?.border
-      const text = customTextColor || theme?.colors?.text || theme?.colors?.heading || '#123b4a'
+      const text = customTextColor || theme?.colors?.text || theme?.colors?.heading
       const bg = customTooltipBgColor || theme?.colors?.surface
       const border = customTooltipBorderColor || theme?.colors?.border
       const fontFamily = theme?.fontFamily
@@ -402,7 +399,7 @@ export const Chart: React.FC<ChartProps> = ({
           </tbody>
         </table>
       </VisuallyHidden>
-      <ChartWrapper $height={height}>
+      <ChartWrapper $height={height} role='img' aria-label={`${title || ariaLabel || 'Chart'} visualization`}>
         <ResponsiveContainer width='100%' height='100%'>
           {renderChartContent()}
         </ResponsiveContainer>

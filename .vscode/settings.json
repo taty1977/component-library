@@ -9,5 +9,11 @@
   },
   "[javascriptreact]": {
     "editor.defaultFormatter": "numso.prettier-standard-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "numso.prettier-standard-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
   }
 }
