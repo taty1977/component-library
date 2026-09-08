@@ -1,9 +1,14 @@
 import React, { useId } from 'react'
 import styled from 'styled-components'
+import type { ThemeType } from '../../styles/theme'
+
+export type TextareaVariant = 'primary' | 'secondary'
 
 export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   /** Visible label associated with the textarea. */
   label?: string
+  /** Class name applied to the outer field container. */
+  className?: string
   /** Number of visible text rows. */
   rows?: number
   /** Additional element IDs announced with the field. */
@@ -14,6 +19,8 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
   onChange?: React.ChangeEventHandler<HTMLTextAreaElement>
   /** Validation message displayed below the textarea. */
   error?: string
+  /** Theme color treatment for the focus state. */
+  variant?: TextareaVariant
 }
 
 const Field = styled.div`
@@ -25,25 +32,33 @@ const Field = styled.div`
 const Label = styled.label`
   display: block;
   margin-bottom: ${({ theme }) => theme.spaces.sm};
-  color: ${({ theme }) => theme.colors.heading};
+  color: ${({ theme }) => theme.colors.title};
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.medium};
 `
 
 const RequiredIndicator = styled.span`
   margin-left: ${({ theme }) => theme.spaces.xs};
-  color: ${({ theme }) => theme.colors.danger};
+  color: ${({ theme }) => theme.actionColors.danger};
 `
 
-const StyledTextArea = styled.textarea<{ $hasError: boolean }>`
+const getVariantAppearance = (theme: ThemeType, variant: TextareaVariant) => {
+  if (variant === 'secondary') {
+    return { color: theme.colors.secondary.base, focusBorder: theme.colors.secondary.focusBorder }
+  }
+
+  return { color: theme.colors.primary.base, focusBorder: theme.colors.primary.focusBorder }
+}
+
+const StyledTextArea = styled.textarea<{ $hasError: boolean; $variant: TextareaVariant }>`
   width: 100%;
   min-height: ${({ theme }) => theme.sizes.sz_200};
   box-sizing: border-box;
   padding: ${({ theme }) => `${theme.spaces.md} ${theme.spaces.lg}`};
-  border: 1px solid ${({ theme, $hasError }) => ($hasError ? theme.colors.danger : theme.colors.border)};
+  border: 1px solid ${({ theme, $hasError }) => ($hasError ? theme.actionColors.danger : theme.colors.border)};
   border-radius: ${({ theme }) => theme.sizes.sz_075};
   background-color: ${({ theme }) => theme.colors.surface};
-  color: ${({ theme }) => theme.colors.heading};
+  color: ${({ theme }) => theme.colors.title};
   font-family: ${({ theme }) => theme.fontFamily};
   font-size: ${({ theme }) => theme.fontSizes.md};
   font-weight: ${({ theme }) => theme.fontWeights.normal};
@@ -62,8 +77,12 @@ const StyledTextArea = styled.textarea<{ $hasError: boolean }>`
   }
 
   &:focus {
-    border-color: ${({ theme }) => theme.colors.activeBorder};
-    box-shadow: ${({ theme }) => theme.boxShadow.bs_04};
+    border-color: ${({ theme, $hasError, $variant }) =>
+      $hasError ? theme.actionColors.danger : getVariantAppearance(theme, $variant).color};
+    box-shadow: ${({ theme, $hasError, $variant }) =>
+      $hasError
+        ? `0 0 0 3px ${theme.actionColors.danger}33`
+        : `0 0 0 3px ${getVariantAppearance(theme, $variant).color}33`};
     background-color: ${({ theme }) => theme.colors.surface};
   }
 
@@ -75,18 +94,26 @@ const StyledTextArea = styled.textarea<{ $hasError: boolean }>`
 
 const ErrorMessage = styled.p`
   margin: ${({ theme }) => `${theme.spaces.sm} 0 0`};
-  color: ${({ theme }) => theme.colors.danger};
+  color: ${({ theme }) => theme.actionColors.danger};
   font-size: ${({ theme }) => theme.fontSizes.sm};
 `
 
-const Textarea: React.FC<TextareaProps> = ({ 'aria-describedby': ariaDescribedBy, error, id, label, ...props }) => {
+const Textarea: React.FC<TextareaProps> = ({
+  className,
+  'aria-describedby': ariaDescribedBy,
+  error,
+  id,
+  label,
+  variant = 'primary',
+  ...props
+}) => {
   const generatedId = useId()
   const textAreaId = id ?? generatedId
   const errorId = `${textAreaId}-error`
   const describedBy = [ariaDescribedBy, error ? errorId : undefined].filter(Boolean).join(' ') || undefined
 
   return (
-    <Field>
+    <Field className={className}>
       {label ? (
         <Label htmlFor={textAreaId}>
           {label}
@@ -99,6 +126,7 @@ const Textarea: React.FC<TextareaProps> = ({ 'aria-describedby': ariaDescribedBy
         aria-describedby={describedBy}
         aria-invalid={error ? true : undefined}
         $hasError={Boolean(error)}
+        $variant={variant}
       />
       {error ? (
         <ErrorMessage id={errorId} aria-live='polite' role='alert'>

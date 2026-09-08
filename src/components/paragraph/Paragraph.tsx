@@ -5,15 +5,15 @@ import type { ThemeType } from '../../styles/theme'
 export type ParagraphSize = keyof ThemeType['fontSizes']
 export type ParagraphWeight = keyof ThemeType['fontWeights']
 export type ParagraphFamily = keyof ThemeType['fontFamilies']
-export type ParagraphColor = keyof ThemeType['actionColors']
-export type ParagraphTextDecoration = keyof ThemeType['textDecorations']
+export type ParagraphColor = 'text' | keyof ThemeType['actionColors']
+export type ParagraphTextTransform = keyof ThemeType['textTransforms']
 
 export interface ParagraphProps extends React.HTMLAttributes<HTMLParagraphElement> {
   size?: ParagraphSize
   weight?: ParagraphWeight
   family?: ParagraphFamily
   color?: ParagraphColor
-  textDecoration?: ParagraphTextDecoration
+  textTransform?: ParagraphTextTransform
 }
 
 interface StyledParagraphProps {
@@ -21,25 +21,25 @@ interface StyledParagraphProps {
   $weight: ParagraphWeight
   $family: ParagraphFamily
   $color: ParagraphColor
-  $textDecoration: ParagraphTextDecoration
+  $textTransform: ParagraphTextTransform
 }
 
 const StyledParagraph = styled.p<StyledParagraphProps>`
   margin: 0;
-  color: ${({ $color, theme }) => theme.actionColors[$color]};
+  color: ${({ $color, theme }) => ($color === 'text' ? theme.colors.text : theme.actionColors[$color])};
   font-family: ${({ $family, theme }) => theme.fontFamilies[$family]};
   font-size: ${({ $size, theme }) => theme.fontSizes[$size]};
   font-weight: ${({ $weight, theme }) => theme.fontWeights[$weight]};
   line-height: 1.6;
-  text-decoration: ${({ $textDecoration, theme }) => theme.textDecorations[$textDecoration]};
+  text-transform: ${({ $textTransform, theme }) => theme.textTransforms[$textTransform]};
 `
 
 const Paragraph: React.FC<ParagraphProps> = ({
   size = 'md',
   weight = 'normal',
-  family = 'paragraph',
-  color = 'Primary',
-  textDecoration = 'none',
+  family = 'openSans',
+  color = 'text',
+  textTransform = 'none',
   children,
   ...props
 }) => (
@@ -48,7 +48,7 @@ const Paragraph: React.FC<ParagraphProps> = ({
     $weight={weight}
     $family={family}
     $color={color}
-    $textDecoration={textDecoration}
+    $textTransform={textTransform}
     {...props}
   >
     {children}

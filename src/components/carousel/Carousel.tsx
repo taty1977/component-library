@@ -2,6 +2,7 @@ import React, { useEffect, useId, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon, ChevronUpIcon, HeartIcon } from '@heroicons/react/24/solid'
 import type { Breakpoint } from '../../styles'
+import type { ThemeType } from '../../styles/theme'
 import Heading from '../heading/Heading'
 
 export interface CarouselImageItem {
@@ -13,10 +14,14 @@ export interface CarouselImageItem {
   likeButton?: boolean
 }
 
+export type CarouselVariant = 'primary' | 'secondary'
+
 export interface CarouselProps {
   images: CarouselImageItem[]
+  className?: string
   likeButton?: boolean
   breakpoint?: Breakpoint
+  variant?: CarouselVariant
   initialIndex?: number
   onImageChange?: (index: number, image: CarouselImageItem) => void
   showThumbnails?: boolean
@@ -37,6 +42,25 @@ const getAccessibleAlt = (image: CarouselImageItem, index: number) => {
 // The source fallback keeps image state stable when an optional id is absent.
 const getImageKey = (image: CarouselImageItem) => image.id || image.src
 
+// Keep every active carousel treatment aligned with the selected color variant.
+const getVariantAppearance = (theme: ThemeType, variant: CarouselVariant) => {
+  if (variant === 'secondary') {
+    return {
+      color: theme.colors.secondary.base,
+      hoverColor: theme.colors.secondary.hover,
+      focusBorder: theme.colors.secondary.focusBorder,
+      surface: theme.colors.secondary.surface,
+    }
+  }
+
+  return {
+    color: theme.colors.primary.base,
+    hoverColor: theme.colors.primary.hover,
+    focusBorder: theme.colors.primary.focusBorder,
+    surface: theme.colors.primary.surface,
+  }
+}
+
 const GalleryRoot = styled.section<{ $breakpoint: Breakpoint; $thumbnailsPosition: ThumbnailPosition }>`
   /* Breakpoint-specific values are exposed as CSS variables for nested gallery layouts. */
   --carousel-thumb-size: ${({ theme }) => theme.sizes.sz_450};
@@ -44,7 +68,6 @@ const GalleryRoot = styled.section<{ $breakpoint: Breakpoint; $thumbnailsPositio
   width: 100%;
   box-sizing: border-box;
   min-width: 0;
-  max-width: ${({ theme }) => theme.carouselImageGallery.maxWidth};
   font-family: ${({ theme }) => theme.fontFamily};
   background-color: ${({ theme }) => theme.colors.surface};
   border: 1px solid ${({ theme }) => theme.colors.border};
@@ -124,7 +147,7 @@ const GalleryBody = styled.div<{
 
 const GalleryInlineBody = styled(GalleryBody)``
 
-const MainImage = styled.img<{ $clickable?: boolean }>`
+const MainImage = styled.img<{ $clickable?: boolean; $variant: CarouselVariant }>`
   display: block;
   width: 100%;
   max-width: 100%;
@@ -140,24 +163,24 @@ const MainImage = styled.img<{ $clickable?: boolean }>`
   cursor: ${({ $clickable }) => ($clickable ? 'zoom-in' : 'default')};
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline: 2px solid ${({ theme, $variant }) => getVariantAppearance(theme, $variant).focusBorder};
     outline-offset: 2px;
   }
 `
 
-const Badge = styled.span`
+const Badge = styled.span<{ $variant: CarouselVariant }>`
   position: absolute;
   top: ${({ theme }) => theme.spaces.md};
   left: ${({ theme }) => theme.spaces.md};
-  background-color: ${({ theme }) => theme.colors.secondary};
+  background-color: ${({ theme, $variant }) => getVariantAppearance(theme, $variant).color};
   color: ${({ theme }) => theme.colors.surface};
   font-size: ${({ theme }) => theme.fontSizes.xs};
   font-weight: ${({ theme }) => theme.fontWeights.semiBold};
   padding: ${({ theme }) => `${theme.spaces.xs} ${theme.spaces.sm}`};
-  border-radius: ${({ theme }) => theme.carouselImageGallery.borderRadius};
+  border-radius: ${({ theme }) => theme.sizes.sz_075};
 `
 
-const LikeButton = styled.button<{ $active: boolean }>`
+const LikeButton = styled.button<{ $active: boolean; $variant: CarouselVariant }>`
   position: absolute;
   top: ${({ theme }) => theme.spaces.md};
   right: ${({ theme }) => theme.spaces.md};
@@ -166,7 +189,7 @@ const LikeButton = styled.button<{ $active: boolean }>`
   border: none;
   border-radius: 999px;
   background-color: ${({ theme }) => theme.colors.surface};
-  color: ${({ theme, $active }) => ($active ? theme.colors.secondary : theme.colors.icon)};
+  color: ${({ theme, $active, $variant }) => ($active ? theme.actionColors.danger : theme.colors.nature.base)};
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -174,16 +197,17 @@ const LikeButton = styled.button<{ $active: boolean }>`
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline: 2px solid ${({ theme, $variant }) => getVariantAppearance(theme, $variant).focusBorder};
     outline-offset: 2px;
   }
 
   &:hover {
-    background-color: ${({ theme }) => theme.colors.surfaceAlt};
+    color: ${({ theme, $variant }) => getVariantAppearance(theme, $variant).hoverColor};
+    background-color: ${({ theme, $variant }) => getVariantAppearance(theme, $variant).surface};
   }
 `
 
-const NavButton = styled.button<{ $side: 'left' | 'right' }>`
+const NavButton = styled.button<{ $side: 'left' | 'right'; $variant: CarouselVariant }>`
   position: absolute;
   ${({ $side, theme }) => ($side === 'left' ? `left: ${theme.spaces.md};` : `right: ${theme.spaces.md};`)}
   top: 50%;
@@ -191,9 +215,9 @@ const NavButton = styled.button<{ $side: 'left' | 'right' }>`
   width: var(--carousel-control-size);
   height: var(--carousel-control-size);
   border: none;
-  border-radius: ${({ theme }) => theme.carouselImageGallery.borderRadius};
+  border-radius: ${({ theme }) => theme.sizes.sz_075};
   background-color: ${({ theme }) => theme.colors.surface};
-  color: ${({ theme }) => theme.colors.icon};
+  color: ${({ theme, $variant }) => getVariantAppearance(theme, $variant).color};
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -201,7 +225,7 @@ const NavButton = styled.button<{ $side: 'left' | 'right' }>`
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline: 2px solid ${({ theme, $variant }) => getVariantAppearance(theme, $variant).focusBorder};
     outline-offset: 2px;
   }
 
@@ -226,17 +250,18 @@ const Indicators = styled.div`
   gap: ${({ theme }) => theme.spaces.sm};
 `
 
-const DotButton = styled.button<{ $active: boolean }>`
+const DotButton = styled.button<{ $active: boolean; $variant: CarouselVariant }>`
   width: ${({ theme }) => theme.sizes.sz_0625};
   height: ${({ theme }) => theme.sizes.sz_0625};
   border-radius: ${({ theme }) => theme.carouselImageGallery.borderRadius};
   border: 1px solid ${({ theme }) => theme.colors.border};
   padding: 0;
   cursor: pointer;
-  background-color: ${({ theme, $active }) => ($active ? theme.colors.primary : theme.colors.surface)};
+  background-color: ${({ theme, $active, $variant }) =>
+    $active ? getVariantAppearance(theme, $variant).color : theme.colors.surface};
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline: 2px solid ${({ theme, $variant }) => getVariantAppearance(theme, $variant).focusBorder};
     outline-offset: 2px;
   }
 `
@@ -279,23 +304,28 @@ const ThumbnailsRail = styled.div<{ $position: ThumbnailPosition; $breakpoint: B
     `}
 `
 
-const ThumbNavButton = styled.button`
+const ThumbNavButton = styled.button<{ $variant: CarouselVariant }>`
   width: ${({ theme }) => theme.sizes.sz_200};
   height: ${({ theme }) => theme.sizes.sz_200};
   justify-self: center;
   align-self: center;
   border: none;
-  border-radius: ${({ theme }) => theme.carouselImageGallery.borderRadius};
+  border-radius: ${({ theme }) => theme.sizes.sz_075};
   background-color: ${({ theme }) => theme.colors.surface};
-  color: ${({ theme }) => theme.colors.icon};
+  color: ${({ theme, $variant }) => getVariantAppearance(theme, $variant).color};
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline: 2px solid ${({ theme, $variant }) => getVariantAppearance(theme, $variant).focusBorder};
     outline-offset: 2px;
+  }
+
+  &:hover:not(:disabled) {
+    color: ${({ theme, $variant }) => getVariantAppearance(theme, $variant).hoverColor};
+    background-color: ${({ theme, $variant }) => getVariantAppearance(theme, $variant).surface};
   }
 
   &:disabled {
@@ -304,21 +334,23 @@ const ThumbNavButton = styled.button`
   }
 `
 
-const ThumbButton = styled.button<{ $active: boolean }>`
+const ThumbButton = styled.button<{ $active: boolean; $variant: CarouselVariant }>`
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
   border-radius: ${({ theme }) => theme.sizes.sz_050};
-  border: 1px solid ${({ theme, $active }) => ($active ? theme.colors.activeBorder : theme.colors.border)};
+  border: 1px solid
+    ${({ theme, $active, $variant }) => ($active ? getVariantAppearance(theme, $variant).color : theme.colors.border)};
   background-color: ${({ theme }) => theme.colors.surfaceAlt};
   overflow: hidden;
   padding: 0;
   cursor: pointer;
   line-height: 0;
-  box-shadow: ${({ theme, $active }) => ($active ? `0 0 0 1px ${theme.colors.activeRing}` : 'none')};
+  box-shadow: ${({ theme, $active, $variant }) =>
+    $active ? `0 0 0 1px ${getVariantAppearance(theme, $variant).color}40` : 'none'};
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline: 2px solid ${({ theme, $variant }) => getVariantAppearance(theme, $variant).focusBorder};
     outline-offset: 2px;
   }
 `
@@ -400,9 +432,9 @@ const GalleryHeader = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 `
 
-const CloseButton = styled.button`
+const CloseButton = styled.button<{ $variant: CarouselVariant }>`
   border: none;
-  border-radius: ${({ theme }) => theme.carouselImageGallery.borderRadius};
+  border-radius: ${({ theme }) => theme.sizes.sz_075};
   background-color: ${({ theme }) => theme.colors.surface};
   color: ${({ theme }) => theme.colors.text};
   font-size: ${({ theme }) => theme.fontSizes.sm};
@@ -410,7 +442,7 @@ const CloseButton = styled.button`
   cursor: pointer;
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline: 2px solid ${({ theme, $variant }) => getVariantAppearance(theme, $variant).focusBorder};
     outline-offset: 2px;
   }
 `
@@ -431,7 +463,9 @@ const GalleryDialogContent = styled.div<{ $breakpoint: Breakpoint }>`
 
 export const Carousel: React.FC<CarouselProps> = ({
   images,
+  className,
   likeButton = true,
+  variant = 'primary',
   initialIndex = 0,
   onImageChange,
   showThumbnails = true,
@@ -481,7 +515,7 @@ export const Carousel: React.FC<CarouselProps> = ({
   }, [isGalleryOpen])
 
   if (safeImages.length === 0) {
-    return <EmptyState>No product images available.</EmptyState>
+    return <EmptyState className={className}>No product images available.</EmptyState>
   }
 
   const activeImage = safeImages[activeIndex]
@@ -543,6 +577,7 @@ export const Carousel: React.FC<CarouselProps> = ({
       <LikeButton
         type='button'
         $active={isActiveImageLiked}
+        $variant={variant}
         aria-label={isActiveImageLiked ? 'Remove from favorites' : 'Add to favorites'}
         aria-pressed={isActiveImageLiked}
         onClick={() => toggleLike(activeImage)}
@@ -554,10 +589,22 @@ export const Carousel: React.FC<CarouselProps> = ({
 
   const renderImageNavigation = () => (
     <>
-      <NavButton type='button' $side='left' aria-label='Previous image' onClick={() => selectIndex(activeIndex - 1)}>
+      <NavButton
+        type='button'
+        $side='left'
+        $variant={variant}
+        aria-label='Previous image'
+        onClick={() => selectIndex(activeIndex - 1)}
+      >
         <ChevronLeftIcon width='1em' height='1em' aria-hidden='true' />
       </NavButton>
-      <NavButton type='button' $side='right' aria-label='Next image' onClick={() => selectIndex(activeIndex + 1)}>
+      <NavButton
+        type='button'
+        $side='right'
+        $variant={variant}
+        aria-label='Next image'
+        onClick={() => selectIndex(activeIndex + 1)}
+      >
         <ChevronRightIcon width='1em' height='1em' aria-hidden='true' />
       </NavButton>
     </>
@@ -589,6 +636,7 @@ export const Carousel: React.FC<CarouselProps> = ({
               key={`thumb-${getImageKey(image)}-${index}`}
               type='button'
               $active={!isOverflowThumb && activeIndex === index}
+              $variant={variant}
               aria-label={
                 isOverflowThumb
                   ? openOnClick
@@ -625,6 +673,7 @@ export const Carousel: React.FC<CarouselProps> = ({
       <ThumbnailsRail $position={position} $breakpoint={breakpoint}>
         <ThumbNavButton
           type='button'
+          $variant={variant}
           aria-label='Previous thumbnails'
           disabled={!canThumbPrev}
           onClick={() => setThumbStartIndex(current => Math.max(0, current - 1))}
@@ -649,6 +698,7 @@ export const Carousel: React.FC<CarouselProps> = ({
                 key={`thumb-${getImageKey(image)}-${actualIndex}`}
                 type='button'
                 $active={activeIndex === actualIndex}
+                $variant={variant}
                 aria-label={`Select ${getAccessibleAlt(image, actualIndex)}`}
                 onClick={() => selectIndex(actualIndex)}
               >
@@ -660,6 +710,7 @@ export const Carousel: React.FC<CarouselProps> = ({
 
         <ThumbNavButton
           type='button'
+          $variant={variant}
           aria-label='Next thumbnails'
           disabled={!canThumbNext}
           onClick={() => setThumbStartIndex(current => Math.min(maxThumbStart, current + 1))}
@@ -677,7 +728,12 @@ export const Carousel: React.FC<CarouselProps> = ({
   const showFooter = showIndicators || (showThumbnails && thumbnailsPosition === 'bottom')
 
   return (
-    <GalleryRoot aria-label={ariaLabel} $breakpoint={breakpoint} $thumbnailsPosition={thumbnailsPosition}>
+    <GalleryRoot
+      className={className}
+      aria-label={ariaLabel}
+      $breakpoint={breakpoint}
+      $thumbnailsPosition={thumbnailsPosition}
+    >
       <GalleryInlineBody
         $showThumbnails={showThumbnails}
         $thumbnailsPosition={thumbnailsPosition}
@@ -686,10 +742,11 @@ export const Carousel: React.FC<CarouselProps> = ({
         {renderInlineThumbnails('left')}
 
         <MainStage>
-          {activeImage.badge ? <Badge>{activeImage.badge}</Badge> : null}
+          {activeImage.badge ? <Badge $variant={variant}>{activeImage.badge}</Badge> : null}
           {renderLikeButton()}
           <MainImage
             $clickable={openOnClick}
+            $variant={variant}
             ref={openOnClick ? galleryTriggerRef : undefined}
             src={activeImage.src}
             alt={getAccessibleAlt(activeImage, activeIndex)}
@@ -719,6 +776,7 @@ export const Carousel: React.FC<CarouselProps> = ({
                   type='button'
                   aria-label={`Go to image ${index + 1}`}
                   $active={activeIndex === index}
+                  $variant={variant}
                   onClick={() => selectIndex(index)}
                 />
               ))}
@@ -746,6 +804,7 @@ export const Carousel: React.FC<CarouselProps> = ({
               <CloseButton
                 ref={closeButtonRef}
                 type='button'
+                $variant={variant}
                 aria-label='Close image gallery'
                 onClick={() => setIsGalleryOpen(false)}
               >
@@ -762,9 +821,13 @@ export const Carousel: React.FC<CarouselProps> = ({
                 {renderGalleryThumbnails('left')}
 
                 <MainStage>
-                  {activeImage.badge ? <Badge>{activeImage.badge}</Badge> : null}
+                  {activeImage.badge ? <Badge $variant={variant}>{activeImage.badge}</Badge> : null}
                   {renderLikeButton()}
-                  <MainImage src={activeImage.src} alt={getAccessibleAlt(activeImage, activeIndex)} />
+                  <MainImage
+                    $variant={variant}
+                    src={activeImage.src}
+                    alt={getAccessibleAlt(activeImage, activeIndex)}
+                  />
                   {renderImageNavigation()}
                 </MainStage>
 

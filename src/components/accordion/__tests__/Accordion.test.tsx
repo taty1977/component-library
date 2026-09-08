@@ -28,7 +28,7 @@ describe('Accordion', () => {
     const button = screen.getByRole('button', { name: /panel one/i })
 
     expect(button).toHaveStyle(`background-color: ${theme.colors.surface}`)
-    expect(button).toHaveStyle(`color: ${theme.colors.heading}`)
+    expect(button).toHaveStyle(`color: ${theme.colors.title}`)
   })
 
   test('supports the primary and secondary variants', () => {
@@ -46,7 +46,7 @@ describe('Accordion', () => {
       </ThemeProvider>,
     )
 
-    expect(screen.getAllByRole('button')[0]).toHaveStyle(`background-color: ${theme.colors.secondary}`)
+    expect(screen.getAllByRole('button')[0]).toHaveStyle(`background-color: ${theme.colors.secondary.base}`)
   })
 
   test('uses custom icons for collapsed and expanded states', async () => {

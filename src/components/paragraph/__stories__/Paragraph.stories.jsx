@@ -9,8 +9,8 @@ const themeStyles = {
 const paragraphSizes = Object.keys(brandTheme.fontSizes)
 const paragraphWeights = Object.keys(brandTheme.fontWeights)
 const paragraphFamilies = Object.keys(brandTheme.fontFamilies)
-const paragraphColors = Object.keys(brandTheme.actionColors)
-const textDecorations = Object.keys(brandTheme.textDecorations)
+const paragraphColors = ['text', ...Object.keys(brandTheme.actionColors)]
+const textTransforms = Object.keys(brandTheme.textTransforms)
 
 const meta = {
   title: 'Typography/Paragraph',
@@ -48,9 +48,9 @@ const meta = {
       'This is a paragraph component. It provides flexible typography for body text with theme-driven styling and independent control over size, weight, and font family.',
     size: 'md',
     weight: 'normal',
-    family: 'paragraph',
-    color: 'Primary',
-    textDecoration: 'none',
+    family: 'openSans',
+    color: 'text',
+    textTransform: 'none',
   },
   argTypes: {
     children: {
@@ -82,10 +82,10 @@ const meta = {
       description: 'Semantic theme color for paragraph text.',
       table: { category: 'Appearance' },
     },
-    textDecoration: {
+    textTransform: {
       control: 'select',
-      options: textDecorations,
-      description: 'Selects the paragraph text decoration.',
+      options: textTransforms,
+      description: 'Selects the paragraph text transform.',
       table: { category: 'Appearance' },
     },
   },

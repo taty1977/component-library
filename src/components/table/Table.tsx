@@ -1,42 +1,43 @@
-import React from 'react';
-import styled from 'styled-components';
-import type { Breakpoint, ThemeType } from '../../styles';
+import React from 'react'
+import styled from 'styled-components'
+import type { Breakpoint, ThemeType } from '../../styles'
 
-export type TableAlign = 'left' | 'center' | 'right';
-export type TableFontWeight = 'normal' | 'semiBold';
-export type TableVariant = 'primary' | 'secondary';
+export type TableAlign = 'left' | 'center' | 'right'
+export type TableFontWeight = 'normal' | 'semiBold'
+export type TableVariant = 'primary' | 'secondary'
 
 export interface TableColumn<T> {
-  key: string;
-  header: React.ReactNode;
-  align?: TableAlign;
-  fontWeight?: TableFontWeight;
-  render?: (row: T, rowIndex: number) => React.ReactNode;
-  sortIcon?: React.ReactNode;
+  key: string
+  header: React.ReactNode
+  align?: TableAlign
+  fontWeight?: TableFontWeight
+  render?: (row: T, rowIndex: number) => React.ReactNode
+  sortIcon?: React.ReactNode
 }
 
 export interface TablePagination {
-  page: number;
-  pageSize: number;
-  total: number;
-  onPageChange: (page: number) => void;
-  pageStatus?: React.ReactNode;
-  previousIcon?: React.ReactNode;
-  nextIcon?: React.ReactNode;
+  page: number
+  pageSize: number
+  total: number
+  onPageChange: (page: number) => void
+  pageStatus?: React.ReactNode
+  previousIcon?: React.ReactNode
+  nextIcon?: React.ReactNode
 }
 
 export interface TableProps<T> extends React.TableHTMLAttributes<HTMLTableElement> {
-  columns: TableColumn<T>[];
-  data: T[];
-  getRowKey?: (row: T, rowIndex: number) => React.Key;
-  pagination?: TablePagination;
-  emptyMessage?: React.ReactNode;
-  variant?: TableVariant;
-  stickyFirstColumn?: boolean;
-  stickyLastColumn?: boolean;
-  showColumnBorders?: boolean;
-  striped?: boolean;
-  breakpoint?: Breakpoint;
+  className?: string
+  columns: TableColumn<T>[]
+  data: T[]
+  getRowKey?: (row: T, rowIndex: number) => React.Key
+  pagination?: TablePagination
+  emptyMessage?: React.ReactNode
+  variant?: TableVariant
+  stickyFirstColumn?: boolean
+  stickyLastColumn?: boolean
+  showColumnBorders?: boolean
+  striped?: boolean
+  breakpoint?: Breakpoint
 }
 
 const Root = styled.div`
@@ -46,17 +47,17 @@ const Root = styled.div`
   background: ${({ theme }) => theme.colors.surface};
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
   font-family: ${({ theme }) => theme.fontFamily};
-`;
+`
 
 // The viewport owns horizontal scrolling and keyboard focus for wide tables.
-const TableViewport = styled.div`
+const TableViewport = styled.div<{ $variant: TableVariant }>`
   overflow-x: auto;
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline: 2px solid ${({ theme, $variant }) => theme.colors[$variant].focusBorder};
     outline-offset: -2px;
   }
-`;
+`
 
 const StyledTable = styled.table`
   width: max-content;
@@ -64,30 +65,31 @@ const StyledTable = styled.table`
   border-collapse: separate;
   border-spacing: 0;
   color: ${({ theme }) => theme.colors.text};
-`;
+`
 
 const getVariantAppearance = (theme: ThemeType, variant: TableVariant) => {
   if (variant === 'secondary') {
-    return { background: theme.colors.secondary, border: theme.colors.secondaryBorder, text: theme.colors.surface };
+    return {
+      background: theme.colors.secondary.base,
+      border: theme.colors.secondary.border,
+      text: theme.colors.surface,
+    }
   }
 
-  return { background: theme.colors.primary, border: theme.colors.primaryBorder, text: theme.colors.surface };
-};
+  return { background: theme.colors.primary.base, border: theme.colors.primary.border, text: theme.colors.surface }
+}
 
 const getVariantHoverColor = (theme: ThemeType, variant: TableVariant) =>
-  variant === 'secondary' ? theme.colors.secondaryHover : theme.colors.primaryHover;
-
-const getBodyHoverColor = (theme: ThemeType, variant: TableVariant) =>
-  variant === 'secondary' ? theme.colors.secondarySurfaceAlt : theme.colors.surfaceAlt;
+  variant === 'secondary' ? theme.colors.secondary.hover : theme.colors.primary.hover
 
 const HeaderCell = styled.th<{
-  $align: TableAlign;
-  $stickyLeft: boolean;
-  $stickyRight: boolean;
-  $variant: TableVariant;
-  $showColumnBorders: boolean;
-  $isFirst: boolean;
-  $isLast: boolean;
+  $align: TableAlign
+  $stickyLeft: boolean
+  $stickyRight: boolean
+  $variant: TableVariant
+  $showColumnBorders: boolean
+  $isFirst: boolean
+  $isLast: boolean
 }>`
   padding: ${({ theme }) => `${theme.spaces.md} ${theme.spaces.lg}`};
   border-bottom: 1px solid ${({ $variant, theme }) => getVariantAppearance(theme, $variant).border};
@@ -105,10 +107,10 @@ const HeaderCell = styled.th<{
   z-index: ${({ $stickyLeft, $stickyRight }) => ($stickyLeft || $stickyRight ? 3 : 'auto')};
   box-shadow: ${({ $stickyLeft, $stickyRight, theme }) =>
     $stickyLeft
-      ? `4px 0 12px -2px ${theme.colors.border}`
+      ? `4px 0 12px -2px ${theme.colors.border}80`
       : $stickyRight
-        ? `-4px 0 12px -2px ${theme.colors.border}`
-        : 'none'};
+      ? `-4px 0 12px -2px ${theme.colors.border}80`
+      : 'none'};
   border-top-left-radius: ${({ $isFirst, theme }) => ($isFirst ? theme.sizes.sz_075 : '0')};
   border-top-right-radius: ${({ $isLast, theme }) => ($isLast ? theme.sizes.sz_075 : '0')};
 
@@ -119,22 +121,22 @@ const HeaderCell = styled.th<{
     gap: ${({ theme }) => theme.spaces.xs};
     width: 100%;
   }
-`;
+`
 
 const BodyCell = styled.td<{
-  $align: TableAlign;
-  $stickyLeft: boolean;
-  $stickyRight: boolean;
-  $variant: TableVariant;
-  $fontWeight: TableFontWeight;
-  $showColumnBorders: boolean;
-  $isFirst: boolean;
-  $isLast: boolean;
-  $isRowHeader: boolean;
-  $isLastRow: boolean;
-  $striped: boolean;
-  $isOddRow: boolean;
-  $roundTop: boolean;
+  $align: TableAlign
+  $stickyLeft: boolean
+  $stickyRight: boolean
+  $variant: TableVariant
+  $fontWeight: TableFontWeight
+  $showColumnBorders: boolean
+  $isFirst: boolean
+  $isLast: boolean
+  $isRowHeader: boolean
+  $isLastRow: boolean
+  $striped: boolean
+  $isOddRow: boolean
+  $roundTop: boolean
 }>`
   padding: ${({ theme }) => `${theme.spaces.md} ${theme.spaces.lg}`};
   border-bottom: 1px solid ${({ theme }) => theme.colors.border};
@@ -144,10 +146,10 @@ const BodyCell = styled.td<{
     $isRowHeader
       ? getVariantAppearance(theme, $variant).background
       : $striped && $isOddRow
-        ? $variant === 'secondary'
-          ? theme.colors.secondarySurfaceAlt
-          : theme.colors.surfaceAlt
-        : theme.colors.surface};
+      ? $variant === 'secondary'
+        ? theme.colors.secondary.surface
+        : theme.colors.surfaceAlt
+      : theme.colors.surface};
   color: ${({ $isRowHeader, $variant, theme }) =>
     $isRowHeader ? getVariantAppearance(theme, $variant).text : theme.colors.text};
   font-size: ${({ theme }) => theme.fontSizes.sm};
@@ -155,55 +157,35 @@ const BodyCell = styled.td<{
     $fontWeight === 'semiBold' ? theme.fontWeights.semiBold : theme.fontWeights.normal};
   text-align: ${({ $align }) => $align};
   vertical-align: middle;
-  transition:
-    background-color 0.15s ease,
-    box-shadow 0.2s ease,
-    transform 0.15s ease,
-    color 0.15s ease;
+  transition: background-color 0.15s ease, box-shadow 0.2s ease, transform 0.15s ease, color 0.15s ease;
   position: ${({ $stickyLeft, $stickyRight }) => ($stickyLeft || $stickyRight ? 'sticky' : 'static')};
   left: ${({ $stickyLeft }) => ($stickyLeft ? '0' : 'auto')};
   right: ${({ $stickyRight }) => ($stickyRight ? '0' : 'auto')};
   z-index: ${({ $stickyLeft, $stickyRight }) => ($stickyLeft || $stickyRight ? 2 : 'auto')};
   box-shadow: ${({ $stickyLeft, $stickyRight, theme }) =>
     $stickyLeft
-      ? `4px 0 12px -2px ${theme.colors.border}`
+      ? `4px 0 12px -2px ${theme.colors.border}80`
       : $stickyRight
-        ? `-4px 0 12px -2px ${theme.colors.border}`
-        : 'none'};
+      ? `-4px 0 12px -2px ${theme.colors.border}80`
+      : 'none'};
   border-top-left-radius: ${({ $roundTop, $isFirst, theme }) => ($roundTop && $isFirst ? theme.sizes.sz_075 : '0')};
   border-top-right-radius: ${({ $roundTop, $isLast, theme }) => ($roundTop && $isLast ? theme.sizes.sz_075 : '0')};
   border-bottom-left-radius: ${({ $isRowHeader, $isLastRow, theme }) =>
     $isRowHeader && $isLastRow ? theme.sizes.sz_075 : '0'};
-`;
+`
 
-// Headerless rows use the first cell as a row header; other cells keep the body hover treatment.
+// Headerless rows use the first cell as a row header.
 const BodyRow = styled.tr<{ $variant: TableVariant }>`
   &:last-child ${BodyCell} {
     border-bottom: 0;
   }
-
-  &:hover {
-    background: ${({ $variant, theme }) => getBodyHoverColor(theme, $variant)};
-
-    ${BodyCell} {
-      background: ${({ $variant, theme }) => `${getBodyHoverColor(theme, $variant)} !important`};
-      color: ${({ theme }) => `${theme.colors.text} !important`};
-
-      &[scope='row'] {
-        background: ${({ $variant, theme }) => `${getVariantHoverColor(theme, $variant)} !important`};
-        color: ${({ theme }) => `${theme.colors.surface} !important`};
-        border-bottom: 0 !important;
-        transform: translateY(-1px);
-      }
-    }
-  }
-`;
+`
 
 const EmptyCell = styled.td`
   padding: ${({ theme }) => `${theme.spaces.xl} ${theme.spaces.lg}`};
   color: ${({ theme }) => theme.colors.text};
   text-align: center;
-`;
+`
 
 const Pagination = styled.nav`
   display: flex;
@@ -212,7 +194,7 @@ const Pagination = styled.nav`
   gap: ${({ theme }) => theme.spaces.sm};
   padding: ${({ theme }) => `${theme.spaces.md} ${theme.spaces.lg}`};
   border-top: 1px solid ${({ theme }) => theme.colors.border};
-`;
+`
 
 const PageButton = styled.button<{ $variant: TableVariant }>`
   display: inline-flex;
@@ -230,10 +212,7 @@ const PageButton = styled.button<{ $variant: TableVariant }>`
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.semiBold};
   transform: translateY(0);
-  transition:
-    background-color 0.15s ease,
-    box-shadow 0.2s ease,
-    transform 0.15s ease;
+  transition: background-color 0.15s ease, box-shadow 0.2s ease, transform 0.15s ease;
   user-select: none;
 
   &:hover:not(:disabled) {
@@ -248,7 +227,7 @@ const PageButton = styled.button<{ $variant: TableVariant }>`
   }
 
   &:focus-visible {
-    outline: 2px solid ${({ theme }) => theme.colors.focusBorder};
+    outline: 2px solid ${({ theme, $variant }) => theme.colors[$variant].focusBorder};
     outline-offset: 2px;
   }
 
@@ -257,7 +236,7 @@ const PageButton = styled.button<{ $variant: TableVariant }>`
     opacity: 0.5;
     transform: none;
   }
-`;
+`
 
 const TableIcon = styled.span`
   display: inline-flex;
@@ -267,37 +246,38 @@ const TableIcon = styled.span`
   height: ${({ theme }) => theme.sizes.sz_100};
   color: currentColor;
   flex-shrink: 0;
-`;
+`
 
 const PageStatus = styled.span`
   color: ${({ theme }) => theme.colors.text};
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.normal};
-`;
+`
 
 const renderSortIcon = (sortIcon: React.ReactNode) => {
-  if (!sortIcon) return null;
+  if (!sortIcon) return null
 
   if (!React.isValidElement<{ onClick?: React.MouseEventHandler<HTMLElement> }>(sortIcon)) {
-    return <TableIcon aria-hidden="true">{sortIcon}</TableIcon>;
+    return <TableIcon aria-hidden='true'>{sortIcon}</TableIcon>
   }
 
-  const iconProps = sortIcon.props;
+  const iconProps = sortIcon.props
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    iconProps.onClick?.(event);
-  };
+    iconProps.onClick?.(event)
+  }
 
   if (typeof iconProps.onClick === 'function') {
-    return React.cloneElement(sortIcon, { onClick: handleClick });
+    return React.cloneElement(sortIcon, { onClick: handleClick })
   }
 
-  return <TableIcon aria-hidden="true">{sortIcon}</TableIcon>;
-};
+  return <TableIcon aria-hidden='true'>{sortIcon}</TableIcon>
+}
 
 const getPageCount = (pagination: TablePagination) =>
-  Math.max(1, Math.ceil(Math.max(0, pagination.total) / Math.max(1, pagination.pageSize)));
+  Math.max(1, Math.ceil(Math.max(0, pagination.total) / Math.max(1, pagination.pageSize)))
 
-function Table<T>({
+function Table<T> ({
+  className,
   columns,
   data,
   getRowKey,
@@ -311,25 +291,25 @@ function Table<T>({
   breakpoint,
   ...tableProps
 }: TableProps<T>) {
-  const pageCount = pagination ? getPageCount(pagination) : 0;
-  const currentPage = pagination ? Math.min(Math.max(pagination.page, 1), pageCount) : 0;
+  const pageCount = pagination ? getPageCount(pagination) : 0
+  const currentPage = pagination ? Math.min(Math.max(pagination.page, 1), pageCount) : 0
   // Mobile tables scroll naturally; larger layouts keep edge columns anchored.
-  const stickyEdgesEnabled = breakpoint !== 'mobile';
+  const stickyEdgesEnabled = breakpoint !== 'mobile'
   // A table without usable column labels has no semantic thead to render.
   const hasHeader = columns.some(
-    (column) => column.header !== null && column.header !== undefined && column.header !== '',
-  );
+    column => column.header !== null && column.header !== undefined && column.header !== '',
+  )
 
   return (
-    <Root>
-      <TableViewport tabIndex={0} role="region" aria-label="Scrollable table">
+    <Root className={className}>
+      <TableViewport $variant={variant} tabIndex={0} role='region' aria-label='Scrollable table'>
         <StyledTable {...tableProps} aria-label={tableProps['aria-label'] ?? 'Data table'}>
           {hasHeader ? (
             <thead>
               <tr>
                 {columns.map((column, columnIndex) => (
                   <HeaderCell
-                    scope="col"
+                    scope='col'
                     key={column.key}
                     $align={column.align ?? 'left'}
                     $variant={variant}
@@ -390,30 +370,30 @@ function Table<T>({
         </StyledTable>
       </TableViewport>
       {pagination ? (
-        <Pagination aria-label="Table pagination">
+        <Pagination aria-label='Table pagination'>
           <PageButton
-            type="button"
+            type='button'
             $variant={variant}
             onClick={() => pagination.onPageChange(currentPage - 1)}
             disabled={currentPage <= 1}
           >
-            {pagination.previousIcon ? <TableIcon aria-hidden="true">{pagination.previousIcon}</TableIcon> : null}
+            {pagination.previousIcon ? <TableIcon aria-hidden='true'>{pagination.previousIcon}</TableIcon> : null}
             <span>Previous</span>
           </PageButton>
-          {pagination.pageStatus ? <PageStatus aria-live="polite">{pagination.pageStatus}</PageStatus> : null}
+          {pagination.pageStatus ? <PageStatus aria-live='polite'>{pagination.pageStatus}</PageStatus> : null}
           <PageButton
-            type="button"
+            type='button'
             $variant={variant}
             onClick={() => pagination.onPageChange(currentPage + 1)}
             disabled={currentPage >= pageCount}
           >
             <span>Next</span>
-            {pagination.nextIcon ? <TableIcon aria-hidden="true">{pagination.nextIcon}</TableIcon> : null}
+            {pagination.nextIcon ? <TableIcon aria-hidden='true'>{pagination.nextIcon}</TableIcon> : null}
           </PageButton>
         </Pagination>
       ) : null}
     </Root>
-  );
+  )
 }
 
-export default Table;
+export default Table

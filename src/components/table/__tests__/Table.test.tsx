@@ -54,7 +54,9 @@ describe('Table', () => {
     expect(screen.getByRole('rowheader', { name: 'Ada Lovelace' })).toHaveStyle(
       `font-weight: ${theme.fontWeights.semiBold}`,
     )
-    expect(screen.getByRole('rowheader', { name: 'Ada Lovelace' })).toHaveStyle(`background: ${theme.colors.primary}`)
+    expect(screen.getByRole('rowheader', { name: 'Ada Lovelace' })).toHaveStyle(
+      `background: ${theme.colors.primary.base}`,
+    )
     expect(screen.getByRole('rowheader', { name: 'Ada Lovelace' })).toHaveStyle(`color: ${theme.colors.surface}`)
     expect(screen.getAllByRole('rowheader', { name: 'Ada Lovelace' })[0]).toHaveStyle(
       `border-top-left-radius: ${theme.sizes.sz_075}`,
@@ -90,7 +92,7 @@ describe('Table', () => {
     )
 
     expect(screen.getByRole('button', { name: 'Previous' })).toHaveStyle(`background: ${theme.colors.surface}`)
-    expect(screen.getByRole('button', { name: 'Previous' })).toHaveStyle(`color: ${theme.colors.primary}`)
+    expect(screen.getByRole('button', { name: 'Previous' })).toHaveStyle(`color: ${theme.colors.primary.base}`)
     expect(screen.getByRole('button', { name: 'Previous' })).toHaveStyle('border: 0')
     expect(screen.getByRole('button', { name: 'Previous' })).toHaveStyle(`font-weight: ${theme.fontWeights.semiBold}`)
   })
@@ -162,7 +164,7 @@ describe('Table', () => {
     renderWithTheme(<Table columns={columns} data={rows} variant='secondary' striped />)
 
     expect(screen.getAllByRole('row')[2].querySelector('td')).toHaveStyle(
-      `background: ${theme.colors.secondarySurfaceAlt}`,
+      `background: ${theme.colors.secondary.surface}`,
     )
   })
 

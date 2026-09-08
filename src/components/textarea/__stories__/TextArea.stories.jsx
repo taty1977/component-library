@@ -24,6 +24,7 @@ const meta = {
     placeholder: 'Write a message',
     rows: 5,
     required: false,
+    variant: 'primary',
   },
   argTypes: {
     label: {
@@ -55,6 +56,12 @@ const meta = {
       description: 'Validation message shown below the field.',
       table: { category: 'Validation' },
     },
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary'],
+      description: 'Selects the focus color treatment.',
+      table: { category: 'Appearance' },
+    },
     disabled: {
       control: 'boolean',
       description: 'Disables the textarea field.',
@@ -63,6 +70,11 @@ const meta = {
     rows: {
       control: 'number',
       description: 'Number of visible text rows.',
+      table: { category: 'Layout' },
+    },
+    className: {
+      control: 'text',
+      description: 'Optional custom CSS class name applied to the textarea field.',
       table: { category: 'Layout' },
     },
     cols: {
@@ -150,30 +162,12 @@ export const RequiredWithError = {
 export const AllStates = {
   name: 'All states',
   render: () => (
-    <>
-      <Textarea label='Default state' placeholder='Enter a message' rows={4} style={{ marginBottom: '2rem' }} />
-      <Textarea
-        label='Focused state'
-        placeholder='Enter a message'
-        rows={4}
-        autoFocus
-        style={{ marginBottom: '2rem' }}
-      />
-      <Textarea
-        label='Error state'
-        placeholder='Enter a message'
-        rows={4}
-        error='This field is required.'
-        style={{ marginBottom: '2rem' }}
-      />
-      <Textarea
-        label='Disabled state'
-        placeholder='Enter a message'
-        rows={4}
-        disabled
-        style={{ marginBottom: '2rem' }}
-      />
+    <div style={{ display: 'grid', gap: '2rem' }}>
+      <Textarea label='Default state' placeholder='Enter a message' rows={4} />
+      <Textarea label='Focused state' placeholder='Enter a message' rows={4} autoFocus />
+      <Textarea label='Error state' placeholder='Enter a message' rows={4} error='This field is required.' />
+      <Textarea label='Disabled state' placeholder='Enter a message' rows={4} disabled />
       <Textarea label='Required field' placeholder='Enter a message' rows={4} required />
-    </>
+    </div>
   ),
 }

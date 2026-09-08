@@ -129,6 +129,7 @@ const meta = {
   args: {
     images: imageSet,
     likeButton: true,
+    variant: 'primary',
     showThumbnails: true,
     thumbnailsPosition: 'bottom',
     showIndicators: true,
@@ -145,6 +146,17 @@ const meta = {
       control: 'boolean',
       description: 'Show or hide the favorite button for the active image.',
       table: { category: 'Display' },
+    },
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary'],
+      description: 'Selects the color treatment for active carousel controls.',
+      table: { category: 'Appearance' },
+    },
+    className: {
+      control: 'text',
+      description: 'Optional custom CSS class name applied to the carousel container.',
+      table: { category: 'Layout' },
     },
     showThumbnails: {
       control: 'boolean',

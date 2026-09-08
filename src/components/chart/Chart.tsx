@@ -1,5 +1,6 @@
 import React, { useCallback, useId, useMemo } from 'react'
 import styled, { useTheme } from 'styled-components'
+import type { ThemeType } from '../../styles/theme'
 import Heading from '../heading/Heading'
 import {
   ResponsiveContainer,
@@ -33,9 +34,13 @@ export interface ChartDataItem {
   [key: string]: any
 }
 
+export type ChartVariant = 'primary' | 'secondary'
+
 export interface ChartProps {
   /** Chart type to display */
   type?: 'line' | 'bar' | 'area' | 'pie'
+  /** Theme color treatment for the default series palette */
+  variant?: ChartVariant
   /** Data points for the chart */
   data: ChartDataItem[]
   /** Series configuration for lines/bars/areas or pie dataKey */
@@ -84,12 +89,12 @@ export interface ChartProps {
   className?: string
 }
 
-const ChartContainer = styled.div`
+const ChartContainer = styled.div<{ $variant: ChartVariant }>`
   width: 100%;
   box-sizing: border-box;
   font-family: ${({ theme }) => theme.fontFamily};
   background-color: ${({ theme }) => theme.colors.surface};
-  border: 1px solid ${({ theme }) => theme.colors.border};
+  border: 1px solid ${({ theme, $variant }) => theme.colors[$variant].border};
   border-radius: ${({ theme }) => theme.sizes.sz_075};
   padding: ${({ theme }) => theme.spaces.lg};
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
@@ -138,8 +143,31 @@ const VisuallyHidden = styled.div`
   border: 0;
 `
 
+const getVariantPalette = (theme: ThemeType, variant: ChartVariant) => {
+  if (variant === 'secondary') {
+    return [
+      theme.colors.secondary.base,
+      theme.colors.primary.base,
+      theme.colors.nature.base,
+      theme.colors.secondary.hover,
+      theme.colors.primary.hover,
+      theme.colors.nature.hover,
+    ]
+  }
+
+  return [
+    theme.colors.primary.base,
+    theme.colors.secondary.base,
+    theme.colors.nature.base,
+    theme.colors.primary.hover,
+    theme.colors.secondary.hover,
+    theme.colors.nature.hover,
+  ]
+}
+
 export const Chart: React.FC<ChartProps> = ({
   type = 'line',
+  variant = 'primary',
   data,
   series,
   colors,
@@ -169,23 +197,16 @@ export const Chart: React.FC<ChartProps> = ({
   const titleId = `${chartId}-title`
   const descriptionId = `${chartId}-desc`
 
-  // Color palette: props > theme
+  // Explicit palettes take precedence; the selected variant sets the leading series color.
   const palette = useMemo(() => {
     if (colors && colors.length > 0) {
       return colors
     }
     if (theme?.colors) {
-      return [
-        theme.colors.primary,
-        theme.colors.tertiary,
-        theme.colors.secondary,
-        theme.colors.heading,
-        theme.colors.icon,
-        theme.colors.danger,
-      ]
+      return getVariantPalette(theme as ThemeType, variant)
     }
     return []
-  }, [colors, theme])
+  }, [colors, theme, variant])
 
   // Resolve series color
   const getColor = useCallback(
@@ -198,10 +219,11 @@ export const Chart: React.FC<ChartProps> = ({
   // Resolve theme styles
   const { gridColor, textColor, customTooltipStyle, tooltipItemStyle, tooltipLabelStyle, axisTickStyle, legendStyle } =
     useMemo(() => {
-      const grid = customGridColor || theme?.colors?.border
-      const text = customTextColor || theme?.colors?.text || theme?.colors?.heading
-      const bg = customTooltipBgColor || theme?.colors?.surface
-      const border = customTooltipBorderColor || theme?.colors?.border
+      const variantColors = theme?.colors?.[variant]
+      const grid = customGridColor || variantColors?.border || theme?.colors?.border
+      const text = customTextColor || theme?.colors?.text || theme?.colors?.title
+      const bg = customTooltipBgColor || variantColors?.surface || theme?.colors?.surface
+      const border = customTooltipBorderColor || variantColors?.border || theme?.colors?.border
       const fontFamily = theme?.fontFamily
       const fontSize = theme?.fontSizes?.sm
 
@@ -223,7 +245,7 @@ export const Chart: React.FC<ChartProps> = ({
           fontFamily,
         },
         tooltipLabelStyle: {
-          color: theme?.colors?.heading || text,
+          color: variantColors?.base || theme?.colors?.title || text,
           fontSize,
           fontFamily,
           fontWeight: 600,
@@ -239,7 +261,7 @@ export const Chart: React.FC<ChartProps> = ({
           fontFamily,
         },
       }
-    }, [customGridColor, customTextColor, customTooltipBgColor, customTooltipBorderColor, theme])
+    }, [customGridColor, customTextColor, customTooltipBgColor, customTooltipBorderColor, theme, variant])
 
   const renderLegendFormatter = useCallback(
     (value: string) => <span style={{ color: textColor }}>{value}</span>,
@@ -358,6 +380,7 @@ export const Chart: React.FC<ChartProps> = ({
   return (
     <ChartContainer
       className={className}
+      $variant={variant}
       role='region'
       aria-label={title ? undefined : ariaLabel || 'Chart'}
       aria-labelledby={title ? titleId : undefined}

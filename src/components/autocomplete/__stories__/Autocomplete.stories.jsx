@@ -25,6 +25,7 @@ const meta = {
     options: ['Apple', 'Banana', 'Cherry', 'Date', 'Fig', 'Grape', 'Kiwi', 'Lemon', 'Mango', 'Orange'],
     placeholder: 'Search fruit...',
     required: false,
+    variant: 'primary',
     showLeftIcon: false,
     showRightIcon: false,
   },
@@ -53,6 +54,12 @@ const meta = {
       control: 'text',
       description: 'Validation message shown below the input.',
       table: { category: 'Validation' },
+    },
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary'],
+      description: 'Selects the focus and action icon color treatment.',
+      table: { category: 'Appearance' },
     },
     onChange: {
       description: 'Called when the input value changes.',
@@ -163,4 +170,46 @@ export const WithBothIcons = {
     showLeftIcon: true,
     showRightIcon: true,
   },
+}
+
+export const AllStates = {
+  name: 'All states',
+  render: () => (
+    <div style={{ display: 'grid', gap: '2rem' }}>
+      <Autocomplete
+        label='Default state'
+        onSelect={() => {}}
+        options={['Apple', 'Banana', 'Cherry']}
+        placeholder='Search fruit'
+      />
+      <Autocomplete
+        label='Focused state'
+        onSelect={() => {}}
+        options={['Apple', 'Banana', 'Cherry']}
+        placeholder='Search fruit'
+        autoFocus
+      />
+      <Autocomplete
+        label='Error state'
+        onSelect={() => {}}
+        options={['Apple', 'Banana', 'Cherry']}
+        placeholder='Search fruit'
+        error='Please select a fruit.'
+      />
+      <Autocomplete
+        label='Disabled state'
+        onSelect={() => {}}
+        options={['Apple', 'Banana', 'Cherry']}
+        placeholder='Search fruit'
+        disabled
+      />
+      <Autocomplete
+        label='Required field'
+        onSelect={() => {}}
+        options={['Apple', 'Banana', 'Cherry']}
+        placeholder='Search fruit'
+        required
+      />
+    </div>
+  ),
 }

@@ -25,8 +25,8 @@ const baseTheme = {
     mobileBreakpoint: breakpoints.mobile,
   },
   fontFamilies: {
-    heading: "'Merriweather', serif",
-    paragraph: "'Open Sans', sans-serif",
+    merriweather: "'Merriweather', serif",
+    openSans: "'Open Sans', sans-serif",
   },
   fontSizes: {
     xs: sizes.sz_075,
@@ -51,19 +51,19 @@ const baseTheme = {
     h5: sizes.sz_150,
     h6: sizes.sz_125,
   },
-  textDecorations: {
+  textTransforms: {
     none: 'none',
-    underline: 'underline',
-    overline: 'overline',
-    lineThrough: 'line-through',
+    capitalize: 'capitalize',
+    uppercase: 'uppercase',
+    lowercase: 'lowercase',
   },
   actionColors: {
-    Primary: colors.col_0d3f48,
-    Secondary: colors.col_9b417b,
-    success: colors.col_28a745,
+    Primary: colors.col_377eb3,
+    Secondary: colors.col_132c3e,
+    success: colors.col_15803d,
     danger: colors.col_dc3545,
-    warning: colors.col_ffcc00,
     info: colors.col_17a2b8,
+    warning: colors.col_ffcc00,
   },
   sizes: {
     ...sizes,
@@ -77,42 +77,82 @@ const baseTheme = {
   },
 }
 
+// Brand Theme Generated using https://accessibility.build/tools/color-palette-generator
+// Base color: #7aaed6
+// Color Harmony: Monochromatic
+// Accessibility: WCAG AA compliant contrast ratios for text and interactive elements
+
 const brandThemeColors = {
-  primary: colors.col_417b9b,
-  primaryHover: colors.col_2f5f7e,
-  primaryBorder: colors.col_254f69,
-  secondary: colors.col_9b417b,
-  secondaryHover: colors.col_7d315d,
-  secondaryBorder: colors.col_69294b,
-  tertiary: colors.col_e9f0db,
-  tertiaryHover: colors.col_dce8c7,
-  tertiaryBorder: colors.col_c4d59e,
-  tertiarySurfaceAlt: colors.col_f5f8ee,
-  heartActive: colors.col_0369a1,
-  activeBorder: colors.col_0369a1,
+  // Primary color palette - Blue tones with accessible contrast
+  primary: {
+    base: colors.col_367caf,
+    text: colors.col_ffffff,
+    hover: colors.col_2e6894,
+    focus: colors.col_255a7a,
+    focusBorder: colors.col_d8e7f3,
+    border: colors.col_367caf,
+    disabled: colors.col_dedfe3,
+    disabledText: colors.col_111827,
+    surface: colors.col_edf5fb,
+  },
+
+  // Secondary color palette - Dark teal tones with accessible contrast
+  secondary: {
+    base: colors.col_132c3e,
+    text: colors.col_ffffff,
+    hover: colors.col_0d1f2f,
+    focus: colors.col_081018,
+    focusBorder: colors.col_9fbdd0,
+    border: colors.col_132c3e,
+    disabled: colors.col_dedfe3,
+    disabledText: colors.col_111827,
+    surface: colors.col_fbf4f9,
+  },
+
+  // Nature color palette - Light blue tones with accessible contrast
+  nature: {
+    base: colors.col_8ab7db,
+    text: colors.col_ffffff,
+    hover: colors.col_7aa8d1,
+    focus: colors.col_6a99c7,
+    focusBorder: colors.col_e8f0f8,
+    border: colors.col_8ab7db,
+    disabled: colors.col_dedfe3,
+    disabledText: colors.col_111827,
+    surface: colors.col_f1f7fc,
+  },
+
+  // Neutral color palette - Dark gray tones with accessible contrast
+  neutral: {
+    base: colors.col_3c4048,
+    text: colors.col_ffffff,
+    hover: colors.col_2f353b,
+    focus: colors.col_242930,
+    focusBorder: colors.col_d0d4db,
+    border: colors.col_3c4048,
+    disabled: colors.col_dedfe3,
+    disabledText: colors.col_111827,
+    surface: colors.col_f1f2f4,
+  },
+
+  // Shared neutral surfaces and semantic feedback colors.
+  surface: colors.col_ffffff,
+  surfaceAlt: colors.col_f4f9fb,
+  border: colors.col_e2e8f0,
+  title: colors.col_0d3f48,
+  text: colors.col_4f545f,
+  mutedText: colors.col_57757d,
+  overlay: colors.col_0d4b57,
   focusBorder: colors.col_0369a1,
   focusRing: colors.col_0284c747,
   activeRing: colors.col_3b82f640,
   overlayBackdrop: colors.col_0f172a99,
-  text: colors.col_4f545f,
-  surface: colors.col_ffffff,
-  surfaceAlt: colors.col_f4f9fb,
-  secondarySurfaceAlt: colors.col_fbf4f9,
-  border: colors.col_e2e8f0,
-  heading: colors.col_0d3f48,
-  mutedText: colors.col_57757d,
-  icon: colors.col_446a73,
-  danger: colors.col_dc3545,
-  overlay: colors.col_0d4b57,
-  badgeBackground: colors.col_f3f4f6,
-  badgeBorder: colors.col_d1d5db,
-  badgeText: colors.col_4b5563,
 }
 
 export const brandTheme = {
   ...baseTheme,
   colors: brandThemeColors,
-  fontFamily: baseTheme.fontFamilies.paragraph,
+  fontFamily: baseTheme.fontFamilies.openSans,
 }
 
 export const theme = brandTheme

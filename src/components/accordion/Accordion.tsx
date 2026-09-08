@@ -10,12 +10,15 @@ interface AccordionItem {
 }
 
 export type AccordionVariant = 'default' | 'primary' | 'secondary'
+export type AccordionIconPosition = 'left' | 'right'
 
 export interface AccordionProps {
   items: AccordionItem[]
+  className?: string
   allowMultiple?: boolean
   collapsedIcon?: React.ReactNode
   expandedIcon?: React.ReactNode
+  iconPosition?: AccordionIconPosition
   variant?: AccordionVariant
   children?: React.ReactNode
 }
@@ -28,21 +31,23 @@ const Container = styled.div`
 const getVariantAppearance = (theme: ThemeType, variant: AccordionVariant) => {
   if (variant === 'primary') {
     return {
-      background: theme.colors.primary,
-      hoverBackground: theme.colors.primaryHover,
-      border: theme.colors.primary,
-      text: theme.colors.surface,
-      panelBackground: theme.colors.surfaceAlt,
+      background: theme.colors.primary.base,
+      hoverBackground: theme.colors.primary.hover,
+      border: theme.colors.primary.border,
+      focusBorder: theme.colors.primary.focusBorder,
+      text: theme.colors.primary.text,
+      panelBackground: theme.colors.primary.surface,
     }
   }
 
   if (variant === 'secondary') {
     return {
-      background: theme.colors.secondary,
-      hoverBackground: theme.colors.secondaryHover,
-      border: theme.colors.secondary,
+      background: theme.colors.secondary.base,
+      hoverBackground: theme.colors.secondary.hover,
+      border: theme.colors.secondary.border,
+      focusBorder: theme.colors.secondary.focusBorder,
       text: theme.colors.surface,
-      panelBackground: theme.colors.secondarySurfaceAlt,
+      panelBackground: theme.colors.secondary.surface,
     }
   }
 
@@ -50,7 +55,8 @@ const getVariantAppearance = (theme: ThemeType, variant: AccordionVariant) => {
     background: theme.colors.surface,
     hoverBackground: theme.colors.surface,
     border: theme.colors.border,
-    text: theme.colors.heading,
+    focusBorder: theme.colors.focusRing,
+    text: theme.colors.title,
     panelBackground: theme.colors.surfaceAlt,
   }
 }
@@ -84,7 +90,7 @@ const ToggleButton = styled.button<{ $variant: AccordionVariant }>`
 
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px ${({ theme }) => theme.colors.focusRing};
+    box-shadow: 0 0 0 3px ${({ $variant, theme }) => getVariantAppearance(theme, $variant).focusBorder};
   }
 `
 
@@ -149,9 +155,11 @@ const getNextExpandedIds = (expandedIds: Set<string>, id: string, allowMultiple:
 
 export const Accordion = ({
   items,
+  className,
   allowMultiple = false,
   collapsedIcon,
   expandedIcon,
+  iconPosition = 'right',
   variant = 'default',
   children,
 }: AccordionProps) => {
@@ -164,13 +172,18 @@ export const Accordion = ({
   }
 
   return (
-    <Container data-variant={variant}>
+    <Container className={className} data-variant={variant}>
       {items.map((item, index) => {
         const expanded = expandedIds.has(item.id)
         const HeaderIcon = getHeaderIcon(expanded)
         // A custom icon replaces only the state it was supplied for.
         const headerIcon = expanded ? expandedIcon : collapsedIcon
         const panelContent = childPanels[index] ?? item.content
+        const icon = (
+          <IconWrapper $variant={variant}>
+            {headerIcon ?? <HeaderIcon width='1em' height='1em' aria-hidden='true' />}
+          </IconWrapper>
+        )
 
         return (
           <Item key={item.id} $expanded={expanded} $variant={variant}>
@@ -183,10 +196,9 @@ export const Accordion = ({
               aria-controls={`accordion-content-${item.id}`}
             >
               <HeaderContent>
+                {iconPosition === 'left' ? icon : null}
                 <span>{item.title}</span>
-                <IconWrapper $variant={variant}>
-                  {headerIcon ?? <HeaderIcon width='1em' height='1em' aria-hidden='true' />}
-                </IconWrapper>
+                {iconPosition === 'right' ? icon : null}
               </HeaderContent>
             </ToggleButton>
             {expanded && panelContent != null && (

@@ -1,9 +1,9 @@
-export { default as Heading } from './Heading'
+export { default as Heading } from './Heading';
 export type {
   HeadingColor,
   HeadingFamily,
   HeadingLevel,
   HeadingProps,
-  HeadingTextDecoration,
+  HeadingTextTransform,
   HeadingWeight,
-} from './Heading'
+} from './Heading';

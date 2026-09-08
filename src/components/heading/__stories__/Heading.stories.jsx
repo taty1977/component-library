@@ -9,8 +9,8 @@ const themeStyles = {
 const headingLevels = Object.keys(brandTheme.headingSizes)
 const headingWeights = Object.keys(brandTheme.fontWeights)
 const headingFamilies = Object.keys(brandTheme.fontFamilies)
-const headingColors = Object.keys(brandTheme.actionColors)
-const textDecorations = Object.keys(brandTheme.textDecorations)
+const headingColors = ['title', ...Object.keys(brandTheme.actionColors)]
+const textTransforms = Object.keys(brandTheme.textTransforms)
 
 const meta = {
   title: 'Typography/Heading',
@@ -48,9 +48,9 @@ const meta = {
     children: 'A clear section heading',
     level: 'h2',
     weight: 'bold',
-    family: 'heading',
-    color: 'Primary',
-    textDecoration: 'none',
+    family: 'merriweather',
+    color: 'title',
+    textTransform: 'none',
   },
   argTypes: {
     children: {
@@ -82,12 +82,13 @@ const meta = {
       description: 'Semantic theme color for headings and notification text.',
       table: { category: 'Appearance' },
     },
-    textDecoration: {
+    textTransform: {
       control: 'select',
-      options: textDecorations,
-      description: 'Selects the heading text decoration.',
+      options: textTransforms,
+      description: 'Selects the heading text transform.',
       table: { category: 'Appearance' },
     },
+    fontFamily: { table: { disable: true } },
   },
 }
 

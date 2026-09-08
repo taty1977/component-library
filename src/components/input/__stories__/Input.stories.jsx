@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowRightIcon, InformationCircleIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
+import { ArrowRightIcon, CheckIcon, ClockIcon, MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { brandTheme } from '../../../styles'
 import Input from '../Input'
 
@@ -24,6 +24,7 @@ const meta = {
     label: 'Input label',
     placeholder: 'Enter a value',
     required: false,
+    variant: 'primary',
     showLeftIcon: false,
     showRightIcon: false,
     showOutsideLeftIcon: false,
@@ -43,6 +44,11 @@ const meta = {
       description: 'HTML input type.',
       table: { category: 'Content' },
     },
+    className: {
+      control: 'text',
+      description: 'Optional custom CSS class name applied to the input field.',
+      table: { category: 'Layout' },
+    },
     onChange: {
       description: 'Called when the input value changes.',
       table: { category: 'Events' },
@@ -56,6 +62,12 @@ const meta = {
       control: 'text',
       description: 'Validation message shown below the field.',
       table: { category: 'Validation' },
+    },
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary'],
+      description: 'Selects the focus and icon color treatment.',
+      table: { category: 'Appearance' },
     },
     disabled: {
       control: 'boolean',
@@ -124,12 +136,8 @@ const renderInput = ({ showLeftIcon, showOutsideLeftIcon, showOutsideRightIcon, 
     {...args}
     iconLeft={showLeftIcon ? <MagnifyingGlassIcon width='1em' height='1em' aria-hidden='true' /> : undefined}
     iconRight={showRightIcon ? <ArrowRightIcon width='1em' height='1em' aria-hidden='true' /> : undefined}
-    outsideIconLeft={
-      showOutsideLeftIcon ? <InformationCircleIcon width='1em' height='1em' aria-hidden='true' /> : undefined
-    }
-    outsideIconRight={
-      showOutsideRightIcon ? <InformationCircleIcon width='1em' height='1em' aria-hidden='true' /> : undefined
-    }
+    outsideIconLeft={showOutsideLeftIcon ? <ClockIcon width='1em' height='1em' aria-hidden='true' /> : undefined}
+    outsideIconRight={showOutsideRightIcon ? <CheckIcon width='1em' height='1em' aria-hidden='true' /> : undefined}
   />
 )
 
@@ -173,6 +181,7 @@ export const WithOutsideIcons = {
   args: {
     showOutsideLeftIcon: true,
     showOutsideRightIcon: true,
+    handleActions: () => {},
   },
 }
 
@@ -226,17 +235,12 @@ export const RequiredWithError = {
 export const AllStates = {
   name: 'All states',
   render: () => (
-    <>
-      <Input label='Default state' placeholder='Enter a value' style={{ marginBottom: '2rem' }} />
-      <Input label='Focused state' placeholder='Enter a value' autoFocus style={{ marginBottom: '2rem' }} />
-      <Input
-        label='Error state'
-        placeholder='Enter a value'
-        error='This field is required.'
-        style={{ marginBottom: '2rem' }}
-      />
-      <Input label='Disabled state' placeholder='Enter a value' disabled style={{ marginBottom: '2rem' }} />
+    <div style={{ display: 'grid', gap: '2rem' }}>
+      <Input label='Default state' placeholder='Enter a value' />
+      <Input label='Focused state' placeholder='Enter a value' autoFocus />
+      <Input label='Error state' placeholder='Enter a value' error='This field is required.' />
+      <Input label='Disabled state' placeholder='Enter a value' disabled />
       <Input label='Required field' placeholder='Enter a value' required />
-    </>
+    </div>
   ),
 }

@@ -36,6 +36,9 @@ const meta = {
   },
   args: {
     label: 'Country',
+    defaultValue: 'ca',
+    placeholder: 'Choose a country',
+    variant: 'primary',
     showLeftIcon: false,
     showSelectionCheck: false,
     required: false,
@@ -46,7 +49,24 @@ const meta = {
       description: 'Visible label for the select.',
       table: { category: 'Content' },
     },
+    placeholder: {
+      control: 'text',
+      description: 'Text shown when no option is selected.',
+      table: { category: 'Content' },
+    },
+    defaultValue: {
+      control: 'select',
+      options: options.map(option => option.value),
+      description: 'Initially selected option value.',
+      table: { category: 'Content' },
+    },
+    className: {
+      control: 'text',
+      description: 'Optional custom CSS class name applied to the select field.',
+      table: { category: 'Layout' },
+    },
     onChange: {
+      action: 'changed',
       description: 'Called when the selected value changes.',
       table: { category: 'Events' },
     },
@@ -59,6 +79,12 @@ const meta = {
       control: 'text',
       description: 'Validation message shown below the select.',
       table: { category: 'Validation' },
+    },
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary'],
+      description: 'Selects the focus and selection-control color treatment.',
+      table: { category: 'Appearance' },
     },
     disabled: {
       control: 'boolean',
@@ -173,22 +199,20 @@ export const RequiredWithError = {
 export const AllStates = {
   name: 'All states',
   render: () => (
-    <>
-      <Select label='Default state' style={{ marginBottom: '2rem' }}>
+    <div style={{ display: 'grid', gap: '2rem' }}>
+      <Select label='Default state'>{renderOptions()}</Select>
+      <Select label='Selected state' defaultValue='ca'>
         {renderOptions()}
       </Select>
-      <Select label='Selected state' defaultValue='ca' style={{ marginBottom: '2rem' }}>
+      <Select label='Error state' error='Please select a country.'>
         {renderOptions()}
       </Select>
-      <Select label='Error state' error='Please select a country.' style={{ marginBottom: '2rem' }}>
-        {renderOptions()}
-      </Select>
-      <Select label='Disabled state' disabled defaultValue='us' style={{ marginBottom: '2rem' }}>
+      <Select label='Disabled state' disabled defaultValue='us'>
         {renderOptions()}
       </Select>
       <Select label='Required field' required>
         {renderOptions()}
       </Select>
-    </>
+    </div>
   ),
 }

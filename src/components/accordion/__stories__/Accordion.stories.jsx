@@ -48,13 +48,27 @@ export default {
         defaultValue: { summary: 'default' },
       },
     },
-    collapsedIcon: { table: { disable: true } },
-    expandedIcon: { table: { disable: true } },
+    className: {
+      control: 'text',
+      description: 'Optional class name applied to the accordion container.',
+      table: { category: 'Layout' },
+    },
+    iconPosition: {
+      control: 'inline-radio',
+      options: ['left', 'right'],
+      description: 'Places the collapsed or expanded icon before or after the title.',
+      table: {
+        category: 'Icons',
+        defaultValue: { summary: 'right' },
+      },
+    },
     items: {
       control: 'object',
       description: 'Accordion panels with an id, title, and optional content.',
       table: { category: 'Data' },
     },
+    collapsedIcon: { table: { disable: true } },
+    expandedIcon: { table: { disable: true } },
   },
   decorators: [
     (Story, context) => {
@@ -86,6 +100,7 @@ const baseArgs = {
   items: accordionItems,
   allowMultiple: false,
   variant: 'default',
+  iconPosition: 'right',
 }
 
 export const Default = {
@@ -157,5 +172,14 @@ export const SecondaryWithCustomIcons = {
   args: {
     ...Secondary.args,
     ...customIconArgs,
+  },
+}
+
+export const IconsLeftDefault = {
+  name: 'Custom icons on the left',
+  args: {
+    ...baseArgs,
+    ...customIconArgs,
+    iconPosition: 'left',
   },
 }

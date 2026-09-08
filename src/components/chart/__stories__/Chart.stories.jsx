@@ -44,6 +44,7 @@ const meta = {
   args: {
     title: 'Financial Overview',
     description: 'Monthly breakdown of sales, revenue, and profit',
+    variant: 'primary',
     data: sampleData,
     series: sampleSeries,
     xAxisKey: 'name',
@@ -52,26 +53,18 @@ const meta = {
     showTooltip: true,
     showLegend: true,
   },
-  render: (args, context) => {
-    const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand
-    const themeSeries = [activeTheme.colors.primary, activeTheme.colors.secondary, activeTheme.colors.heading]
-
-    return (
-      <Chart
-        {...args}
-        series={args.series.map((seriesItem, index) => ({
-          ...seriesItem,
-          color: seriesItem.color || themeSeries[index % themeSeries.length],
-        }))}
-      />
-    )
-  },
   argTypes: {
     type: {
       control: { type: 'select' },
       options: ['line', 'bar', 'area', 'pie'],
       description: 'The visual type of chart to display.',
       table: { category: 'Chart Type' },
+    },
+    variant: {
+      control: { type: 'select' },
+      options: ['primary', 'secondary'],
+      description: 'Selects the ordered theme palette for series without a custom color.',
+      table: { category: 'Appearance' },
     },
     title: {
       control: 'text',
@@ -113,11 +106,6 @@ const meta = {
       description: 'Show series legend.',
       table: { category: 'Display' },
     },
-    colors: {
-      control: 'object',
-      description: 'Array of custom colors to override the default theme color palette.',
-      table: { category: 'Colors' },
-    },
     gridColor: {
       control: 'color',
       description: 'Custom stroke color for grid lines (overrides theme border).',
@@ -143,11 +131,6 @@ const meta = {
       description: 'Stroke width for lines and area borders.',
       table: { category: 'Styles' },
     },
-    fillOpacity: {
-      control: { type: 'range', min: 0, max: 1, step: 0.1 },
-      description: 'Fill opacity for area chart fills.',
-      table: { category: 'Styles' },
-    },
     dot: {
       control: 'boolean',
       description: 'Show or configure data point dots on line charts.',
@@ -156,21 +139,6 @@ const meta = {
     activeDot: {
       control: 'boolean',
       description: 'Show or configure active hover dots on line charts.',
-      table: { category: 'Styles' },
-    },
-    barRadius: {
-      control: 'object',
-      description: 'Corner radius for bar chart bars.',
-      table: { category: 'Styles' },
-    },
-    outerRadius: {
-      control: 'number',
-      description: 'Outer radius for pie chart slices.',
-      table: { category: 'Styles' },
-    },
-    innerRadius: {
-      control: 'number',
-      description: 'Inner radius for pie chart slices (e.g. donut charts).',
       table: { category: 'Styles' },
     },
     data: { table: { category: 'Data' } },

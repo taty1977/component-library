@@ -20,23 +20,6 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   shape?: ButtonShape
 }
 
-const variantStyles = {
-  primary: {
-    background: 'primary',
-    border: 'primary',
-    color: 'surface',
-    hoverBackground: 'primaryHover',
-    hoverBorder: 'primaryHover',
-  },
-  secondary: {
-    background: 'secondary',
-    border: 'secondary',
-    color: 'surface',
-    hoverBackground: 'secondaryHover',
-    hoverBorder: 'secondaryHover',
-  },
-} as const
-
 interface StyledButtonProps {
   $size: ButtonSize
   $variant: ButtonVariant
@@ -55,24 +38,24 @@ interface ButtonAppearance {
 }
 
 const getButtonAppearance = (theme: ThemeType, variant: ButtonVariant, outline = false): ButtonAppearance => {
-  const styles = variantStyles[variant]
+  const colors = theme.colors[variant]
   const baseAppearance = {
-    background: theme.colors[styles.background],
-    border: theme.colors[styles.border],
-    color: theme.colors[styles.color],
-    hoverBackground: theme.colors[styles.hoverBackground],
-    hoverBorder: theme.colors[styles.hoverBorder],
-    hoverColor: theme.colors[styles.color],
+    background: colors.base,
+    border: colors.border,
+    color: colors.text,
+    hoverBackground: colors.hover,
+    hoverBorder: colors.hover,
+    hoverColor: colors.text,
   }
 
   if (!outline) return baseAppearance
 
   return {
     background: theme.colors.surface,
-    border: theme.colors[variant],
-    color: theme.colors[variant],
-    hoverBackground: theme.colors[`${variant}Hover`],
-    hoverBorder: theme.colors[`${variant}Hover`],
+    border: colors.base,
+    color: colors.base,
+    hoverBackground: colors.hover,
+    hoverBorder: colors.hover,
     hoverColor: theme.colors.surface,
   }
 }
@@ -145,8 +128,9 @@ const StyledButton = styled.button<StyledButtonProps>`
 
   &:focus-visible {
     outline: none;
-    border-color: ${({ theme, $variant }) => theme.colors[$variant]};
-    box-shadow: 0 0 0 3px ${({ theme, $variant }) => theme.colors[$variant]}, ${({ theme }) => theme.boxShadow.bs_01};
+    border-color: ${({ theme, $variant }) => theme.colors[$variant].base};
+    box-shadow: 0 0 0 3px ${({ theme, $variant }) => `${theme.colors[$variant].base}33`},
+      ${({ theme }) => theme.boxShadow.bs_01};
   }
 
   &:disabled {

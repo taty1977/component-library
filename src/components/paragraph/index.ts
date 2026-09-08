@@ -1,9 +1,9 @@
-export { default as Paragraph } from './Paragraph'
+export { default as Paragraph } from './Paragraph';
 export type {
   ParagraphColor,
   ParagraphFamily,
   ParagraphProps,
   ParagraphSize,
-  ParagraphTextDecoration,
+  ParagraphTextTransform,
   ParagraphWeight,
-} from './Paragraph'
+} from './Paragraph';

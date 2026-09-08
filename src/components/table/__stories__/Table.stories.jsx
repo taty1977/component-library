@@ -17,9 +17,9 @@ const rows = [
 ]
 
 const statusStyles = {
-  Active: { background: '#e8f5ee', color: brandTheme.colors.heading },
-  Inactive: { background: brandTheme.colors.badgeBackground, color: brandTheme.colors.badgeText },
-  Pending: { background: '#fff4d6', color: brandTheme.colors.heading },
+  Active: { background: `${brandTheme.actionColors.success}1f`, color: brandTheme.actionColors.success },
+  Inactive: { background: `${brandTheme.actionColors.Secondary}1f`, color: brandTheme.actionColors.Secondary },
+  Pending: { background: `${brandTheme.actionColors.warning}33`, color: brandTheme.actionColors.Secondary },
 }
 
 const Status = ({ value }) => (
