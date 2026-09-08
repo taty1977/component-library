@@ -104,15 +104,20 @@ const StyledSelect = styled.select<{ $hasLeftIcon: boolean; $hasRightIcon: boole
   outline: none;
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.mutedText};
   }
 
+  &:hover:not(:disabled) {
+    box-shadow: ${({ theme }) => theme.boxShadow.bs_02};
+  }
+
   &:focus {
-    border-color: ${({ theme }) => theme.colors.border};
+    border-color: ${({ theme }) => theme.colors.activeBorder};
     box-shadow: ${({ theme }) => theme.boxShadow.bs_04};
+    background-color: ${({ theme }) => theme.colors.surface};
   }
 
   &:disabled {
@@ -139,12 +144,17 @@ const SelectTrigger = styled.button<{ $hasLeftIcon: boolean; $hasError: boolean 
   outline: none;
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+
+  &:hover:not(:disabled) {
+    box-shadow: ${({ theme }) => theme.boxShadow.bs_02};
+  }
 
   &:focus-visible,
   &[aria-expanded='true'] {
-    border-color: ${({ theme }) => theme.colors.border};
+    border-color: ${({ theme }) => theme.colors.activeBorder};
     box-shadow: ${({ theme }) => theme.boxShadow.bs_04};
+    background-color: ${({ theme }) => theme.colors.surface};
   }
 
   &:disabled {

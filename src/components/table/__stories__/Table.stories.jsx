@@ -1,73 +1,32 @@
-import React from 'react';
-import { ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon, FunnelIcon } from '@heroicons/react/24/solid';
-import { brandTheme } from '../../../styles';
-import Table from '../Table';
+import React from 'react'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/solid'
+import { ThemeProvider } from 'styled-components'
+import { brandTheme } from '../../../styles'
+import Table from '../Table'
 
-const theme = brandTheme;
+const themeStyles = {
+  Brand: brandTheme,
+}
 
+// Shared fixture data keeps every story deterministic and lightweight.
 const rows = [
-  {
-    id: 1,
-    name: 'Ada Lovelace',
-    role: 'Principal Engineer',
-    team: 'Platform',
-    status: 'Active',
-    joined: 'Jan 12, 2022',
-  },
-  {
-    id: 2,
-    name: 'Grace Hopper',
-    role: 'Engineering Manager',
-    team: 'Applications',
-    status: 'Pending',
-    joined: 'Mar 04, 2023',
-  },
-  {
-    id: 3,
-    name: 'Katherine Johnson',
-    role: 'Data Scientist',
-    team: 'Insights',
-    status: 'Active',
-    joined: 'Jun 19, 2021',
-  },
-  {
-    id: 4,
-    name: 'Evelyn Boyd Granville',
-    role: 'Staff Engineer',
-    team: 'Platform',
-    status: 'Inactive',
-    joined: 'Sep 27, 2020',
-  },
-  {
-    id: 5,
-    name: 'Dorothy Vaughan',
-    role: 'Delivery Lead',
-    team: 'Applications',
-    status: 'Active',
-    joined: 'Nov 08, 2022',
-  },
-  {
-    id: 6,
-    name: 'Mary Jackson',
-    role: 'Frontend Engineer',
-    team: 'Design Systems',
-    status: 'Pending',
-    joined: 'Feb 16, 2024',
-  },
-];
+  { id: 1, name: 'Ada Lovelace', role: 'Principal Engineer', team: 'Platform', status: 'Active' },
+  { id: 2, name: 'Grace Hopper', role: 'Engineering Manager', team: 'Applications', status: 'Pending' },
+  { id: 3, name: 'Katherine Johnson', role: 'Data Scientist', team: 'Insights', status: 'Active' },
+  { id: 4, name: 'Evelyn Boyd Granville', role: 'Staff Engineer', team: 'Platform', status: 'Inactive' },
+]
 
-const statusColors = {
-  Active: { background: '#e8f5ee', color: theme.actionColors.success },
-  Inactive: { background: theme.colors.badgeBackground, color: theme.colors.badgeText },
-  Pending: { background: '#fff4d6', color: '#805d00' },
-};
+const statusStyles = {
+  Active: { background: '#e8f5ee', color: brandTheme.colors.heading },
+  Inactive: { background: brandTheme.colors.badgeBackground, color: brandTheme.colors.badgeText },
+  Pending: { background: '#fff4d6', color: brandTheme.colors.heading },
+}
 
 const Status = ({ value }) => (
   <span
     style={{
-      ...statusColors[value],
+      ...statusStyles[value],
       display: 'inline-flex',
-      alignItems: 'center',
       borderRadius: '999px',
       padding: '0.25rem 0.6rem',
       fontSize: '0.75rem',
@@ -76,68 +35,61 @@ const Status = ({ value }) => (
   >
     {value}
   </span>
-);
+)
 
-const sortIcon = (label) => (
-  <button
-    type="button"
-    aria-label={`Sort by ${label}`}
-    onClick={() => {}}
-    style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      border: 0,
-      padding: 0,
-      background: 'transparent',
-      color: 'inherit',
-      cursor: 'pointer',
-    }}
-  >
-    <ArrowUpIcon width="1rem" height="1rem" aria-hidden="true" />
-  </button>
-);
-
-const columns = [
-  { key: 'name', header: 'Name', sortIcon: sortIcon('name') },
+// Headered and headerless column definitions cover the two table modes.
+const headerColumns = [
+  { key: 'name', header: 'Name', fontWeight: 'semiBold' },
   { key: 'role', header: 'Role' },
   { key: 'team', header: 'Team' },
-  { key: 'status', header: 'Status', render: (row) => <Status value={row.status} /> },
-  { key: 'joined', header: 'Joined', align: 'right', sortIcon: sortIcon('joined') },
-];
+  { key: 'status', header: 'Status', render: row => <Status value={row.status} /> },
+]
 
-const emphasizedColumns = [{ ...columns[0], fontWeight: 'semiBold' }, ...columns.slice(1)];
+const headerlessColumns = headerColumns.map(({ header, ...column }) => column)
+const withSemiboldFirstColumn = columns =>
+  columns.map((column, index) => (index === 0 ? { ...column, fontWeight: 'semiBold' } : column))
 
-const renderTable = (args) => <Table {...args} columns={columns} data={rows} getRowKey={(row) => row.id} />;
-const renderEmphasizedTable = (args) => (
-  <Table {...args} columns={emphasizedColumns} data={rows} getRowKey={(row) => row.id} />
-);
+const semiboldHeaderColumns = withSemiboldFirstColumn(headerColumns)
+const semiboldHeaderlessColumns = withSemiboldFirstColumn(headerlessColumns)
 
+const renderTable = (args, columns = headerColumns, data = rows) => (
+  <Table {...args} columns={columns} data={data} getRowKey={row => row.id} />
+)
+
+// Storybook metadata and controls.
 const meta = {
-  title: 'Components/Table',
+  title: 'Content/Table',
   component: Table,
   tags: ['autodocs'],
+  decorators: [
+    (Story, context) => (
+      <ThemeProvider theme={themeStyles[context.globals.theme] || themeStyles.Brand}>
+        <Story />
+      </ThemeProvider>
+    ),
+  ],
   parameters: {
     docs: {
       description: {
         component:
-          'A responsive data table with custom cell rendering, sort icons, sticky columns, striped rows, slots, variants, and optional pagination.',
+          'A responsive data table with primary and secondary variants, optional column headers, sticky edges, striping, pagination, and custom cell rendering.',
       },
     },
   },
   args: {
     variant: 'primary',
+    breakpoint: 'desktop',
     stickyFirstColumn: false,
     stickyLastColumn: false,
     showColumnBorders: false,
     striped: false,
   },
   argTypes: {
-    variant: {
+    variant: { control: 'select', options: ['primary', 'secondary'], table: { category: 'Appearance' } },
+    breakpoint: {
       control: 'select',
-      options: ['primary', 'secondary'],
-      description: 'Controls the header color treatment.',
-      table: { category: 'Appearance', defaultValue: { summary: 'primary' } },
+      options: ['mobile', 'tablet', 'desktop'],
+      table: { category: 'Responsive' },
     },
     stickyFirstColumn: { control: 'boolean', table: { category: 'Layout' } },
     stickyLastColumn: { control: 'boolean', table: { category: 'Layout' } },
@@ -146,117 +98,76 @@ const meta = {
     columns: { table: { disable: true } },
     data: { table: { disable: true } },
     getRowKey: { table: { disable: true } },
-    header: { table: { disable: true } },
-    footer: { table: { disable: true } },
     pagination: { table: { disable: true } },
     emptyMessage: { table: { disable: true } },
   },
-};
+}
 
-export default meta;
+export default meta
 
-export const PrimaryDirectory = {
-  render: renderTable,
-  name: 'Primary directory',
-  args: {
-    header: (
-      <>
-        <div>
-          <strong style={{ display: 'block', fontSize: '1.1rem' }}>Team directory</strong>
-          <span style={{ color: theme.colors.mutedText, fontSize: '0.875rem' }}>6 people across three teams</span>
-        </div>
-        <button
-          type="button"
-          aria-label="Filter team directory"
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.35rem',
-            border: `1px solid ${theme.colors.border}`,
-            borderRadius: '0.25rem',
-            padding: '0.5rem 0.75rem',
-            background: theme.colors.surface,
-            color: theme.colors.heading,
-            cursor: 'pointer',
-          }}
-        >
-          <FunnelIcon width="1rem" height="1rem" aria-hidden="true" />
-          Filter
-        </button>
-      </>
-    ),
-    footer: <span style={{ color: theme.colors.mutedText, fontSize: '0.875rem' }}>Updated just now</span>,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: 'The primary table treatment with header and footer slots.',
-      },
-    },
-  },
-};
+// Core appearance matrix.
+export const HeaderPrimary = {
+  render: args => renderTable(args),
+  name: 'Header / primary',
+}
 
-export const SecondaryStriped = {
-  render: renderTable,
+export const HeaderSecondary = {
+  render: args => renderTable(args),
+  name: 'Header / secondary',
   args: { variant: 'secondary', striped: true, showColumnBorders: true },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Secondary tables use the secondary surface-alt token for striped rows.',
-      },
-    },
-  },
-};
+}
 
-export const StickyColumns = {
-  render: renderTable,
-  args: { stickyFirstColumn: true, stickyLastColumn: true, showColumnBorders: true },
+export const HeaderlessPrimary = {
+  render: args => renderTable(args, semiboldHeaderlessColumns),
+  name: 'Headerless / primary',
   parameters: {
-    docs: {
-      description: {
-        story: 'The fixed first column uses semibold body text and stays visible with horizontal scrolling.',
-      },
-    },
+    docs: { description: { story: 'The first body column becomes a semibold row header.' } },
   },
-};
+}
+
+export const HeaderlessSecondary = {
+  render: args => renderTable(args, semiboldHeaderlessColumns),
+  name: 'Headerless / secondary',
+  args: { variant: 'secondary', striped: true, showColumnBorders: true },
+}
+
+// Layout and typography states.
+export const StickyFirstColumn = {
+  render: args => renderTable(args),
+  args: { stickyFirstColumn: true, stickyLastColumn: false, showColumnBorders: true },
+}
+
+export const StickyLastColumn = {
+  render: args => renderTable(args),
+  args: { stickyFirstColumn: false, stickyLastColumn: true, showColumnBorders: true },
+}
+
+export const MobileScroll = {
+  render: args => renderTable(args),
+  args: { breakpoint: 'mobile', stickyFirstColumn: true, stickyLastColumn: false },
+}
 
 export const SemiboldColumn = {
-  render: renderEmphasizedTable,
-  name: 'Semibold column',
-  parameters: {
-    docs: {
-      description: {
-        story: 'Any column can opt into semibold body text with fontWeight: semibold.',
-      },
-    },
-  },
-};
+  render: args => renderTable(args, semiboldHeaderColumns),
+}
 
+// Interaction and empty states.
 export const Paginated = {
-  render: renderTable,
+  render: args => renderTable(args),
   args: {
     pagination: {
       page: 2,
-      pageSize: 6,
-      total: 18,
+      pageSize: 4,
+      total: 12,
+      pageStatus: <>Page 2 of 3</>,
+      previousIcon: <ChevronLeftIcon width='1rem' height='1rem' aria-hidden='true' />,
+      nextIcon: <ChevronRightIcon width='1rem' height='1rem' aria-hidden='true' />,
       onPageChange: () => {},
-      previousIcon: <ChevronLeftIcon width="1rem" height="1rem" aria-hidden="true" />,
-      nextIcon: <ChevronRightIcon width="1rem" height="1rem" aria-hidden="true" />,
     },
   },
-  parameters: {
-    docs: {
-      description: {
-        story: 'Pagination buttons remain borderless, semibold, and use the active variant color for their text.',
-      },
-    },
-  },
-};
+}
 
 export const Empty = {
-  render: (args) => <Table {...args} columns={columns} data={[]} />,
-  args: {
-    emptyMessage: 'No team members match the current filters.',
-    header: <strong>Filtered directory</strong>,
-  },
-};
+  render: args => renderTable(args, headerColumns, []),
+  args: { emptyMessage: 'No team members found.' },
+}

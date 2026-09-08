@@ -36,6 +36,7 @@ const meta = {
             border: `1px solid ${activeTheme.colors.border}`,
             color: activeTheme.colors.text,
             padding: activeTheme.spaces.lg,
+            maxWidth: '600px',
           }}
         >
           <Story />
@@ -52,6 +53,11 @@ const meta = {
     textDecoration: 'none',
   },
   argTypes: {
+    children: {
+      control: 'text',
+      description: 'Text content of the heading.',
+      table: { category: 'Content' },
+    },
     level: {
       control: 'select',
       options: headingLevels,
@@ -116,4 +122,18 @@ export const Notification = {
     color: 'info',
     children: 'Additional information',
   },
+}
+
+export const AllHeadingLevels = {
+  name: 'All heading levels',
+  render: () => (
+    <>
+      <Heading level='h1'>Heading H1</Heading>
+      <Heading level='h2'>Heading H2</Heading>
+      <Heading level='h3'>Heading H3</Heading>
+      <Heading level='h4'>Heading H4</Heading>
+      <Heading level='h5'>Heading H5</Heading>
+      <Heading level='h6'>Heading H6</Heading>
+    </>
+  ),
 }

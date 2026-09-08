@@ -96,15 +96,20 @@ const StyledInput = styled.input<{ $hasLeftIcon: boolean; $hasRightIcon: boolean
   line-height: 1.4;
   outline: none;
   box-shadow: ${({ theme }) => theme.boxShadow.bs_01};
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.mutedText};
   }
 
+  &:hover:not(:disabled) {
+    box-shadow: ${({ theme }) => theme.boxShadow.bs_02};
+  }
+
   &:focus {
-    border-color: ${({ theme }) => theme.colors.border};
+    border-color: ${({ theme }) => theme.colors.activeBorder};
     box-shadow: ${({ theme }) => theme.boxShadow.bs_04};
+    background-color: ${({ theme }) => theme.colors.surface};
   }
 
   &:disabled {

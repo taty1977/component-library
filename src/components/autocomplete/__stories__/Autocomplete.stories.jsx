@@ -12,6 +12,7 @@ const meta = {
   component: Autocomplete,
   tags: ['autodocs'],
   parameters: {
+    layout: 'padded',
     docs: {
       description: {
         component:
@@ -28,7 +29,21 @@ const meta = {
     showRightIcon: false,
   },
   argTypes: {
-    label: { control: 'text', description: 'Visible label for the autocomplete input.', table: { category: 'Input' } },
+    label: {
+      control: 'text',
+      description: 'Visible label for the autocomplete input.',
+      table: { category: 'Content' },
+    },
+    placeholder: {
+      control: 'text',
+      description: 'Placeholder text shown when input is empty.',
+      table: { category: 'Content' },
+    },
+    value: {
+      control: 'text',
+      description: 'Controlled input value. Use with onChange.',
+      table: { category: 'Content' },
+    },
     required: {
       control: 'boolean',
       description: 'Marks the field as required and shows an asterisk.',
@@ -39,16 +54,19 @@ const meta = {
       description: 'Validation message shown below the input.',
       table: { category: 'Validation' },
     },
-    onSelect: { action: 'selected' },
+    onChange: {
+      description: 'Called when the input value changes.',
+      table: { category: 'Events' },
+    },
+    onSelect: {
+      action: 'selected',
+      description: 'Called when an option is selected from the list.',
+      table: { category: 'Events' },
+    },
     options: {
       control: 'object',
       description: 'List of options used for client-side filtering.',
       table: { category: 'Data' },
-    },
-    placeholder: {
-      control: 'text',
-      description: 'Placeholder text shown when input is empty.',
-      table: { category: 'Input' },
     },
     showLeftIcon: {
       control: 'boolean',
@@ -77,7 +95,8 @@ const meta = {
             backgroundColor: activeTheme.colors.surface,
             color: activeTheme.colors.text,
             border: `1px solid ${activeTheme.colors.border}`,
-            padding: '16px',
+            padding: activeTheme.spaces.lg,
+            maxWidth: '600px',
           }}
         >
           <Story />

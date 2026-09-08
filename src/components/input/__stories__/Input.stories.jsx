@@ -12,6 +12,7 @@ const meta = {
   component: Input,
   tags: ['autodocs'],
   parameters: {
+    layout: 'padded',
     docs: {
       description: {
         component:
@@ -29,7 +30,23 @@ const meta = {
     showOutsideRightIcon: false,
   },
   argTypes: {
-    label: { control: 'text', description: 'Visible label for the input.', table: { category: 'Input' } },
+    label: { control: 'text', description: 'Visible label for the input.', table: { category: 'Content' } },
+    placeholder: { control: 'text', description: 'Placeholder text.', table: { category: 'Content' } },
+    value: {
+      control: 'text',
+      description: 'Controlled input value. Use with onChange.',
+      table: { category: 'Content' },
+    },
+    type: {
+      control: 'select',
+      options: ['text', 'email', 'password', 'number', 'date', 'tel', 'url'],
+      description: 'HTML input type.',
+      table: { category: 'Content' },
+    },
+    onChange: {
+      description: 'Called when the input value changes.',
+      table: { category: 'Events' },
+    },
     required: {
       control: 'boolean',
       description: 'Marks the field as required and shows an asterisk.',
@@ -40,25 +57,39 @@ const meta = {
       description: 'Validation message shown below the field.',
       table: { category: 'Validation' },
     },
+    disabled: {
+      control: 'boolean',
+      description: 'Disables the input field.',
+      table: { category: 'State' },
+    },
     showLeftIcon: {
       control: 'boolean',
-      description: 'Shows the configured icon in the input.',
+      description: 'Shows the configured icon inside the input.',
       table: { category: 'Icons' },
     },
     showRightIcon: {
       control: 'boolean',
-      description: 'Shows the configured icon in the input.',
+      description: 'Shows the configured icon inside the input.',
       table: { category: 'Icons' },
     },
     showOutsideLeftIcon: {
       control: 'boolean',
-      description: 'Shows the configured icon beside the input.',
-      table: { category: 'Outside icons' },
+      description: 'Shows the configured icon beside the input on the left.',
+      table: { category: 'Outside Icons' },
     },
     showOutsideRightIcon: {
       control: 'boolean',
-      description: 'Shows the configured icon beside the input.',
-      table: { category: 'Outside icons' },
+      description: 'Shows the configured icon beside the input on the right.',
+      table: { category: 'Outside Icons' },
+    },
+    handleActions: {
+      description: 'Callback function triggered by interactive outside icons.',
+      table: { category: 'Outside Icons' },
+    },
+    'aria-describedby': {
+      control: 'text',
+      description: 'IDs of elements that describe the input.',
+      table: { category: 'Accessibility' },
     },
     iconLeft: { table: { disable: true } },
     iconRight: { table: { disable: true } },
@@ -76,6 +107,7 @@ const meta = {
             border: `1px solid ${activeTheme.colors.border}`,
             color: activeTheme.colors.text,
             padding: activeTheme.spaces.lg,
+            maxWidth: '600px',
           }}
         >
           <Story />
@@ -142,4 +174,69 @@ export const WithOutsideIcons = {
     showOutsideLeftIcon: true,
     showOutsideRightIcon: true,
   },
+}
+
+export const Disabled = {
+  render: renderInput,
+  args: {
+    disabled: true,
+    defaultValue: 'This field is disabled',
+  },
+}
+
+export const Email = {
+  render: renderInput,
+  args: {
+    label: 'Email address',
+    placeholder: 'you@example.com',
+    type: 'email',
+  },
+}
+
+export const Password = {
+  render: renderInput,
+  args: {
+    label: 'Password',
+    placeholder: 'Enter your password',
+    type: 'password',
+    showRightIcon: true,
+  },
+}
+
+export const Search = {
+  render: renderInput,
+  args: {
+    label: 'Search',
+    placeholder: 'Search...',
+    showLeftIcon: true,
+  },
+}
+
+export const RequiredWithError = {
+  render: renderInput,
+  args: {
+    label: 'Email address',
+    placeholder: 'you@example.com',
+    type: 'email',
+    required: true,
+    error: 'Please enter a valid email address.',
+  },
+}
+
+export const AllStates = {
+  name: 'All states',
+  render: () => (
+    <>
+      <Input label='Default state' placeholder='Enter a value' style={{ marginBottom: '2rem' }} />
+      <Input label='Focused state' placeholder='Enter a value' autoFocus style={{ marginBottom: '2rem' }} />
+      <Input
+        label='Error state'
+        placeholder='Enter a value'
+        error='This field is required.'
+        style={{ marginBottom: '2rem' }}
+      />
+      <Input label='Disabled state' placeholder='Enter a value' disabled style={{ marginBottom: '2rem' }} />
+      <Input label='Required field' placeholder='Enter a value' required />
+    </>
+  ),
 }

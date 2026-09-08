@@ -25,26 +25,46 @@ const renderWithTheme = (component: React.ReactElement) =>
   render(<ThemeProvider theme={theme}>{component}</ThemeProvider>)
 
 describe('Table', () => {
-  test('renders data and optional header and footer slots', () => {
-    renderWithTheme(
-      <Table<User>
-        columns={columns}
-        data={rows}
-        header={<h2>Users</h2>}
-        footer={<span>2 users</span>}
-        getRowKey={row => row.id}
-      />,
-    )
+  test('renders data', () => {
+    renderWithTheme(<Table<User> columns={columns} data={rows} getRowKey={row => row.id} />)
 
-    expect(screen.getByRole('heading', { name: 'Users' })).toBeInTheDocument()
     expect(screen.getByRole('cell', { name: 'Ada Lovelace' })).toBeInTheDocument()
-    expect(screen.getByText('2 users')).toBeInTheDocument()
+    expect(screen.getByRole('table', { name: 'Data table' })).toBeInTheDocument()
   })
 
   test('renders an empty message when data is empty', () => {
     renderWithTheme(<Table columns={columns} data={[]} emptyMessage='Nothing here' />)
 
     expect(screen.getByText('Nothing here')).toBeInTheDocument()
+  })
+
+  test('hides the table head and rounds the body when headers are unavailable', () => {
+    renderWithTheme(
+      <Table
+        columns={[
+          { key: 'name', header: null },
+          { key: 'status', header: null },
+        ]}
+        data={rows}
+      />,
+    )
+
+    expect(screen.queryByRole('columnheader')).not.toBeInTheDocument()
+    expect(screen.getByRole('rowheader', { name: 'Ada Lovelace' })).toHaveAttribute('scope', 'row')
+    expect(screen.getByRole('rowheader', { name: 'Ada Lovelace' })).toHaveStyle(
+      `font-weight: ${theme.fontWeights.semiBold}`,
+    )
+    expect(screen.getByRole('rowheader', { name: 'Ada Lovelace' })).toHaveStyle(`background: ${theme.colors.primary}`)
+    expect(screen.getByRole('rowheader', { name: 'Ada Lovelace' })).toHaveStyle(`color: ${theme.colors.surface}`)
+    expect(screen.getAllByRole('rowheader', { name: 'Ada Lovelace' })[0]).toHaveStyle(
+      `border-top-left-radius: ${theme.sizes.sz_075}`,
+    )
+    expect(screen.getAllByRole('cell', { name: 'Active' })[0]).toHaveStyle(
+      `border-top-right-radius: ${theme.sizes.sz_075}`,
+    )
+    expect(screen.getByRole('rowheader', { name: 'Grace Hopper' })).toHaveStyle(
+      `border-bottom-left-radius: ${theme.sizes.sz_075}`,
+    )
   })
 
   test('renders pagination only when configured and changes pages', () => {
@@ -75,6 +95,24 @@ describe('Table', () => {
     expect(screen.getByRole('button', { name: 'Previous' })).toHaveStyle(`font-weight: ${theme.fontWeights.semiBold}`)
   })
 
+  test('renders page status supplied as a React node', () => {
+    renderWithTheme(
+      <Table
+        columns={columns}
+        data={rows}
+        pagination={{
+          page: 2,
+          pageSize: 2,
+          total: 5,
+          onPageChange: jest.fn(),
+          pageStatus: <>Step 2 of 3</>,
+        }}
+      />,
+    )
+
+    expect(screen.getByText('Step 2 of 3')).toBeInTheDocument()
+  })
+
   test('can fix the first and last columns', () => {
     renderWithTheme(<Table columns={columns} data={rows} stickyFirstColumn stickyLastColumn />)
 
@@ -90,6 +128,14 @@ describe('Table', () => {
     expect(screen.getAllByRole('cell', { name: 'Active' })[0]).toHaveStyle('right: 0')
     expect(screen.getByRole('columnheader', { name: 'Status' })).toHaveStyle('position: sticky')
     expect(screen.getByRole('columnheader', { name: 'Status' })).toHaveStyle('right: 0')
+  })
+
+  test('disables sticky edges at the mobile breakpoint', () => {
+    renderWithTheme(<Table columns={columns} data={rows} breakpoint='mobile' stickyFirstColumn stickyLastColumn />)
+
+    expect(screen.getByRole('columnheader', { name: 'Name' })).toHaveStyle('position: static')
+    expect(screen.getByRole('columnheader', { name: 'Status' })).toHaveStyle('position: static')
+    expect(screen.getByRole('cell', { name: 'Ada Lovelace' })).toHaveStyle('position: static')
   })
 
   test('supports semibold text on any column', () => {
@@ -164,7 +210,6 @@ describe('Table', () => {
           columns[1],
         ]}
         data={rows}
-        header={<h2>Users</h2>}
       />,
     )
 
