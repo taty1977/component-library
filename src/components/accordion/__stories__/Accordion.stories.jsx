@@ -7,6 +7,11 @@ const themeStyles = {
   Brand: brandTheme,
 }
 
+const accordionVariants = [
+  'default',
+  ...Object.keys(brandTheme.colors).filter(color => ['primary', 'secondary'].includes(color)),
+]
+
 export default {
   component: Accordion,
   title: 'Components/Accordion',
@@ -36,7 +41,7 @@ export default {
     },
     variant: {
       control: 'select',
-      options: ['default', 'primary', 'secondary'],
+      options: accordionVariants,
       description: 'Choose the accordion color treatment.',
       table: {
         category: 'Appearance',

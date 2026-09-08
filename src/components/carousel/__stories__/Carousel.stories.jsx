@@ -1,6 +1,6 @@
 import React from 'react'
 import { brandTheme } from '../../../styles'
-import { CarouselImageGallery } from '../CarouselImageGallery'
+import { Carousel } from '../Carousel'
 import Heading from '../../heading/Heading'
 
 const themeStyles = {
@@ -62,7 +62,7 @@ const renderShowcase = (args, context) => {
         </div>
       </div>
 
-      <CarouselImageGallery {...args} />
+      <Carousel {...args} />
     </main>
   )
 }
@@ -113,8 +113,8 @@ const imageSet = [
 ]
 
 const meta = {
-  title: 'Components/CarouselImageGallery',
-  component: CarouselImageGallery,
+  title: 'Components/Carousel',
+  component: Carousel,
   tags: ['autodocs'],
   parameters: {
     layout: 'padded',

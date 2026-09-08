@@ -6,7 +6,7 @@ export type HeadingWeight = keyof ThemeType['fontWeights']
 export type HeadingFamily = keyof ThemeType['fontFamilies']
 export type HeadingColor = keyof ThemeType['actionColors']
 export type HeadingLevel = keyof ThemeType['headingSizes']
-export type HeadingTextDecoration = 'none' | 'underline' | 'overline' | 'line-through' | 'capitalize'
+export type HeadingTextDecoration = keyof ThemeType['textDecorations']
 
 export interface HeadingProps extends React.HTMLAttributes<HTMLHeadingElement> {
   level?: HeadingLevel
@@ -31,7 +31,7 @@ const StyledHeading = styled.h1<StyledHeadingProps>`
   font-size: ${({ $level, theme }) => theme.headingSizes[$level]};
   font-weight: ${({ $weight, theme }) => theme.fontWeights[$weight]};
   line-height: 1.2;
-  text-decoration: ${({ $textDecoration }) => $textDecoration};
+  text-decoration: ${({ $textDecoration, theme }) => theme.textDecorations[$textDecoration]};
 `
 
 const Heading: React.FC<HeadingProps> = ({

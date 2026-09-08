@@ -51,6 +51,12 @@ const baseTheme = {
     h5: sizes.sz_150,
     h6: sizes.sz_125,
   },
+  textDecorations: {
+    none: 'none',
+    underline: 'underline',
+    overline: 'overline',
+    lineThrough: 'line-through',
+  },
   actionColors: {
     Primary: colors.col_0d3f48,
     Secondary: colors.col_9b417b,

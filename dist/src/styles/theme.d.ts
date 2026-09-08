@@ -16,7 +16,7 @@ export declare const brandTheme: {
         focusRing: "#0284c747";
         activeRing: "#3b82f640";
         overlayBackdrop: "#0f172a99";
-        text: string;
+        text: "#4f545f";
         surface: "#ffffff";
         surfaceAlt: "#f4f9fb";
         secondarySurfaceAlt: "#fbf4f9";
@@ -52,6 +52,10 @@ export declare const brandTheme: {
         tabletBreakpoint: "900px";
         mobileBreakpoint: "640px";
     };
+    fontFamilies: {
+        heading: string;
+        paragraph: string;
+    };
     fontSizes: {
         xs: "0.75rem";
         sm: "0.875rem";
@@ -63,8 +67,9 @@ export declare const brandTheme: {
         light: number;
         normal: number;
         medium: number;
-        semibold: number;
+        semiBold: number;
         bold: number;
+        extraBold: number;
     };
     headingSizes: {
         h1: "3rem";
@@ -73,6 +78,14 @@ export declare const brandTheme: {
         h4: "1.75rem";
         h5: "1.5rem";
         h6: "1.25rem";
+    };
+    actionColors: {
+        Primary: "#0d3f48";
+        Secondary: "#9b417b";
+        success: "#28a745";
+        danger: "#dc3545";
+        warning: "#ffcc00";
+        info: "#17a2b8";
     };
     sizes: {
         sz_025: "0.25rem";
@@ -143,7 +156,7 @@ export declare const theme: {
         focusRing: "#0284c747";
         activeRing: "#3b82f640";
         overlayBackdrop: "#0f172a99";
-        text: string;
+        text: "#4f545f";
         surface: "#ffffff";
         surfaceAlt: "#f4f9fb";
         secondarySurfaceAlt: "#fbf4f9";
@@ -179,6 +192,10 @@ export declare const theme: {
         tabletBreakpoint: "900px";
         mobileBreakpoint: "640px";
     };
+    fontFamilies: {
+        heading: string;
+        paragraph: string;
+    };
     fontSizes: {
         xs: "0.75rem";
         sm: "0.875rem";
@@ -190,8 +207,9 @@ export declare const theme: {
         light: number;
         normal: number;
         medium: number;
-        semibold: number;
+        semiBold: number;
         bold: number;
+        extraBold: number;
     };
     headingSizes: {
         h1: "3rem";
@@ -200,6 +218,14 @@ export declare const theme: {
         h4: "1.75rem";
         h5: "1.5rem";
         h6: "1.25rem";
+    };
+    actionColors: {
+        Primary: "#0d3f48";
+        Secondary: "#9b417b";
+        success: "#28a745";
+        danger: "#dc3545";
+        warning: "#ffcc00";
+        info: "#17a2b8";
     };
     sizes: {
         sz_025: "0.25rem";

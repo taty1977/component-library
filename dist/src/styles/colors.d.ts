@@ -25,6 +25,9 @@ export declare const colors: {
     readonly col_0d3f48: "#0d3f48";
     readonly col_0d4b57: "#0d4b57";
     readonly col_4f545f: "#4f545f";
+    readonly col_28a745: "#28a745";
+    readonly col_ffcc00: "#ffcc00";
+    readonly col_17a2b8: "#17a2b8";
     readonly col_446a73: "#446a73";
     readonly col_4b5563: "#4b5563";
     readonly col_57757d: "#4a6870";

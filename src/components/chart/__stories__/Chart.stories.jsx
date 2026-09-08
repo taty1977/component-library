@@ -30,7 +30,7 @@ const pieData = [
 ]
 
 const meta = {
-  title: 'Components/Chart',
+  title: 'Content/Chart',
   component: Chart,
   tags: ['autodocs'],
   parameters: {

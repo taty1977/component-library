@@ -3,6 +3,10 @@ import { GlobeAltIcon } from '@heroicons/react/24/solid'
 import { brandTheme } from '../../../styles'
 import Select from '../Select'
 
+const themeStyles = {
+  Brand: brandTheme,
+}
+
 const options = [
   { value: '', label: 'Choose a country' },
   { value: 'us', label: 'United States' },
@@ -65,17 +69,22 @@ const meta = {
     children: { table: { disable: true } },
   },
   decorators: [
-    Story => (
-      <div
-        style={{
-          backgroundColor: brandTheme.colors.surface,
-          border: `1px solid ${brandTheme.colors.border}`,
-          padding: '16px',
-        }}
-      >
-        <Story />
-      </div>
-    ),
+    (Story, context) => {
+      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand
+
+      return (
+        <div
+          style={{
+            backgroundColor: activeTheme.colors.surface,
+            border: `1px solid ${activeTheme.colors.border}`,
+            color: activeTheme.colors.text,
+            padding: activeTheme.spaces.lg,
+          }}
+        >
+          <Story />
+        </div>
+      )
+    },
   ],
 }
 

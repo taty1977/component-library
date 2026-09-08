@@ -1,3 +1,4 @@
+import React from 'react'
 import { ArrowRightIcon, PlusIcon } from '@heroicons/react/24/solid'
 import { brandTheme } from '../../../styles'
 import Button from '../Button'
@@ -5,6 +6,8 @@ import Button from '../Button'
 const themeStyles = {
   Brand: brandTheme,
 }
+
+const buttonVariants = Object.keys(brandTheme.colors).filter(color => ['primary', 'secondary'].includes(color))
 
 const meta = {
   title: 'Components/Button',
@@ -49,7 +52,7 @@ const meta = {
     },
     variant: {
       control: 'select',
-      options: ['primary', 'secondary'],
+      options: buttonVariants,
       description: 'Selects the button color treatment.',
       table: { category: 'Appearance' },
     },

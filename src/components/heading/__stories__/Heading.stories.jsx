@@ -1,9 +1,16 @@
 import React from 'react'
+import { brandTheme } from '../../../styles'
 import Heading from '../Heading'
 
-const headingLevels = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6']
-const headingWeights = ['light', 'normal', 'medium', 'semiBold', 'bold', 'extraBold']
-const textDecorations = ['none', 'underline', 'overline', 'line-through']
+const themeStyles = {
+  Brand: brandTheme,
+}
+
+const headingLevels = Object.keys(brandTheme.headingSizes)
+const headingWeights = Object.keys(brandTheme.fontWeights)
+const headingFamilies = Object.keys(brandTheme.fontFamilies)
+const headingColors = Object.keys(brandTheme.actionColors)
+const textDecorations = Object.keys(brandTheme.textDecorations)
 
 const meta = {
   title: 'Typography/Heading',
@@ -18,6 +25,24 @@ const meta = {
       },
     },
   },
+  decorators: [
+    (Story, context) => {
+      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand
+
+      return (
+        <div
+          style={{
+            backgroundColor: activeTheme.colors.surface,
+            border: `1px solid ${activeTheme.colors.border}`,
+            color: activeTheme.colors.text,
+            padding: activeTheme.spaces.lg,
+          }}
+        >
+          <Story />
+        </div>
+      )
+    },
+  ],
   args: {
     children: 'A clear section heading',
     level: 'h2',
@@ -41,13 +66,13 @@ const meta = {
     },
     family: {
       control: 'select',
-      options: ['heading', 'paragraph'],
+      options: headingFamilies,
       description: 'Theme font-family token.',
       table: { category: 'Appearance' },
     },
     color: {
       control: 'select',
-      options: ['Primary', 'Secondary', 'success', 'danger', 'warning', 'info'],
+      options: headingColors,
       description: 'Semantic theme color for headings and notification text.',
       table: { category: 'Appearance' },
     },

@@ -3,6 +3,10 @@ import { ArrowRightIcon, InformationCircleIcon, MagnifyingGlassIcon } from '@her
 import { brandTheme } from '../../../styles'
 import Input from '../Input'
 
+const themeStyles = {
+  Brand: brandTheme,
+}
+
 const meta = {
   title: 'Forms/Input',
   component: Input,
@@ -62,17 +66,22 @@ const meta = {
     outsideIconRight: { table: { disable: true } },
   },
   decorators: [
-    Story => (
-      <div
-        style={{
-          backgroundColor: brandTheme.colors.surface,
-          border: `1px solid ${brandTheme.colors.border}`,
-          padding: '16px',
-        }}
-      >
-        <Story />
-      </div>
-    ),
+    (Story, context) => {
+      const activeTheme = themeStyles[context.globals.theme] || themeStyles.Brand
+
+      return (
+        <div
+          style={{
+            backgroundColor: activeTheme.colors.surface,
+            border: `1px solid ${activeTheme.colors.border}`,
+            color: activeTheme.colors.text,
+            padding: activeTheme.spaces.lg,
+          }}
+        >
+          <Story />
+        </div>
+      )
+    },
   ],
 }
 

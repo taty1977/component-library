@@ -13,7 +13,7 @@ export interface CarouselImageItem {
   likeButton?: boolean
 }
 
-export interface CarouselImageGalleryProps {
+export interface CarouselProps {
   images: CarouselImageItem[]
   likeButton?: boolean
   breakpoint?: Breakpoint
@@ -429,7 +429,7 @@ const GalleryDialogContent = styled.div<{ $breakpoint: Breakpoint }>`
       : ''}
 `
 
-export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
+export const Carousel: React.FC<CarouselProps> = ({
   images,
   likeButton = true,
   initialIndex = 0,
@@ -780,4 +780,4 @@ export const CarouselImageGallery: React.FC<CarouselImageGalleryProps> = ({
   )
 }
 
-export default CarouselImageGallery
+export default Carousel

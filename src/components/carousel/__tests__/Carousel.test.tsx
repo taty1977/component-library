@@ -4,7 +4,7 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { ThemeProvider } from 'styled-components'
 import { theme } from '../../../styles'
-import { CarouselImageGallery } from '../CarouselImageGallery'
+import { Carousel } from '../Carousel'
 
 const images = [
   { id: '1', src: 'https://example.com/1.jpg', alt: 'Image one' },
@@ -32,25 +32,25 @@ const overflowImages = Array.from({ length: 30 }, (_, index) => {
 const renderWithTheme = (component: React.ReactElement) =>
   render(<ThemeProvider theme={theme}>{component}</ThemeProvider>)
 
-describe('CarouselImageGallery', () => {
+describe('Carousel', () => {
   test('renders fallback when no images are provided', () => {
-    renderWithTheme(<CarouselImageGallery images={[]} />)
+    renderWithTheme(<Carousel images={[]} />)
     expect(screen.getByText(/no product images available/i)).toBeInTheDocument()
   })
 
   test('renders first image by default', () => {
-    renderWithTheme(<CarouselImageGallery images={images} />)
+    renderWithTheme(<Carousel images={images} />)
     expect(screen.getByRole('button', { name: /open image gallery: image one/i })).toBeInTheDocument()
   })
 
   test('provides fallback accessible text when an image alt is empty', () => {
-    renderWithTheme(<CarouselImageGallery images={[{ src: 'https://example.com/untitled.jpg', alt: '   ' }]} />)
+    renderWithTheme(<Carousel images={[{ src: 'https://example.com/untitled.jpg', alt: '   ' }]} />)
     expect(screen.getByRole('button', { name: /open image gallery: product image 1/i })).toBeInTheDocument()
   })
 
   test('opens gallery when main image is clicked', async () => {
     const user = userEvent.setup()
-    renderWithTheme(<CarouselImageGallery images={images} />)
+    renderWithTheme(<Carousel images={images} />)
 
     await user.click(screen.getByRole('button', { name: /open image gallery: image one/i }))
     expect(screen.getByRole('dialog', { name: /image gallery/i })).toBeInTheDocument()
@@ -58,7 +58,7 @@ describe('CarouselImageGallery', () => {
 
   test('opens gallery when the active image is activated with the keyboard', async () => {
     const user = userEvent.setup()
-    renderWithTheme(<CarouselImageGallery images={images} />)
+    renderWithTheme(<Carousel images={images} />)
 
     const image = screen.getByRole('button', { name: /open image gallery: image one/i })
     image.focus()
@@ -68,7 +68,7 @@ describe('CarouselImageGallery', () => {
   })
 
   test('does not make the main image open the modal when disabled', () => {
-    renderWithTheme(<CarouselImageGallery images={images} openOnClick={false} />)
+    renderWithTheme(<Carousel images={images} openOnClick={false} />)
 
     expect(screen.getByRole('img', { name: /image one/i })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /^open image gallery:/i })).not.toBeInTheDocument()
@@ -76,7 +76,7 @@ describe('CarouselImageGallery', () => {
 
   test('dialog is labeled and closes on Escape', async () => {
     const user = userEvent.setup()
-    renderWithTheme(<CarouselImageGallery images={images} />)
+    renderWithTheme(<Carousel images={images} />)
 
     await user.click(screen.getByRole('button', { name: /open image gallery: image one/i }))
     const dialog = screen.getByRole('dialog', { name: /image gallery/i })
@@ -88,7 +88,7 @@ describe('CarouselImageGallery', () => {
 
   test('toggles like button state when clicked', async () => {
     const user = userEvent.setup()
-    renderWithTheme(<CarouselImageGallery images={images} />)
+    renderWithTheme(<Carousel images={images} />)
 
     const likeButton = screen.getByRole('button', { name: /add to favorites/i })
     expect(likeButton).toHaveAttribute('aria-pressed', 'false')
@@ -98,13 +98,13 @@ describe('CarouselImageGallery', () => {
   })
 
   test('hides the like button when disabled', () => {
-    renderWithTheme(<CarouselImageGallery images={images} likeButton={false} />)
+    renderWithTheme(<Carousel images={images} likeButton={false} />)
     expect(screen.queryByRole('button', { name: /add to favorites/i })).not.toBeInTheDocument()
   })
 
   test('moves to next image when next button is clicked', async () => {
     const user = userEvent.setup()
-    renderWithTheme(<CarouselImageGallery images={images} />)
+    renderWithTheme(<Carousel images={images} />)
 
     await user.click(screen.getByRole('button', { name: /next image/i }))
     expect(screen.getByRole('button', { name: /open image gallery: image two/i })).toBeInTheDocument()
@@ -112,7 +112,7 @@ describe('CarouselImageGallery', () => {
 
   test('selects image when thumbnail is clicked', async () => {
     const user = userEvent.setup()
-    renderWithTheme(<CarouselImageGallery images={images} />)
+    renderWithTheme(<Carousel images={images} />)
 
     await user.click(screen.getByRole('button', { name: /select image three/i }))
     expect(screen.getByRole('button', { name: /open image gallery: image three/i })).toBeInTheDocument()
@@ -121,7 +121,7 @@ describe('CarouselImageGallery', () => {
   test('calls onImageChange on navigation', async () => {
     const user = userEvent.setup()
     const onImageChange = jest.fn()
-    renderWithTheme(<CarouselImageGallery images={images} onImageChange={onImageChange} />)
+    renderWithTheme(<Carousel images={images} onImageChange={onImageChange} />)
 
     await user.click(screen.getByRole('button', { name: /next image/i }))
 
@@ -131,14 +131,14 @@ describe('CarouselImageGallery', () => {
 
   test.each(['left', 'right'] as const)('supports %s thumbnail position', async thumbnailsPosition => {
     const user = userEvent.setup()
-    renderWithTheme(<CarouselImageGallery images={images} thumbnailsPosition={thumbnailsPosition} />)
+    renderWithTheme(<Carousel images={images} thumbnailsPosition={thumbnailsPosition} />)
 
     await user.click(screen.getByRole('button', { name: /select image three/i }))
     expect(screen.getByRole('button', { name: /open image gallery: image three/i })).toBeInTheDocument()
   })
 
   test('shows +N thumbnail and no thumbnail arrows in inline view', () => {
-    renderWithTheme(<CarouselImageGallery images={overflowImages} thumbnailsPosition='bottom' />)
+    renderWithTheme(<Carousel images={overflowImages} thumbnailsPosition='bottom' />)
 
     expect(screen.getByRole('button', { name: /open image gallery \(\d+ more\)/i })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /previous thumbnails/i })).not.toBeInTheDocument()
@@ -146,7 +146,7 @@ describe('CarouselImageGallery', () => {
   })
 
   test.each(['left', 'right'] as const)('shows +N thumbnail in inline view for %s position', thumbnailsPosition => {
-    renderWithTheme(<CarouselImageGallery images={overflowImages} thumbnailsPosition={thumbnailsPosition} />)
+    renderWithTheme(<Carousel images={overflowImages} thumbnailsPosition={thumbnailsPosition} />)
 
     expect(screen.getByRole('button', { name: /open image gallery \(\d+ more\)/i })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /previous thumbnails/i })).not.toBeInTheDocument()
@@ -155,7 +155,7 @@ describe('CarouselImageGallery', () => {
 
   test('shows thumbnail arrows in open gallery and selects hidden image', async () => {
     const user = userEvent.setup()
-    renderWithTheme(<CarouselImageGallery images={overflowImages} thumbnailsPosition='bottom' />)
+    renderWithTheme(<Carousel images={overflowImages} thumbnailsPosition='bottom' />)
 
     await user.click(screen.getByRole('button', { name: /open image gallery \(\d+ more\)/i }))
     const galleryDialog = screen.getByRole('dialog', { name: /image gallery/i })
@@ -174,7 +174,7 @@ describe('CarouselImageGallery', () => {
     'shows thumbnail arrows in open gallery and selects hidden image for %s position',
     async thumbnailsPosition => {
       const user = userEvent.setup()
-      renderWithTheme(<CarouselImageGallery images={overflowImages} thumbnailsPosition={thumbnailsPosition} />)
+      renderWithTheme(<Carousel images={overflowImages} thumbnailsPosition={thumbnailsPosition} />)
 
       await user.click(screen.getByRole('button', { name: /open image gallery \(\d+ more\)/i }))
       const galleryDialog = screen.getByRole('dialog', { name: /image gallery/i })
